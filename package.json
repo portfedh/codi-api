@@ -1,0 +1,34 @@
+{
+  "name": "codi-api",
+  "version": "1.0.0",
+  "description": "API to Generate Codi Payments via QR codes and Push notifications",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/portfedh/codi-api.git"
+  },
+  "keywords": [
+    "Banco",
+    "de",
+    "Mexico",
+    "Banxico",
+    "CoDi",
+    "codi",
+    "CODI"
+  ],
+  "author": "Pablo Cruz Lemini",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "bugs": {
+    "url": "https://github.com/portfedh/codi-api/issues"
+  },
+  "homepage": "https://github.com/portfedh/codi-api#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
