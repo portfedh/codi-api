@@ -87,10 +87,7 @@ app.use(limiter);
 
 // Routes:
 // =======
-// Route imports
 const homeRoutes = require("./routes/home");
-
-// Listening routes
 app.use("/", homeRoutes);
 
 // Server Port
