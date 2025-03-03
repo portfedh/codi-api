@@ -12,7 +12,7 @@ const { generateSignature } = require("./utils/generateDigitalSignature");
 // Exports
 // *******
 module.exports = {
-  getBillingStatus: async (req, res) => {
+  getBillingInfo: async (req, res) => {
     try {
       // Get payment data
       const { folioCodi, tpg, npg, fechaInicial, fechaFinal } = req.body;
