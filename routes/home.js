@@ -15,9 +15,9 @@ const recepcion = require("../controllers/recepcion");
 
 // Routes
 // ******
-router.get("/send-qr-payment", qr.sendQrPayment);
-router.get("/send-push-payment", push.sendPushPayment);
-router.get("/consultaOperaciones", consulta.getBillingInfo);
+router.post("/codi/qr", qr.sendQrPayment);
+router.post("/codi/push", push.sendPushPayment);
+router.post("/codi/consulta", consulta.getBillingInfo);
 router.get("/v2/resultadoOperaciones", recepcion.logRequestData);
 
 // Exports
