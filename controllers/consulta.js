@@ -16,21 +16,21 @@ module.exports = {
     try {
       // Get payment data
       const { folioCodi, tpg, npg, fechaInicial, fechaFinal } = req.body;
-      console.log("\n🔵 Datos de pago: ", req.body);
+      // console.log("\n🔵 Datos de pago: ", req.body);
 
       // Get url endpoint
       const codiApiStatusEndpoint = getCodiStatusURL();
-      console.log("\n🔵 QR Endpoint: ", codiApiStatusEndpoint);
+      // console.log("\n🔵 QR Endpoint: ", codiApiStatusEndpoint);
 
       // Get seller api key
       const apiKey = getSellerApiKey();
-      console.log("\n🔵 Seller API Key: ", apiKey);
+      // console.log("\n🔵 Seller API Key: ", apiKey);
 
       // Get developer credentials
       const crtLogIn = process.env.CRT_LOG_IN;
       const crtOper = process.env.CRT_OPER;
-      console.log("\n🔵 Developer crtLogIn: ", crtLogIn);
-      console.log("\n🔵 Developer crtOper: ", crtLogIn);
+      // console.log("\n🔵 Developer crtLogIn: ", crtLogIn);
+      // console.log("\n🔵 Developer crtOper: ", crtLogIn);
 
       // Create object
       const peticionConsulta = {
@@ -41,11 +41,11 @@ module.exports = {
         fechaInicial,
         fechaFinal,
       };
-      console.log("\n🔵 Datos a firmar: ", peticionConsulta);
+      // console.log("\n🔵 Datos a firmar: ", peticionConsulta);
 
       // Sign the data
       const selloDigital = await generateSignature(peticionConsulta);
-      console.log("\n🔵 Sello digital: ", selloDigital);
+      // console.log("\n🔵 Sello digital: ", selloDigital);
 
       // Create request body
       const epoch = Date.now();
@@ -56,7 +56,7 @@ module.exports = {
         crtLogIn,
         crtOper,
       };
-      console.log("\n🔵 Request body a Banxico: ", requestBody);
+      // console.log("\n🔵 Request body a Banxico: ", requestBody);
 
       return res.status(200).json({
         success: true,

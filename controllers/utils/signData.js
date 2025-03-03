@@ -6,15 +6,15 @@ function signData(string) {
     // Read private key from environment variables
     const privateKeyPem = process.env.PRIVATE_KEY;
     const passphrase = process.env.PRIVATE_KEY_PASSPHRASE;
-    console.log("\nEncrypted Private Key: ", privateKeyPem);
-    console.log("\nPassphrase: ", passphrase);
+    // console.log("\nEncrypted Private Key: ", privateKeyPem);
+    // console.log("\nPassphrase: ", passphrase);
 
     // Decrypt the private key
     const decryptedPrivateKey = forge.pki.decryptRsaPrivateKey(
       privateKeyPem,
       passphrase
     );
-    console.log("\nDecrypted Private Key: ", decryptedPrivateKey);
+    // console.log("\nDecrypted Private Key: ", decryptedPrivateKey);
 
     if (!decryptedPrivateKey) {
       throw new Error("\nFailed to decrypt private key");
@@ -22,12 +22,12 @@ function signData(string) {
 
     // Convert the private key to PEM format
     const privateKeyPemString = forge.pki.privateKeyToPem(decryptedPrivateKey);
-    console.log("\nPrivate Key PEM String: ", privateKeyPemString);
+    // console.log("\nPrivate Key PEM String: ", privateKeyPemString);
 
     // Create signer
     const signer = crypto.createSign("RSA-SHA512");
     signer.update(string);
-    console.log("\nSigner Object: ", signer);
+    // console.log("\nSigner Object: ", signer);
 
     // Sign the string with PSS padding
     const signature = signer.sign({
@@ -35,11 +35,11 @@ function signData(string) {
       padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
       saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST, //64 bits checar con openSSL
     });
-    console.log("\nHex Signature: ", signature);
+    // console.log("\nHex Signature: ", signature);
 
     // Convert to base64
     const signatureBase64 = signature.toString("base64");
-    console.log("\nSignature Base 64: ", signatureBase64);
+    // console.log("\nSignature Base 64: ", signatureBase64);
     return signatureBase64;
   } catch (error) {
     console.error("Error signing hash:", error);
