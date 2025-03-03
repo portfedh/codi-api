@@ -17,14 +17,28 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
 const allowedOrigins = [
+  //
   "http://localhost:5173",
   "http://localhost:2121",
+  //
   "https://salsa-candela.com",
   "https://www.salsa-candela.com",
+  //
   "https://admin.salsa-candela.com",
   "https://www.admin.salsa-candela.com",
+  //
   "https://bar.salsa-candela.com",
   "https://www.bar.salsa-candela.com",
+  //
+  "http://170.70.226.117",
+  "http://170.70.226.118",
+  "http://170.70.226.119",
+  "http://170.70.226.120",
+  //
+  "http://170.70.227.117",
+  "http://170.70.227.118",
+  "http://170.70.227.119",
+  "http://170.70.227.120",
 ];
 const corsOptions = {
   origin: function (origin, callback) {
@@ -64,10 +78,10 @@ app.use((req, res, next) => {
 });
 
 // Rate Limiter
-const rateLimit = require('express-rate-limit');
+const rateLimit = require("express-rate-limit");
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 100, // limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
 
@@ -79,12 +93,9 @@ const homeRoutes = require("./routes/home");
 // Listening routes
 app.use("/", homeRoutes);
 
-
 // Server Port
 // ===========
 const port = process.env.PORT || PORT;
 app.listen(port, () => {
-console.log(`Server running on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
-
-
