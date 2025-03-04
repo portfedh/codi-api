@@ -8,10 +8,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Execute deploy script on server
+      - name: Deploy code to DigitalOcean Droplet
         uses: appleboy/ssh-action@master
         with:
           host: 164.90.245.198
           username: root
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          script: /root/deployment.sh
+          script: |
+            cd /root/codi-api
+            git pull origin main
+            npm install
+            pm2 restart codi-api
+            echo "Deployment successful!"
