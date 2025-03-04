@@ -5,6 +5,7 @@
 // *******
 const axios = require("axios");
 require("dotenv").config({ path: "../config/.env" });
+const { verifySignature } = require("./utils/verifySignature");
 const { getCodiQrUrl } = require("./utils/getCodiQrUrl");
 const { getSellerApiKey } = require("./utils/getSellerApiKey");
 const { generateSignature } = require("./utils/generateDigitalSignature");
@@ -31,6 +32,10 @@ module.exports = {
       const crtOper = process.env.CRT_OPER;
       // console.log("\n🔵 Developer crtLogIn: ", crtLogIn);
       // console.log("\n🔵 Developer crtOper: ", crtLogIn);
+
+      // Get Public Key Certificate
+      const publicKey = process.env.PUBLIC_KEY;
+      // console.log("\n🔵 Public Key Certificate: ", publicKey);
 
       // Get epoch
       const epoch = Date.now();
@@ -59,7 +64,18 @@ module.exports = {
         crtLogIn,
         crtOper,
       };
-      console.log("\n🔵 Request body a Banxico: ", requestBody);
+      // console.log("\n🔵 Request body a Banxico: ", requestBody);
+
+      // Verify the signature
+      const isVerified = verifySignature(requestBody, publicKey);
+      // console.log("\n🔵 Firma verificada: ", isVerified);
+
+      if (!isVerified) {
+        return res.status(400).json({
+          success: false,
+          error: "Signature verification failed",
+        });
+      }
 
       // return res.status(200).json({
       //   success: true,

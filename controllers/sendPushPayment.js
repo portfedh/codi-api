@@ -7,6 +7,7 @@ const axios = require("axios");
 require("dotenv").config({ path: "../config/.env" });
 const { getCodiPushUrl } = require("./utils/getCodiPushUrl");
 const { getSellerApiKey } = require("./utils/getSellerApiKey");
+const { verifySignature } = require("./utils/verifySignature");
 const { generateSignature } = require("./utils/generateDigitalSignature");
 
 // Exports
@@ -37,6 +38,10 @@ module.exports = {
       const epoch = Date.now();
       // console.log("\n🔵 Epoch: ", epoch);
 
+      // Get Public Key Certificate
+      const publicKey = process.env.PUBLIC_KEY;
+      // console.log("\n🔵 Public Key Certificate: ", publicKey);
+
       // Create object
       const datosMC = {
         celularCliente, // 10 digits
@@ -60,8 +65,17 @@ module.exports = {
         crtLogIn,
         crtOper,
       };
-
       // console.log("\n🔵 Request body a Banxico: ", requestBody);
+
+      const isVerified = verifySignature(requestBody, publicKey);
+      console.log("\n🔵 Firma verificada: ", isVerified);
+
+      if (!isVerified) {
+        return res.status(400).json({
+          success: false,
+          error: "Signature verification failed",
+        });
+      }
 
       // return res.status(200).json({
       //   success: true,

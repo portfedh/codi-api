@@ -7,6 +7,7 @@ const axios = require("axios");
 require("dotenv").config({ path: "../config/.env" });
 const { getCodiStatusURL } = require("./utils/getCodiStatusUrl");
 const { getSellerApiKey } = require("./utils/getSellerApiKey");
+const { verifySignature } = require("./utils/verifySignature");
 const { generateSignature } = require("./utils/generateDigitalSignature");
 
 // Exports
@@ -36,6 +37,10 @@ module.exports = {
       const epoch = Date.now();
       // console.log("\n🔵 Epoch: ", epoch);
 
+      // Get Public Key Certificate
+      const publicKey = process.env.PUBLIC_KEY;
+      // console.log("\n🔵 Public Key Certificate: ", publicKey);
+
       // Create object
       const peticionConsulta = {
         apiKey,
@@ -61,19 +66,30 @@ module.exports = {
       };
       // console.log("\n🔵 Request body a Banxico: ", requestBody);
 
-      return res.status(200).json({
-        success: true,
-        data: requestBody,
-      });
+      // Verify the signature
+      const isVerified = verifySignature(requestBody, publicKey);
+      // console.log("\n🔵 Firma verificada: ", isVerified);
 
-      // Send the data
-      // const response = await axios.post(codiApiStatusEndpoint, requestBody);
-      // // Revisar que la petición se envíe como UTF-8 y no latin1 o ISO-8859-1
+      if (!isVerified) {
+        return res.status(400).json({
+          success: false,
+          error: "Signature verification failed",
+        });
+      }
 
       // return res.status(200).json({
       //   success: true,
-      //   data: response.data,
+      //   data: requestBody,
       // });
+
+      // Send the data
+      const response = await axios.post(codiApiStatusEndpoint, requestBody);
+      // Revisar que la petición se envíe como UTF-8 y no latin1 o ISO-8859-1
+
+      return res.status(200).json({
+        success: true,
+        data: response.data,
+      });
     } catch (error) {
       console.error(
         "Error en consulta del Estado de un Mensaje de Cobro: ",
