@@ -59,7 +59,7 @@ module.exports = {
         crtLogIn,
         crtOper,
       };
-      // console.log("\n🔵 Request body a Banxico: ", requestBody);
+      console.log("\n🔵 Request body a Banxico: ", requestBody);
 
       // return res.status(200).json({
       //   success: true,

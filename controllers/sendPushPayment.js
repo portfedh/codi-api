@@ -33,6 +33,10 @@ module.exports = {
       // console.log("\n🔵 Developer crtLogIn: ", crtLogIn);
       // console.log("\n🔵 Developer crtOper: ", crtLogIn);
 
+      // Get epoch
+      const epoch = Date.now();
+      // console.log("\n🔵 Epoch: ", epoch);
+
       // Create object
       const datosMC = {
         celularCliente, // 10 digits
@@ -45,11 +49,10 @@ module.exports = {
       // console.log("\n🔵 Datos a firmar: ", datosMC);
 
       // Sign the data
-      const selloDigital = await generateSignature(datosMC);
+      const selloDigital = await generateSignature(datosMC, epoch);
       // console.log("\n🔵 Sello digital: ", selloDigital);
 
       // Create request body
-      const epoch = Date.now();
       const requestBody = {
         datosMC,
         selloDigital,
