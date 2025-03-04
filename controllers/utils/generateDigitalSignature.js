@@ -3,7 +3,7 @@ const { signData } = require("./signData");
 const { cleanJsonObject } = require("./cleanJsonObject");
 const { hasPipeCharacter } = require("./hasPipeCharacter");
 
-async function generateSignature(object) {
+async function generateSignature(object, epoch) {
   try {
     // console.log("\n Iniciando generación de sello digital...");
     // console.log("\n Datos recibidos: ", object);
@@ -19,9 +19,9 @@ async function generateSignature(object) {
     // console.log("\n Datos procesados: ", processedJson);
 
     // Step 3: Stringify JSON
-    const epoch = Date.now();
-    const stringifiedJson = JSON.stringify(processedJson) + epoch;
-    // console.log("\n Datos a firmar con epoch: ", stringifiedJson);
+    let stringifiedJson = `${JSON.stringify(processedJson)}${epoch}`;
+    stringifiedJson = stringifiedJson.trim();
+    // console.log("\n Datos a firmar con epoch:", stringifiedJson);
 
     // Step 4: Sign the data
     const signature = signData(stringifiedJson);
