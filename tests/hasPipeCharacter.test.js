@@ -1,4 +1,4 @@
-const { hasPipeCharacter } = require("../utils/hasPipeCharacter");
+const { hasPipeCharacter } = require("../controllers/utils/hasPipeCharacter");
 
 describe("hasPipeCharacter", () => {
   test("should return true if any value contains a pipe character", () => {

@@ -1,4 +1,4 @@
-const { verifySignature } = require("./verifySignature");
+const { verifySignature } = require("../controllers/utils/verifySignature");
 const crypto = require("crypto");
 const forge = require("node-forge");
 

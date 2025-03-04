@@ -1,4 +1,4 @@
-const { getSellerApiKey } = require("../utils/getSellerApiKey");
+const { getSellerApiKey } = require("../controllers/utils/getSellerApiKey");
 
 describe("getSellerApiKey", () => {
   afterEach(() => {

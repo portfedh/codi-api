@@ -1,4 +1,4 @@
-const { getCodiPushUrl } = require("../utils/getCodiPushUrl");
+const { getCodiPushUrl } = require("../controllers/utils/getCodiPushUrl");
 
 describe("getCodiPushUrl", () => {
   afterEach(() => {

@@ -1,4 +1,4 @@
-const { getCodiStatusURL } = require("../utils/getCodiStatusUrl");
+const { getCodiStatusURL } = require("../controllers/utils/getCodiStatusUrl");
 
 describe("getCodiStatusURL", () => {
   afterEach(() => {

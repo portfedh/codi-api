@@ -1,4 +1,4 @@
-const { toValidUTF8 } = require("../utils/toValidUTF8");
+const { toValidUTF8 } = require("../controllers/utils/toValidUTF8");
 
 describe("toValidUTF8", () => {
   test("should return the same string if it is already valid UTF-8", () => {

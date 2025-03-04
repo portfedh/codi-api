@@ -1,4 +1,4 @@
-const { signData } = require("../utils/signData");
+const { signData } = require("../controllers/utils/signData");
 const crypto = require("crypto");
 const forge = require("node-forge");
 

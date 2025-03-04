@@ -1,4 +1,4 @@
-const { cleanJsonObject } = require("../utils/cleanJsonObject");
+const { cleanJsonObject } = require("../controllers/utils/cleanJsonObject");
 
 describe("cleanJsonObject", () => {
   it("should return 'null' when input is null", () => {

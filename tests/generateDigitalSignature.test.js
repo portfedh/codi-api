@@ -1,11 +1,13 @@
-const { generateSignature } = require("../utils/generateDigitalSignature");
-const { signData } = require("../utils/signData");
-const { cleanJsonObject } = require("../utils/cleanJsonObject");
-const { hasPipeCharacter } = require("../utils/hasPipeCharacter");
+const {
+  generateSignature,
+} = require("../controllers/utils/generateDigitalSignature");
+const { signData } = require("../controllers/utils/signData");
+const { cleanJsonObject } = require("../controllers/utils/cleanJsonObject");
+const { hasPipeCharacter } = require("../controllers/utils/hasPipeCharacter");
 
-jest.mock("../utils/signData");
-jest.mock("../utils/cleanJsonObject");
-jest.mock("../utils/hasPipeCharacter");
+jest.mock("../controllers/utils/signData");
+jest.mock("../controllers/utils/cleanJsonObject");
+jest.mock("../controllers/utils/hasPipeCharacter");
 
 describe("generateSignature", () => {
   beforeEach(() => {
