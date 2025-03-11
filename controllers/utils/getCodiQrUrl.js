@@ -1,6 +1,4 @@
 function getCodiQrUrl() {
-  // To Do:
-  // Entender por que hay dos sitios
   const endPoint =
     process.env.NODE_ENV === "production"
       ? process.env.SITIO_CODI_QR_PROD_2

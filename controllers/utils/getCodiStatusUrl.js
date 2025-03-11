@@ -1,6 +1,4 @@
 function getCodiStatusURL() {
-  // To Do:
-  // Entender por que hay dos sitios para pr
   const endPoint =
     process.env.NODE_ENV === "production"
       ? process.env.SITIO_CODI_CONSULTA_PROD_2
