@@ -9,6 +9,7 @@ const { getCodiQrUrl } = require("./utils/getCodiQrUrl");
 const { getSellerApiKey } = require("./utils/getSellerApiKey");
 const { verifySignature } = require("./utils/verifySignature");
 const { getKeyCredentials } = require("./utils/getKeyCredentials");
+const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
 const { generateSignature } = require("./utils/generateDigitalSignature");
 const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
@@ -81,7 +82,7 @@ module.exports = {
         });
       }
 
-      // Send the data
+      // Send the data to Banxico
       const response = await axios.post(codiApiQrEndpoint, requestBody, {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
@@ -89,7 +90,11 @@ module.exports = {
       });
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
-      // Verify the signed data
+      // Verify th crtBdeM value sent in response
+      const crtBanxicoVerified = compareCrtBanxico(crtBanxico, response.data);
+      // console.log("\n🔵 crtBdeM verificado: ", crtBanxicoVerified);
+
+      // Verify the signature: Banxico
       const responseIsVerified = verifySignature(
         response.data,
         publicKeyBanxico
