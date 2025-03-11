@@ -10,6 +10,7 @@ const { getSellerApiKey } = require("./utils/getSellerApiKey");
 const { verifySignature } = require("./utils/verifySignature");
 const { getKeyCredentials } = require("./utils/getKeyCredentials");
 const { generateSignature } = require("./utils/generateDigitalSignature");
+const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 
 // Exports
@@ -39,7 +40,8 @@ module.exports = {
       // console.log("\n🔵 Public Key Certificate: ", publicKey);
 
       // Get Banxico Public Key Certificate
-      // const banxicoPublicKey = process.env.BANXICO_PUBLIC_KEY;
+      const { crtBanxico, publicKeyBanxico } = getBanxicoCredentials();
+      // console.log("\n🔵 Banxico Public Key Certificate: ", publicKeyBanxico);
 
       // Get epoch
       const epoch = Date.now();
@@ -53,7 +55,6 @@ module.exports = {
         vigencia,
         apiKey,
       };
-
       // console.log("\n🔵 Datos a firmar: ", datosMC);
 
       // Sign the data
@@ -70,21 +71,15 @@ module.exports = {
       };
       // console.log("\n🔵 Request body a Banxico: ", requestBody);
 
-      // Verify the signature
+      // Verify the signature: Developer
       const isVerified = verifySignature(requestBody, publicKey);
-      // console.log("\n🔵 Firma verificada: ", isVerified);
-
+      // console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
       if (!isVerified) {
         return res.status(400).json({
           success: false,
-          error: "Signature verification failed",
+          error: "Signature verification failed on request data",
         });
       }
-
-      // return res.status(200).json({
-      //   success: true,
-      //   data: requestBody,
-      // });
 
       // Send the data
       const response = await axios.post(codiApiQrEndpoint, requestBody, {
@@ -92,14 +87,16 @@ module.exports = {
           "Content-Type": "application/json; charset=utf-8",
         },
       });
-
-      // Parse Response
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
-      // const data = JSON.parse(response.data);
-      // console.log("\n🔵 Respuesta JSON de Banxico: ", data);
 
       // Verify the signed data
-      // Get cadenaMC from response
+      const responseIsVerified = verifySignature(
+        response.data,
+        publicKeyBanxico
+      );
+      // console.log("\n🔵 Firma de Banxico verificada: ", responseIsVerified);
+
+      // Get cadenaMC  and epoch from response
       // Save IDC Value inside cadenaMC in database
       // Create a QR code with cadenaMC value
       // Send the QR code to the client
@@ -117,3 +114,10 @@ module.exports = {
     }
   },
 };
+
+// Code to test the controller
+// **************************
+// return res.status(200).json({
+//   success: true,
+//   data: requestBody,
+// });

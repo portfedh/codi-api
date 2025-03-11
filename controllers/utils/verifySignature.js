@@ -17,11 +17,15 @@ function verifySignature(object, publicKeyCertificate) {
     // Prepare the data to be verified
     const signatureBase64 = object.selloDigital;
     // console.log("\nFirma a verificar: ", signatureBase64);
-    const inputJson = object.datosMC || object.peticionConsulta;
+    const inputJson =
+      object.datosMC || object.peticionConsulta || object.cadenaMC;
     // console.log("\nDatos a verificar:", inputJson);
     const epoch = object.epoch;
     // console.log("\nEpoch a verificar:", epoch);
-    const stringifiedJson = `${JSON.stringify(inputJson)}${epoch}`;
+
+    const jsonString =
+      typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
+    const stringifiedJson = `${jsonString}${epoch}`;
     // console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
 
     // Create verifier
