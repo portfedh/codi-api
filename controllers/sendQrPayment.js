@@ -5,10 +5,12 @@
 // *******
 const axios = require("axios");
 require("dotenv").config({ path: "../config/.env" });
-const { verifySignature } = require("./utils/verifySignature");
 const { getCodiQrUrl } = require("./utils/getCodiQrUrl");
 const { getSellerApiKey } = require("./utils/getSellerApiKey");
+const { verifySignature } = require("./utils/verifySignature");
+const { getKeyCredentials } = require("./utils/getKeyCredentials");
 const { generateSignature } = require("./utils/generateDigitalSignature");
+const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 
 // Exports
 // *******
@@ -28,14 +30,16 @@ module.exports = {
       // console.log("\n🔵 Seller API Key: ", apiKey);
 
       // Get developer credentials
-      const crtLogIn = process.env.CRT_LOG_IN;
-      const crtOper = process.env.CRT_OPER;
+      const { crtLogIn, crtOper } = getDeveloperCredentials();
       // console.log("\n🔵 Developer crtLogIn: ", crtLogIn);
       // console.log("\n🔵 Developer crtOper: ", crtLogIn);
 
-      // Get Public Key Certificate
-      const publicKey = process.env.PUBLIC_KEY;
+      // Get Developer Public Key Certificate
+      const { publicKey } = getKeyCredentials();
       // console.log("\n🔵 Public Key Certificate: ", publicKey);
+
+      // Get Banxico Public Key Certificate
+      // const banxicoPublicKey = process.env.BANXICO_PUBLIC_KEY;
 
       // Get epoch
       const epoch = Date.now();
@@ -88,6 +92,17 @@ module.exports = {
           "Content-Type": "application/json; charset=utf-8",
         },
       });
+
+      // Parse Response
+      // console.log("\n🔵 Respuesta de Banxico: ", response.data);
+      // const data = JSON.parse(response.data);
+      // console.log("\n🔵 Respuesta JSON de Banxico: ", data);
+
+      // Verify the signed data
+      // Get cadenaMC from response
+      // Save IDC Value inside cadenaMC in database
+      // Create a QR code with cadenaMC value
+      // Send the QR code to the client
 
       return res.status(200).json({
         success: true,

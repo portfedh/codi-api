@@ -1,9 +1,11 @@
 const { signData } = require("../controllers/utils/signData");
 const crypto = require("crypto");
 const forge = require("node-forge");
+const { getKeyCredentials } = require("../controllers/utils/getKeyCredentials");
 
 jest.mock("crypto");
 jest.mock("node-forge");
+jest.mock("../controllers/utils/getKeyCredentials");
 
 describe("signData", () => {
   const mockPrivateKeyPem = "mockPrivateKeyPem";
@@ -13,8 +15,11 @@ describe("signData", () => {
   const mockSignature = Buffer.from("mockSignature");
 
   beforeEach(() => {
-    process.env.PRIVATE_KEY = mockPrivateKeyPem;
-    process.env.PRIVATE_KEY_PASSPHRASE = mockPassphrase;
+    // Mock getKeyCredentials instead of environment variables
+    getKeyCredentials.mockReturnValue({
+      privateKey: mockPrivateKeyPem,
+      privateKeyPassphrase: mockPassphrase,
+    });
 
     forge.pki.decryptRsaPrivateKey.mockReturnValue(mockDecryptedPrivateKey);
     forge.pki.privateKeyToPem.mockReturnValue(mockPrivateKeyPemString);
@@ -38,6 +43,7 @@ describe("signData", () => {
     const stringToSign = "testString";
     const result = signData(stringToSign);
 
+    expect(getKeyCredentials).toHaveBeenCalled();
     expect(forge.pki.decryptRsaPrivateKey).toHaveBeenCalledWith(
       mockPrivateKeyPem,
       mockPassphrase

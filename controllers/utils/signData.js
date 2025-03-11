@@ -1,11 +1,13 @@
 const crypto = require("crypto");
 const forge = require("node-forge");
+const { getKeyCredentials } = require("./getKeyCredentials");
 
 function signData(string) {
   try {
     // Read private key from environment variables
-    const privateKeyPem = process.env.PRIVATE_KEY;
-    const passphrase = process.env.PRIVATE_KEY_PASSPHRASE;
+    const { privateKey, privateKeyPassphrase } = getKeyCredentials();
+    const privateKeyPem = privateKey;
+    const passphrase = privateKeyPassphrase;
     // console.log("\nEncrypted Private Key: ", privateKeyPem);
     // console.log("\nPassphrase: ", passphrase);
 
