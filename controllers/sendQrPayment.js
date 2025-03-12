@@ -4,6 +4,7 @@
 // Imports
 // *******
 const axios = require("axios");
+const QRCode = require("qrcode");
 require("dotenv").config({ path: "../config/.env" });
 const { getCodiQrUrl } = require("./utils/getCodiQrUrl");
 const { getSellerApiKey } = require("./utils/getSellerApiKey");
@@ -90,24 +91,41 @@ module.exports = {
       });
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
-      // Verify th crtBdeM value sent in response
+      // Verify th crtBdeM value matches our records
       const crtBanxicoVerified = compareCrtBanxico(crtBanxico, response.data);
-      // console.log("\n🔵 crtBdeM verificado: ", crtBanxicoVerified);
+      // console.log("\n🔵 Certificado de Banxico verificado: ", crtBanxicoVerified);
+      if (!crtBanxicoVerified) {
+        return res.status(400).json({
+          success: false,
+          error: "Banxico public key certificate mismatch",
+        });
+      }
 
-      // Verify the signature: Banxico
+      // Verify Banxico signed data
       const responseIsVerified = verifySignature(
         response.data,
         publicKeyBanxico
       );
-      // console.log("\n🔵 Firma de Banxico verificada: ", responseIsVerified);
+      // console.log("\n🔵  Mensaje de Banxico verificado: ", responseIsVerified);
+      if (!responseIsVerified) {
+        return res.status(400).json({
+          success: false,
+          error: "Signature verification failed on response data",
+        });
+      }
 
-      // Get cadenaMC  and epoch from response
-      // Save IDC Value inside cadenaMC in database
       // Create a QR code with cadenaMC value
-      // Send the QR code to the client
+      // console.log("\n🔵 CadenaMC: ", response.data.cadenaMC);
+      const cadenaMCString = JSON.stringify(response.data.cadenaMC);
+      // console.log("\n🔵 CadenaMC string: ", cadenaMCString);
+      const qrCode = await QRCode.toDataURL(cadenaMCString, {
+        errorCorrectionLevel: "H",
+      });
+      // console.log("\n🔵 QR Code: ", qrCode);
 
+      // Send the QR code to the client
       return res.status(200).json({
-        success: true,
+        qrCode,
         data: response.data,
       });
     } catch (error) {
