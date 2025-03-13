@@ -117,7 +117,9 @@ module.exports = {
 
       // Create a QR code with cadenaMC value
       // console.log("\n🔵 CadenaMC: ", response.data.cadenaMC);
-      const cadenaMCString = JSON.stringify(response.data.cadenaMC);
+      const cadenaMCString = JSON.stringify(response.data.cadenaMC)
+        .replace(/\\\"/g, '"') // Replace escaped quotes with regular quotes
+        .slice(1, -1); // Remove the outer quotes
       // console.log("\n🔵 CadenaMC string: ", cadenaMCString);
       const qrCode = await QRCode.toDataURL(cadenaMCString, {
         errorCorrectionLevel: "H",
