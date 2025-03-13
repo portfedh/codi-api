@@ -76,6 +76,7 @@ module.exports = {
       // Verify the signature: Developer
       const isVerified = verifySignature(requestBody, publicKey);
       // console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
+
       if (!isVerified) {
         return res.status(400).json({
           success: false,

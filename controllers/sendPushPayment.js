@@ -8,7 +8,11 @@ require("dotenv").config({ path: "../config/.env" });
 const { getCodiPushUrl } = require("./utils/getCodiPushUrl");
 const { getSellerApiKey } = require("./utils/getSellerApiKey");
 const { verifySignature } = require("./utils/verifySignature");
+const { getKeyCredentials } = require("./utils/getKeyCredentials");
+const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
 const { generateSignature } = require("./utils/generateDigitalSignature");
+const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
+const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 
 // Exports
 // *******
@@ -29,18 +33,21 @@ module.exports = {
       // console.log("\n🔵 Seller API Key: ", apiKey);
 
       // Get developer credentials
-      const crtLogIn = process.env.CRT_LOG_IN;
-      const crtOper = process.env.CRT_OPER;
+      const { crtLogIn, crtOper } = getDeveloperCredentials();
       // console.log("\n🔵 Developer crtLogIn: ", crtLogIn);
       // console.log("\n🔵 Developer crtOper: ", crtLogIn);
+
+      // Get Developer Public Key Certificate
+      const { publicKey } = getKeyCredentials();
+      // console.log("\n🔵 Public Key Certificate: ", publicKey);
+
+      // Get Banxico Public Key Certificate
+      const { crtBanxico, publicKeyBanxico } = getBanxicoCredentials();
+      // console.log("\n🔵 Banxico Public Key Certificate: ", publicKeyBanxico);
 
       // Get epoch
       const epoch = Date.now();
       // console.log("\n🔵 Epoch: ", epoch);
-
-      // Get Public Key Certificate
-      const publicKey = process.env.PUBLIC_KEY;
-      // console.log("\n🔵 Public Key Certificate: ", publicKey);
 
       // Create object
       const datosMC = {
@@ -68,26 +75,35 @@ module.exports = {
       // console.log("\n🔵 Request body a Banxico: ", requestBody);
 
       const isVerified = verifySignature(requestBody, publicKey);
-      console.log("\n🔵 Firma verificada: ", isVerified);
+      // console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
 
       if (!isVerified) {
         return res.status(400).json({
           success: false,
-          error: "Signature verification failed",
+          error: "Signature verification failed on request data",
         });
       }
 
-      // return res.status(200).json({
-      //   success: true,
-      //   data: requestBody,
-      // });
-
-      // Send the data
+      // Send the data to Banxico
       const response = await axios.post(codiApiPushEndpoint, requestBody, {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
         },
       });
+      console.log("\n🔵 Respuesta de Banxico: ", response.data);
+
+      // Verify Banxico signed data
+      const responseIsVerified = verifySignature(
+        response.data,
+        publicKeyBanxico
+      );
+      console.log("\n🔵  Mensaje de Banxico verificado: ", responseIsVerified);
+      if (!responseIsVerified) {
+        return res.status(400).json({
+          success: false,
+          error: "Signature verification failed on response data",
+        });
+      }
 
       return res.status(200).json({
         success: true,
@@ -102,3 +118,10 @@ module.exports = {
     }
   },
 };
+
+// Code to test the controller
+// **************************
+// return res.status(200).json({
+//   success: true,
+//   data: requestBody,
+// });

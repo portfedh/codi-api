@@ -18,7 +18,10 @@ function verifySignature(object, publicKeyCertificate) {
     const signatureBase64 = object.selloDigital;
     // console.log("\nFirma a verificar: ", signatureBase64);
     const inputJson =
-      object.datosMC || object.peticionConsulta || object.cadenaMC;
+      object.datosMC ||
+      object.peticionConsulta ||
+      object.cadenaMC ||
+      object.folioCodi;
     // console.log("\nDatos a verificar:", inputJson);
     const epoch = object.epoch;
     // console.log("\nEpoch a verificar:", epoch);
