@@ -90,14 +90,24 @@ module.exports = {
           "Content-Type": "application/json; charset=utf-8",
         },
       });
-      console.log("\n🔵 Respuesta de Banxico: ", response.data);
+      // console.log("\n🔵 Respuesta de Banxico: ", response.data);
+
+      // Verify th crtBdeM value matches our records
+      const crtBanxicoVerified = compareCrtBanxico(crtBanxico, response.data);
+      // console.log("\n🔵 Certificado de Banxico verificado: ", crtBanxicoVerified);
+      if (!crtBanxicoVerified) {
+        return res.status(400).json({
+          success: false,
+          error: "Banxico public key certificate mismatch",
+        });
+      }
 
       // Verify Banxico signed data
       const responseIsVerified = verifySignature(
         response.data,
         publicKeyBanxico
       );
-      console.log("\n🔵  Mensaje de Banxico verificado: ", responseIsVerified);
+      // console.log("\n🔵  Mensaje de Banxico verificado: ", responseIsVerified);
       if (!responseIsVerified) {
         return res.status(400).json({
           success: false,
