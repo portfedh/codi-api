@@ -13,6 +13,7 @@ const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
 const { generateSignature } = require("./utils/generateDigitalSignature");
 const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
+const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
 
 // Exports
 // *******
@@ -91,6 +92,12 @@ module.exports = {
         },
       });
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
+
+      // Verify Banxico response code
+      const banxicoResult = verifyBanxicoResponse(response);
+      if (!banxicoResult.success) {
+        return res.status(400).json(banxicoResult);
+      }
 
       // Verify that crtBdeM value matches our records
       const crtBanxicoVerified = compareCrtBanxico(crtBanxico, response.data);

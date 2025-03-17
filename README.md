@@ -10,3 +10,7 @@
 - Send push payment requests
 - Query the status of payment requests
 - Log incoming request data
+
+## ToDo
+
+- Validación de certificado de Banxico falla si Banxico manda un error code.

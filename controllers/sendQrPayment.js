@@ -14,6 +14,7 @@ const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
 const { generateSignature } = require("./utils/generateDigitalSignature");
 const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
+const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
 
 // Exports
 // *******
@@ -76,7 +77,6 @@ module.exports = {
       // Verify the signature: Developer
       const isVerified = verifySignature(requestBody, publicKey);
       // console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
-
       if (!isVerified) {
         return res.status(400).json({
           success: false,
@@ -91,6 +91,12 @@ module.exports = {
         },
       });
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
+
+      // Verify Banxico response code
+      const banxicoResult = verifyBanxicoResponse(response);
+      if (!banxicoResult.success) {
+        return res.status(400).json(banxicoResult);
+      }
 
       // Verify th crtBdeM value matches our records
       const crtBanxicoVerified = compareCrtBanxico(crtBanxico, response.data);
