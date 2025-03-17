@@ -92,7 +92,7 @@ module.exports = {
       });
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
-      // Verify th crtBdeM value matches our records
+      // Verify that crtBdeM value matches our records
       const crtBanxicoVerified = compareCrtBanxico(crtBanxico, response.data);
       // console.log("\n🔵 Certificado de Banxico verificado: ", crtBanxicoVerified);
       if (!crtBanxicoVerified) {
