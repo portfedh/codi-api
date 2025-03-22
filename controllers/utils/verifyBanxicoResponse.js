@@ -1,5 +1,5 @@
 function verifyBanxicoResponse(response) {
-  const { edoPet, detalleEdoPet } = response.data;
+  const { edoPet, detalleEdoPet = null } = response.data;
 
   if (edoPet !== 0) {
     return {
