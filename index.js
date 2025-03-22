@@ -11,7 +11,7 @@ const cors = require("cors");
 // Use express
 const app = express();
 // Trust first proxy
-app.set("trust proxy", true);
+app.set("trust proxy", 1);
 // Enable reading JSON data:
 app.use(express.json());
 // Enable reading from html elements:
@@ -19,16 +19,14 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
 const allowedOrigins = [
-  //
+  // Development domains
   "http://localhost:5173",
   "http://localhost:2121",
-  //
+  // Salsa Candela domains
   "https://salsa-candela.com",
   "https://www.salsa-candela.com",
-  //
   "https://admin.salsa-candela.com",
   "https://www.admin.salsa-candela.com",
-  //
   "https://bar.salsa-candela.com",
   "https://www.bar.salsa-candela.com",
   //
@@ -41,7 +39,7 @@ const allowedOrigins = [
   "http://170.70.227.118",
   "http://170.70.227.119",
   "http://170.70.227.120",
-  // Assigned IP address
+  // Assigned Digital Ocean IP address
   "http://164.90.245.198",
   "http://164.90.245.198:80",
 ];
