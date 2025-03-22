@@ -76,4 +76,42 @@ describe("verifySignature", () => {
       "Failed to verify signature"
     );
   });
+
+  it("should verify the signature successfully with resultado property", () => {
+    const mockObjectWithResultado = {
+      ...mockObject,
+      datosMC: undefined,
+      resultado: { key: "value" },
+    };
+    const mockStringifiedJsonWithResultado =
+      JSON.stringify(mockObjectWithResultado.resultado) +
+      mockObjectWithResultado.epoch;
+
+    crypto.createVerify().verify.mockReturnValue(true);
+
+    const result = verifySignature(
+      mockObjectWithResultado,
+      mockPublicKeyCertificate
+    );
+
+    expect(result).toBe(true);
+    expect(forge.pki.certificateFromPem).toHaveBeenCalledWith(
+      mockPublicKeyCertificate
+    );
+    expect(forge.pki.publicKeyToPem).toHaveBeenCalledWith(
+      "mockPublicKeyObject"
+    );
+    expect(crypto.createVerify().update).toHaveBeenCalledWith(
+      mockStringifiedJsonWithResultado
+    );
+    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
+      {
+        key: mockPublicKey,
+        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
+        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
+      },
+      mockObjectWithResultado.selloDigital,
+      "base64"
+    );
+  });
 });
