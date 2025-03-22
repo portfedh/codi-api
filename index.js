@@ -10,6 +10,8 @@ const express = require("express");
 const cors = require("cors");
 // Use express
 const app = express();
+// Trust first proxy
+app.set("trust proxy", true);
 // Enable reading JSON data:
 app.use(express.json());
 // Enable reading from html elements:
@@ -39,6 +41,9 @@ const allowedOrigins = [
   "http://170.70.227.118",
   "http://170.70.227.119",
   "http://170.70.227.120",
+  // Assigned IP address
+  "http://164.90.245.198",
+  "http://164.90.245.198:80",
 ];
 const corsOptions = {
   origin: function (origin, callback) {
