@@ -26,20 +26,21 @@ module.exports = {
 
       // Get url endpoint
       const codiApiStatusEndpoint = getCodiStatusURL();
-      // console.log("\n🔵 QR Endpoint: ", codiApiStatusEndpoint);
+      // console.log("\n🔵 Consulta Endpoint: ", codiApiStatusEndpoint);
 
       // Get seller api key
       const apiKey = getSellerApiKey();
       // console.log("\n🔵 Seller API Key: ", apiKey);
 
       // Get developer credentials
-      const { crtLogIn, crtOper } = getDeveloperCredentials();
-      // console.log("\n🔵 Developer crtLogIn: ", crtLogIn);
-      // console.log("\n🔵 Developer crtOper: ", crtLogIn);
+      const { crtLogIn: crtLogin, crtOper } = getDeveloperCredentials();
+      // crtLogin es diferente en la consulta que en el cobro
+      // console.log("\n🔵 Developer crtLogIn: ", crtLogin);
+      // console.log("\n🔵 Developer crtOper: ", crtOper);
 
       // Get Developer Public Key Certificate
       const { publicKey } = getKeyCredentials();
-      // console.log("\n🔵 Public Key Certificate: ", publicKey);
+      // console.log("\n🔵 Developer Public Key Certificate: ", publicKey);
 
       // Get Banxico Public Key Certificate
       const { crtBanxico, publicKeyBanxico } = getBanxicoCredentials();
@@ -69,14 +70,14 @@ module.exports = {
         peticionConsulta,
         selloDigital,
         epoch,
-        crtLogIn,
+        crtLogin,
         crtOper,
       };
       // console.log("\n🔵 Request body a Banxico: ", requestBody);
 
       // Verify the signature
       const isVerified = verifySignature(requestBody, publicKey);
-      // console.log("\n🔵 Firma verificada: ", isVerified);
+      // console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
 
       if (!isVerified) {
         return res.status(400).json({
@@ -86,12 +87,12 @@ module.exports = {
       }
 
       // Send the data to Banxico
-      const response = await axios.post(codiApiStatusEndpoint, {
+      const response = await axios.post(codiApiStatusEndpoint, requestBody, {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
         },
       });
-      console.log("\n🔵 Respuesta de Banxico: ", response.data);
+      // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
       // Verify Banxico response code
       const banxicoResult = verifyBanxicoResponse(response);
@@ -101,7 +102,10 @@ module.exports = {
 
       // Verify that crtBdeM value matches our records
       const crtBanxicoVerified = compareCrtBanxico(crtBanxico, response.data);
-      // console.log("\n🔵 Certificado de Banxico verificado: ", crtBanxicoVerified);
+      // console.log(
+      //   "\n🔵 Certificado de Banxico verificado: ",
+      //   crtBanxicoVerified
+      // );
       if (!crtBanxicoVerified) {
         return res.status(400).json({
           success: false,
