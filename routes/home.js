@@ -18,7 +18,7 @@ const resultado = require("../controllers/recepcion");
 router.post("/codi/qr", qr.sendQrPayment);
 router.post("/codi/push", push.sendPushPayment);
 router.post("/codi/consulta", consulta.getBillingInfo);
-router.get("/v2/resultadoOperaciones", resultado.logRequestData);
+router.get("/v2/resultadoOperaciones", resultado.consultaOperaciones);
 
 // Exports
 // *******

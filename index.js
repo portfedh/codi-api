@@ -29,12 +29,12 @@ const allowedOrigins = [
   "https://www.admin.salsa-candela.com",
   "https://bar.salsa-candela.com",
   "https://www.bar.salsa-candela.com",
-  //
+  // IP Banxico Beta
   "http://170.70.226.117",
   "http://170.70.226.118",
   "http://170.70.226.119",
   "http://170.70.226.120",
-  //
+  // IP Banxico Prod
   "http://170.70.227.117",
   "http://170.70.227.118",
   "http://170.70.227.119",
