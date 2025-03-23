@@ -23,18 +23,19 @@ function verifyParameters(resultado) {
   // Check if all required fields exist
   for (const field of requiredFields) {
     if (!resultado.hasOwnProperty(field)) {
-      throw new Error(`Missing required field: ${field}`);
+      return -6;
     }
   }
 
-  // Check if all required sub-fields exist in cadenaInformacion
+  // Check if all required sub-fields exist in cadenaInformación
   for (const subField of requiredSubFields) {
     if (!resultado.cadenaInformacion.hasOwnProperty(subField)) {
-      throw new Error(
-        `Missing required sub-field in cadenaInformacion: ${subField}`
-      );
+      return -6;
     }
   }
+
+  // If all checks pass
+  return 0;
 }
 
 module.exports = {

@@ -1,7 +1,7 @@
 const { verifyParameters } = require("../controllers/utils/verifyParameters");
 
 describe("verifyParameters", () => {
-  it("should not throw an error when all required fields and sub-fields are present", () => {
+  it("should return 0 when all required fields and sub-fields are present", () => {
     const resultado = {
       cadenaInformacion: {
         certComercioProveedor: "value",
@@ -24,10 +24,10 @@ describe("verifyParameters", () => {
       selloDigital: "value",
     };
 
-    expect(() => verifyParameters(resultado)).not.toThrow();
+    expect(verifyParameters(resultado)).toBe(0);
   });
 
-  it("should throw an error when a required field is missing", () => {
+  it("should return -6 when a required field is missing", () => {
     const resultado = {
       cadenaInformacion: {
         certComercioProveedor: "value",
@@ -49,12 +49,10 @@ describe("verifyParameters", () => {
       },
     };
 
-    expect(() => verifyParameters(resultado)).toThrow(
-      "Missing required field: selloDigital"
-    );
+    expect(verifyParameters(resultado)).toBe(-6);
   });
 
-  it("should throw an error when a required sub-field is missing", () => {
+  it("should return -6 when a required sub-field is missing", () => {
     const resultado = {
       cadenaInformacion: {
         certComercioProveedor: "value",
@@ -76,23 +74,21 @@ describe("verifyParameters", () => {
       selloDigital: "value",
     };
 
-    expect(() => verifyParameters(resultado)).toThrow(
-      "Missing required sub-field in cadenaInformacion: horaEnvioMensaje"
-    );
+    expect(verifyParameters(resultado)).toBe(-6);
   });
 
-  it("should throw an error when cadenaInformacion is not an object", () => {
+  it("should return -6 when cadenaInformacion is not an object", () => {
     const resultado = {
       cadenaInformacion: "notAnObject",
       selloDigital: "value",
     };
 
-    expect(() => verifyParameters(resultado)).toThrow();
+    expect(verifyParameters(resultado)).toBe(-6);
   });
 
-  it("should throw an error when resultado is not an object", () => {
+  it("should return -6 when resultado is not an object", () => {
     const resultado = "notAnObject";
 
-    expect(() => verifyParameters(resultado)).toThrow();
+    expect(verifyParameters(resultado)).toBe(-6);
   });
 });
