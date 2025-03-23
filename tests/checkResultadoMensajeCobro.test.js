@@ -2,28 +2,37 @@ const {
   checkResultadoMensajeDeCobro,
 } = require("../controllers/utils/checkResultadoMensajeCobro");
 
-describe("checkResultadoMensajeDeCobro", () => {
-  it("should return undefined for valid resultadoMensajeCobro", () => {
-    const resultado = { cadenaInformacion: { resultadoMensajeCobro: 1 } };
-    const result = checkResultadoMensajeDeCobro(resultado);
-    expect(result).toBeUndefined();
-  });
+test("should return -6 when cadenaInformacion is missing", () => {
+  const resultado = {};
+  expect(checkResultadoMensajeDeCobro(resultado)).toBe(-6);
+});
 
-  it("should return -6 for invalid resultadoMensajeCobro", () => {
-    const resultado = { cadenaInformacion: { resultadoMensajeCobro: 99 } };
-    const result = checkResultadoMensajeDeCobro(resultado);
-    expect(result).toBe(-6);
-  });
+test("should return -6 when resultadoMensajeCobro is missing", () => {
+  const resultado = { cadenaInformacion: {} };
+  expect(checkResultadoMensajeDeCobro(resultado)).toBe(-6);
+});
 
-  it("should return -6 when cadenaInformacion is missing", () => {
-    const resultado = {};
-    const result = checkResultadoMensajeDeCobro(resultado);
-    expect(result).toBe(-6);
-  });
+test("should return -6 when resultado is null", () => {
+  const resultado = null;
+  expect(checkResultadoMensajeDeCobro(resultado)).toBe(-6);
+});
 
-  it("should return -6 when resultadoMensajeCobro is missing", () => {
-    const resultado = { cadenaInformacion: {} };
-    const result = checkResultadoMensajeDeCobro(resultado);
-    expect(result).toBe(-6);
-  });
+test("should return -6 when resultado is undefined", () => {
+  const resultado = undefined;
+  expect(checkResultadoMensajeDeCobro(resultado)).toBe(-6);
+});
+
+test("should return -6 when resultadoMensajeCobro is invalid", () => {
+  const resultado = { cadenaInformacion: { resultadoMensajeCobro: 99 } };
+  expect(checkResultadoMensajeDeCobro(resultado)).toBe(-6);
+});
+
+test("should return 0 when resultadoMensajeCobro is valid", () => {
+  const resultado = { cadenaInformacion: { resultadoMensajeCobro: 0 } };
+  expect(checkResultadoMensajeDeCobro(resultado)).toBe(0);
+});
+
+test("should return 0 when resultadoMensajeCobro is another valid value", () => {
+  const resultado = { cadenaInformacion: { resultadoMensajeCobro: 1 } };
+  expect(checkResultadoMensajeDeCobro(resultado)).toBe(0);
 });
