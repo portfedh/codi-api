@@ -8,7 +8,7 @@ const {
 jest.mock("../controllers/utils/getDeveloperCredentials");
 
 describe("verifyCrtDeveloper", () => {
-  it("should not throw an error when certComercioProveedor matches crtOper", () => {
+  it("should return 0 when certComercioProveedor matches crtOper", () => {
     getDeveloperCredentials.mockReturnValue({ crtOper: "expectedCrtOper" });
 
     const resultado = {
@@ -17,10 +17,10 @@ describe("verifyCrtDeveloper", () => {
       },
     };
 
-    expect(() => verifyCrtDeveloper(resultado)).not.toThrow();
+    expect(verifyCrtDeveloper(resultado)).toBe(0);
   });
 
-  it("should throw an error when certComercioProveedor does not match crtOper", () => {
+  it("should return -4 when certComercioProveedor does not match crtOper", () => {
     getDeveloperCredentials.mockReturnValue({ crtOper: "expectedCrtOper" });
 
     const resultado = {
@@ -29,8 +29,6 @@ describe("verifyCrtDeveloper", () => {
       },
     };
 
-    expect(() => verifyCrtDeveloper(resultado)).toThrow(
-      "certComercioProveedor does not match crtOper"
-    );
+    expect(verifyCrtDeveloper(resultado)).toBe(-4);
   });
 });
