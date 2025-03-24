@@ -22,10 +22,10 @@ function verifySignature(object, publicKeyCertificate) {
       object.peticionConsulta ||
       object.cadenaMC ||
       object.folioCodi ||
-      object.resultado;
-    // console.log("\nDatos a verificar:", inputJson);
-    const epoch = object.epoch;
-    // console.log("\nEpoch a verificar:", epoch);
+      object.cadenaInformacion;
+    console.log("\nDatos a verificar:", inputJson);
+    const epoch = object.epoch || object.cadenaInformacion.horaEnvioMensaje;
+    console.log("\nEpoch a verificar:", epoch);
 
     const jsonString =
       typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);

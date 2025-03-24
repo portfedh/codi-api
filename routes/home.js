@@ -11,14 +11,14 @@ const router = express.Router();
 const qr = require("../controllers/sendQrPayment");
 const push = require("../controllers/sendPushPayment");
 const consulta = require("../controllers/consulta");
-const resultado = require("../controllers/recepcion");
+const resultado = require("../controllers/resultadoOperaciones");
 
 // Routes
 // ******
 router.post("/codi/qr", qr.sendQrPayment);
 router.post("/codi/push", push.sendPushPayment);
 router.post("/codi/consulta", consulta.getBillingInfo);
-router.get("/v2/resultadoOperaciones", resultado.consultaOperaciones);
+router.post("/v2/resultadoOperaciones", resultado.resultadoOperaciones);
 
 // Exports
 // *******
