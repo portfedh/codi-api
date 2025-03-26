@@ -40,4 +40,51 @@ describe("cleanJsonObject", () => {
     const result = cleanJsonObject(input);
     expect(result).toStrictEqual(expectedOutput);
   });
+
+  it("should handle objects with inherited properties", () => {
+    // Create parent object with a property
+    const parentObj = { parentProp: "parent value" };
+
+    // Create child object inheriting from parent
+    const childObj = Object.create(parentObj);
+    childObj.ownProp = "child value";
+
+    const result = cleanJsonObject(childObj);
+
+    // Should only clean own properties, not inherited ones
+    expect(result).toHaveProperty("ownProp");
+    expect(result.ownProp).toBe("child value");
+
+    // The inherited property should not be in the result as an own property
+    expect(Object.hasOwn(result, "parentProp")).toBe(false);
+  });
+
+  it("should handle arrays as objects", () => {
+    const input = ["line\nbreak", "tab\tcharacter", " spaces "];
+    const expectedOutput = ["linebreak", "tabcharacter", "spaces"];
+
+    const result = cleanJsonObject(input);
+    expect(result).toStrictEqual(expectedOutput);
+  });
+
+  it("should handle numeric concept values", () => {
+    // As per comment: "Cuidar caso: Envío de concepto un numero: 200. Debe ser string."
+    const input = {
+      datosMC: {
+        concepto: 200,
+        monto: 100,
+      },
+    };
+
+    // Numeric values that aren't strings should remain unchanged
+    const expectedOutput = {
+      datosMC: {
+        concepto: 200,
+        monto: 100,
+      },
+    };
+
+    const result = cleanJsonObject(input);
+    expect(result).toStrictEqual(expectedOutput);
+  });
 });

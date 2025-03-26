@@ -22,6 +22,7 @@ function verifySignature(object, publicKeyCertificate) {
       object.peticionConsulta ||
       object.cadenaMC ||
       object.folioCodi ||
+      object.resultado ||
       object.cadenaInformacion;
     console.log("\nDatos a verificar:", inputJson);
     const epoch = object.epoch || object.cadenaInformacion.horaEnvioMensaje;
