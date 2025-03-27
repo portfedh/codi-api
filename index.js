@@ -8,10 +8,14 @@ const result = require("dotenv").config({ path: ".env" });
 const express = require("express");
 // Import cors
 const cors = require("cors");
+// Import helmet
+const helmet = require("helmet");
 // Use express
 const app = express();
 // Trust first proxy
 app.set("trust proxy", 1);
+// Use helmet for security headers
+app.use(helmet());
 // Enable reading JSON data:
 app.use(express.json());
 // Enable reading from html elements:
