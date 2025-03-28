@@ -7,19 +7,56 @@
 const express = require("express");
 const router = express.Router();
 
+// Middleware
+const { validateApiKey } = require("../middleware/validateApiKey");
+
 // Controllers
 const qr = require("../controllers/sendQrPayment");
 const push = require("../controllers/sendPushPayment");
 const consulta = require("../controllers/consulta");
 const resultado = require("../controllers/resultadoOperaciones");
 
+// Validators
+const {
+  qrValidationRules,
+  pushValidationRules,
+  consultaValidationRules,
+  validateRequest,
+} = require("../validators/codiValidators");
+
 // Routes
 // ******
-router.post("/codi/qr", qr.sendQrPayment);
-router.post("/codi/push", push.sendPushPayment);
-router.post("/codi/consulta", consulta.getBillingInfo);
-router.post("/resultadoOperaciones", resultado.resultadoOperaciones);
-router.post("/v2/resultadoOperaciones", resultado.resultadoOperaciones);
+router.post(
+  "/codi/qr",
+  validateApiKey,
+  qrValidationRules,
+  validateRequest,
+  qr.sendQrPayment
+);
+router.post(
+  "/codi/push",
+  validateApiKey,
+  pushValidationRules,
+  validateRequest,
+  push.sendPushPayment
+);
+router.post(
+  "/codi/consulta",
+  validateApiKey,
+  consultaValidationRules,
+  validateRequest,
+  consulta.getBillingInfo
+);
+router.post(
+  "/resultadoOperaciones",
+  validateApiKey,
+  resultado.resultadoOperaciones
+);
+router.post(
+  "/v2/resultadoOperaciones",
+  validateApiKey,
+  resultado.resultadoOperaciones
+);
 
 // Exports
 // *******
