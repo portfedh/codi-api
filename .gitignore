@@ -2,7 +2,7 @@ node_modules
 .env
 .DS_Store
 Index
-ToDos.md
+ToDo.md
 pm2.log
 pm2.pid
 coverage
