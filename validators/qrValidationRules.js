@@ -3,6 +3,8 @@ const validAsciiCharacters = require("../config/validAsciiCharacters");
 
 const qrValidationRules = [
   body("monto")
+    .notEmpty()
+    .withMessage("Monto cannot be empty")
     .isNumeric()
     .withMessage("Monto must be a numeric value")
     .custom((value) => {
@@ -18,6 +20,10 @@ const qrValidationRules = [
     ),
 
   body("referenciaNumerica")
+    .customSanitizer((value) => {
+      // If the value is an empty string, convert it to "0"
+      return value === "" ? "0" : value;
+    })
     .custom((value) => {
       // Convert value to a string for validation
       const stringValue = value.toString();
@@ -31,15 +37,17 @@ const qrValidationRules = [
 
   body("concepto")
     .isString()
-    .isLength({ max: 40 })
+    .isLength({ min: 1, max: 40 })
     .withMessage(
-      "Concepto must be a string with a maximum length of 40 characters"
+      "Concepto must be a string with a minimum length of 1 and maximum length of 40 allowed ascii characters"
     )
     .custom((value) => {
-      // Check if all characters in the string are valid ASCII characters
+      // Create a set of valid characters for faster lookup
+      const validChars = new Set(Object.values(validAsciiCharacters));
+
+      // Check if all characters in the string are valid
       for (const char of value) {
-        const asciiCode = char.charCodeAt(0);
-        if (!validAsciiCharacters[asciiCode]) {
+        if (!validChars.has(char)) {
           return false;
         }
       }
@@ -48,16 +56,46 @@ const qrValidationRules = [
     .withMessage("Concepto contains invalid characters"),
 
   body("vigencia")
+    .notEmpty()
+    .withMessage("Vigencia cannot be empty")
     .custom((value) => {
       // Convert value to a string for validation
-      const stringValue = value.toString();
-      // Check if it is either "0" or a valid Date.now() value (up to 15 characters long)
-      const isValid = stringValue === "0" || /^\d{1,15}$/.test(stringValue);
-      return isValid;
-    })
-    .withMessage(
-      "Vigencia must be a number or string, max 15 characters long, that can be a Date.now() value or 0"
-    ),
+      const stringValue = String(value); // Force convert to string
+      // Special case: If value is "0", it's valid
+      if (stringValue === "0") {
+        return true;
+      }
+      // Check if it's a numeric string (no letters or special chars)
+      if (!/^\d+$/.test(stringValue)) {
+        throw new Error(
+          "Vigencia must be '0' or a numeric value without any letters or special characters"
+        );
+      }
+      // Check length
+      if (stringValue.length > 15) {
+        throw new Error("Vigencia numeric value cannot exceed 15 digits");
+      }
+      // Convert to number and check if it's a valid timestamp
+      const timestamp = Number(stringValue);
+      if (isNaN(timestamp)) {
+        throw new Error("Vigencia must be a valid numeric timestamp");
+      }
+      // Current time in milliseconds
+      const currentTime = Date.now();
+      const oneYearInMs = 365 * 24 * 60 * 60 * 1000;
+      // If timestamp has 10 digits or less, assume it's in seconds and convert to ms
+      const normalizedTimestamp =
+        timestamp < 10000000000 ? timestamp * 1000 : timestamp;
+      // Check if timestamp is in the past
+      if (normalizedTimestamp < currentTime) {
+        throw new Error("Vigencia timestamp must be in the future");
+      }
+      // Check if timestamp is more than 1 year in the future
+      if (normalizedTimestamp > currentTime + oneYearInMs) {
+        throw new Error("Vigencia timestamp cannot exceed one year from now");
+      }
+      return true;
+    }),
 ];
 
 module.exports = {
