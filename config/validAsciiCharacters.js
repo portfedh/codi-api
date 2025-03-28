@@ -96,3 +96,5 @@ const validAsciiCharacters = {
   168: "¿",
   173: "¡",
 };
+
+module.exports = validAsciiCharacters;
