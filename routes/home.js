@@ -18,6 +18,7 @@ const resultado = require("../controllers/resultadoOperaciones");
 router.post("/codi/qr", qr.sendQrPayment);
 router.post("/codi/push", push.sendPushPayment);
 router.post("/codi/consulta", consulta.getBillingInfo);
+router.post("/resultadoOperaciones", resultado.resultadoOperaciones);
 router.post("/v2/resultadoOperaciones", resultado.resultadoOperaciones);
 
 // Exports

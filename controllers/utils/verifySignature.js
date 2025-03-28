@@ -3,9 +3,9 @@ const forge = require("node-forge");
 
 function verifySignature(object, publicKeyCertificate) {
   try {
-    // console.log("Iniciando proceso de verificación de firma");
+    console.log("Iniciando proceso de verificación de firma");
     // console.log("\nCertificado Publico: ", publicKeyCertificate);
-    // console.log("\nObjeto a verificar: ", object);
+    console.log("\nObjeto a verificar: ", object);
 
     // Convert the certificate from PEM format to a forge certificate object
     const cert = forge.pki.certificateFromPem(publicKeyCertificate);
@@ -24,14 +24,14 @@ function verifySignature(object, publicKeyCertificate) {
       object.folioCodi ||
       object.resultado ||
       object.cadenaInformacion;
-    console.log("\nDatos a verificar:", inputJson);
+    // console.log("\nDatos a verificar:", inputJson);
     const epoch = object.epoch || object.cadenaInformacion.horaEnvioMensaje;
-    console.log("\nEpoch a verificar:", epoch);
+    // console.log("\nEpoch a verificar:", epoch);
 
     const jsonString =
       typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
     const stringifiedJson = `${jsonString}${epoch}`;
-    // console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
+    console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
 
     // Create verifier
     const verifier = crypto.createVerify("RSA-SHA512");
@@ -48,7 +48,7 @@ function verifySignature(object, publicKeyCertificate) {
       signatureBase64,
       "base64"
     );
-    // console.log("\nFirma verificada: ", isVerified);
+    console.log("\nFirma verificada: ", isVerified);
     return isVerified;
   } catch (error) {
     console.error("Error verifying signature:", error);
