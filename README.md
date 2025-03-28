@@ -10,3 +10,4 @@
 - Send push payment requests
 - Query the status of payment requests
 - Log incoming request data
+- View logs: pm2 logs codi-api

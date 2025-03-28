@@ -1,6 +1,7 @@
-// Environment variables
-// =====================
+// Imports
+// =======
 const result = require("dotenv").config({ path: ".env" });
+const { sanitizeRequest } = require("./middleware/sanitizeRequest");
 
 // Express
 // =======
@@ -16,6 +17,8 @@ const app = express();
 app.set("trust proxy", 1);
 // Use helmet for security headers
 app.use(helmet());
+// Apply sanitization middleware before routes
+app.use(sanitizeRequest);
 // Enable reading JSON data:
 app.use(express.json());
 // Enable reading from html elements:
