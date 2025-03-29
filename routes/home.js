@@ -17,44 +17,44 @@ const consulta = require("../controllers/consulta");
 const resultado = require("../controllers/resultadoOperaciones");
 
 // Validators
+const { qrValidationRules } = require("../validators/qrValidationRules");
+const { pushValidationRules } = require("../validators/pushValidationRules");
 const {
-  qrValidationRules,
-  pushValidationRules,
   consultaValidationRules,
-  validateRequest,
-} = require("../validators/codiValidators");
+} = require("../validators/consultaValidationRules");
+const { validateRequest } = require("../validators/validateRequest");
 
 // Routes
 // ******
 router.post(
-  "/codi/qr",
-  validateApiKey,
+  "/v2/codi/qr",
+  // validateApiKey,
   qrValidationRules,
   validateRequest,
   qr.sendQrPayment
 );
 router.post(
-  "/codi/push",
-  validateApiKey,
+  "/v2/codi/push",
+  // validateApiKey,
   pushValidationRules,
   validateRequest,
   push.sendPushPayment
 );
 router.post(
-  "/codi/consulta",
-  validateApiKey,
+  "/v2/codi/consulta",
+  // validateApiKey,
   consultaValidationRules,
   validateRequest,
   consulta.getBillingInfo
 );
 router.post(
   "/resultadoOperaciones",
-  validateApiKey,
+  // validateApiKey,
   resultado.resultadoOperaciones
 );
 router.post(
   "/v2/resultadoOperaciones",
-  validateApiKey,
+  // validateApiKey,
   resultado.resultadoOperaciones
 );
 

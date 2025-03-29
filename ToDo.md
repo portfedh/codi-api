@@ -7,4 +7,4 @@
 - IP de Banxico para CORS
 - Cambiar fetch vs Axios
 - Tratar un URL de Banxico y si no otra
-- Asignar un URL para cada cliente vs client API KEY
+- Añadir test de vigencia minima una vez establecida [ventana_vigencia]
