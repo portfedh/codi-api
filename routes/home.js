@@ -28,35 +28,27 @@ const { validateRequest } = require("../validators/validateRequest");
 // ******
 router.post(
   "/v2/codi/qr",
-  // validateApiKey,
+  validateApiKey,
   qrValidationRules,
   validateRequest,
   qr.sendQrPayment
 );
 router.post(
   "/v2/codi/push",
-  // validateApiKey,
+  validateApiKey,
   pushValidationRules,
   validateRequest,
   push.sendPushPayment
 );
 router.post(
   "/v2/codi/consulta",
-  // validateApiKey,
+  validateApiKey,
   consultaValidationRules,
   validateRequest,
   consulta.getBillingInfo
 );
-router.post(
-  "/resultadoOperaciones",
-  // validateApiKey,
-  resultado.resultadoOperaciones
-);
-router.post(
-  "/v2/resultadoOperaciones",
-  // validateApiKey,
-  resultado.resultadoOperaciones
-);
+router.post("/resultadoOperaciones", resultado.resultadoOperaciones);
+router.post("/v2/resultadoOperaciones", resultado.resultadoOperaciones);
 
 // Exports
 // *******
