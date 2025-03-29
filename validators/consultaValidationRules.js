@@ -1,6 +1,4 @@
 const { body } = require("express-validator");
-const validAsciiCharacters = require("../config/validAsciiCharacters");
-const moment = require("moment");
 
 const consultaValidationRules = [
   body("folioCodi")
