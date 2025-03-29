@@ -1,5 +1,7 @@
 // Imports
 // =======
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocs = require("./config/swagger");
 const result = require("dotenv").config({ path: ".env" });
 const { sanitizeRequest } = require("./middleware/sanitizeRequest");
 
@@ -99,6 +101,7 @@ app.use(limiter);
 // =======
 const homeRoutes = require("./routes/home");
 app.use("/", homeRoutes);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Server Port
 // ===========
