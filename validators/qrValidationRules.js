@@ -13,6 +13,8 @@ const qrValidationRules = [
       // Check if it has at most two decimal places
       const hasTwoDecimals = /^\d+(\.\d{1,2})?$/.test(value);
       // Ensure it is within the valid range
+      // 0 is allowed: User will define the amount.
+      // To DO: Check minimum allowed amount with Banxico
       return hasTwoDecimals && numValue >= 0 && numValue <= 999999999999.99;
     })
     .withMessage(
@@ -56,6 +58,7 @@ const qrValidationRules = [
     .withMessage("Concepto contains invalid characters"),
 
   body("vigencia")
+    // ToDo: Must be larger than [ventana_vigencia]
     .notEmpty()
     .withMessage("Vigencia cannot be empty")
     .custom((value) => {
