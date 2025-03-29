@@ -23,6 +23,7 @@ module.exports = {
 
     const isVerified = verifySignature(resultado, publicKeyBanxico);
     if (!isVerified) {
+      console.log("Signature verification failed. Resultado -8");
       return res.status(200).json({
         resultado: -8,
       });
@@ -43,6 +44,9 @@ module.exports = {
     for (let i = 0; i < checks.length; i++) {
       const checkResult = checks[i](resultado);
       if (checkResult !== 0) {
+        console.log(
+          `Check ${checks[i].name} failed with result ${checkResult}`
+        );
         return res.status(200).json({
           resultado: checkResult,
           temp_request_body: req.body,
@@ -51,6 +55,7 @@ module.exports = {
     }
 
     // If all checks pass
+    console.log("All checks passed. Processing request...");
     return res.status(200).json({
       resultado: 0,
     });
