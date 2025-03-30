@@ -4,6 +4,10 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocs = require("./config/swagger");
 const result = require("dotenv").config({ path: ".env" });
 const { sanitizeRequest } = require("./middleware/sanitizeRequest");
+const morgan = require("morgan");
+const fs = require("fs");
+const path = require("path");
+const rfs = require("rotating-file-stream");
 
 // Express
 // =======
@@ -15,6 +19,23 @@ const cors = require("cors");
 const helmet = require("helmet");
 // Use express
 const app = express();
+
+// Ensure log directory exists
+const logDirectory = path.join(__dirname, "logs");
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+
+// Create a rotating write stream
+const accessLogStream = rfs.createStream("access.log", {
+  interval: "1d", // rotate daily
+  path: logDirectory,
+});
+
+// Setup morgan logging
+// Use 'combined' format for production and 'dev' for development
+const morganFormat = process.env.NODE_ENV === "production" ? "combined" : "dev";
+app.use(morgan(morganFormat, { stream: accessLogStream })); // Log to file
+app.use(morgan(morganFormat)); // Also log to console
+
 // Trust first proxy
 app.set("trust proxy", 1);
 // Use helmet for security headers

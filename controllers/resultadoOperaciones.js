@@ -55,7 +55,7 @@ module.exports = {
     }
 
     // If all checks pass
-    console.log("All checks passed. Processing request...");
+    console.log("All checks passed. Processing request.... Resultado 0");
     return res.status(200).json({
       resultado: 0,
     });
