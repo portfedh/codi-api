@@ -53,6 +53,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:2121",
   // Salsa Candela domains
+  "https://codi.salsa-candela.com",
   "https://salsa-candela.com",
   "https://www.salsa-candela.com",
   "https://admin.salsa-candela.com",
