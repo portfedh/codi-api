@@ -9,6 +9,7 @@
 - Tratar un URL de Banxico y si no otra
 - Añadir test de vigencia minima una vez establecida [ventana_vigencia]
 
+
 - HashiCorp Vault (Community Edition)
 - CyberArk Conjur Open Source
 - AWS Key Management Service (KMS)

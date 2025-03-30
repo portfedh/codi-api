@@ -18,6 +18,31 @@ const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
 // Exports
 // *******
 module.exports = {
+  /**
+   * Sends a CODI push payment request to Banxico's API
+   *
+   * This controller handles the full payment request flow:
+   * 1. Retrieves payment data from request body
+   * 2. Gets necessary endpoints and credentials
+   * 3. Creates and digitally signs the payment request
+   * 4. Verifies the signature before sending
+   * 5. Sends request to Banxico
+   * 6. Verifies Banxico's response signature and certificates
+   *
+   * @param {Object} req - Express request object
+   * @param {Object} req.body - Request body containing payment details
+   * @param {string} req.body.celularCliente - Customer's 10-digit phone number
+   * @param {number} req.body.monto - Payment amount
+   * @param {string} req.body.referenciaNumerica - Numeric reference for the payment
+   * @param {string} req.body.concepto - Payment concept/description
+   * @param {string} req.body.vigencia - Payment validity period
+   * @param {Object} res - Express response object
+   *
+   * @returns {Object} JSON response with status and data
+   * @returns {boolean} response.success - Whether the operation was successful
+   * @returns {Object} [response.data] - Data returned from Banxico on success
+   * @returns {string} [response.error] - Error message if operation failed
+   */
   sendPushPayment: async (req, res) => {
     try {
       // Get payment data
@@ -135,10 +160,3 @@ module.exports = {
     }
   },
 };
-
-// Code to test the controller
-// **************************
-// return res.status(200).json({
-//   success: true,
-//   data: requestBody,
-// });

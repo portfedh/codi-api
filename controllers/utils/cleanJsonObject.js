@@ -1,6 +1,24 @@
+/**
+ * @fileoverview Utility functions for cleaning and normalizing JSON data.
+ * Contains functions to ensure data integrity when processing JSON objects.
+ */
+
 const { toValidUTF8 } = require("./toValidUTF8");
 
-// Cuidar caso: Envío de concepto un numero: 200. Debe ser string.
+/**
+ * Cleans and normalizes a JSON object by recursively processing all properties.
+ *
+ * @param {*} data - The data to clean. Can be any JSON-compatible value.
+ * @returns {*} The cleaned data with the same structure but normalized strings.
+ *
+ * @example
+ * // Returns cleaned object with normalized strings
+ * cleanJsonObject({ name: "John\n\t", age: 30 });
+ *
+ * @example
+ * // Note: When numeric values need to be sent as strings (e.g., "200" instead of 200),
+ * // they should be explicitly converted to strings before calling this function.
+ */
 function cleanJsonObject(data) {
   if (data === null || data === undefined) {
     return data;

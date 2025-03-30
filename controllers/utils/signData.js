@@ -2,6 +2,17 @@ const crypto = require("crypto");
 const forge = require("node-forge");
 const { getKeyCredentials } = require("./getKeyCredentials");
 
+/**
+ * Signs data using RSA-SHA512 algorithm with PSS padding
+ *
+ * @description This function retrieves a private key from environment variables,
+ * decrypts it using the provided passphrase, and uses it to create a digital
+ * signature for the input data.
+ *
+ * @param {string} string - The data to be signed
+ * @returns {string} Base64-encoded digital signature of the input data
+ * @throws {Error} If the private key cannot be decrypted or if the signing process fails
+ */
 function signData(string) {
   try {
     // Read private key from environment variables

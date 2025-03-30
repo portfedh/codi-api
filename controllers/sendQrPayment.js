@@ -16,8 +16,27 @@ const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
 
-// Exports
-// *******
+/**
+ * @module sendQrPayment
+ * @description Controller for generating and sending CODI QR payment codes by communicating with Banxico API
+ */
+
+/**
+ * Processes payment data, generates a digitally signed request to Banxico,
+ * verifies the response, and returns a QR code to the client.
+ *
+ * @async
+ * @function sendQrPayment
+ * @param {Object} req - Express request object
+ * @param {Object} req.body - Request body containing payment information
+ * @param {string} req.body.monto - Payment amount
+ * @param {string} req.body.referenciaNumerica - Numeric reference for the payment
+ * @param {string} req.body.concepto - Payment concept/description
+ * @param {string} req.body.vigencia - Validity period for the payment
+ * @param {Object} res - Express response object
+ * @returns {Object} Response containing QR code and Banxico response data
+ * @throws {Error} If signature verification fails or communication with Banxico fails
+ */
 module.exports = {
   sendQrPayment: async (req, res) => {
     try {
@@ -146,10 +165,3 @@ module.exports = {
     }
   },
 };
-
-// Code to test the controller
-// **************************
-// return res.status(200).json({
-//   success: true,
-//   data: requestBody,
-// });

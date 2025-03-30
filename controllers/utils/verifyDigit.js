@@ -1,3 +1,12 @@
+/**
+ * Validates the client verification digit from the transaction information
+ *
+ * @param {Object} resultado - The transaction information object
+ * @param {Object} resultado.cadenaInformacion - Information chain object
+ * @param {number} resultado.cadenaInformacion.digitoVerificadorCliente - Client verification digit
+ *
+ * @returns {number} 0 if verification is successful, -6 if verification fails
+ */
 function verifyDigit(resultado) {
   const digitoVerificadorCliente =
     resultado.cadenaInformacion.digitoVerificadorCliente;

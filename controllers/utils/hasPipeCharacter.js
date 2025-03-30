@@ -1,3 +1,15 @@
+/**
+ * Checks if any value in an object contains a pipe character (|).
+ *
+ * @param {Object} data - The object to check for pipe characters.
+ * @returns {boolean} Returns true if any value contains a pipe character, false otherwise.
+ * @example
+ * // Returns true
+ * hasPipeCharacter({ name: "John|Doe", age: 30 });
+ *
+ * // Returns false
+ * hasPipeCharacter({ name: "John Doe", age: 30 });
+ */
 function hasPipeCharacter(data) {
   // 1. Get all values from the object and convert them to an array
   const values = Object.values(data);
@@ -14,7 +26,10 @@ function hasPipeCharacter(data) {
   return false;
 }
 
+/**
+ * Utility function exports.
+ * @module controllers/utils/hasPipeCharacter
+ */
 module.exports = {
   hasPipeCharacter,
 };
-

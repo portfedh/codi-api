@@ -1,3 +1,13 @@
+/**
+ * ResultadoOperaciones Controller
+ *
+ * This controller processes and validates operation results from Banxico's CODI payment system.
+ * It verifies signatures, validates request parameters, and ensures data integrity before
+ * providing a response with the appropriate status code.
+ *
+ * @module controllers/resultadoOperaciones
+ */
+
 // Imports
 // *******
 const { verifyDigit } = require("./utils/verifyDigit");
@@ -15,6 +25,20 @@ const {
 } = require("./utils/verifyResultadoMensajeCobro");
 
 module.exports = {
+  /**
+   * Handles and validates operation results from payment requests
+   *
+   * This controller function processes operation results by:
+   * 1. Verifying the digital signature using Banxico's public key
+   * 2. Running a series of validation checks on the request data
+   * 3. Returning appropriate status codes based on validation results
+   *
+   * @param {Object} req - Express request object
+   * @param {Object} req.body - Request body containing operation result data
+   * @param {Object} res - Express response object
+   * @returns {Object} JSON response with resultado status code
+   *                   0 if successful, negative values for specific errors
+   */
   resultadoOperaciones: (req, res) => {
     const resultado = req.body;
 

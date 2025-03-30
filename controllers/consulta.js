@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Controller for querying the status of CODI payment messages from Banxico
+ * @module controllers/consulta
+ */
+
 // CODI Consulta del Estado de un Mensaje de Cobro
 // ***********************************************
 
@@ -18,6 +23,30 @@ const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
 // Exports
 // *******
 module.exports = {
+  /**
+   * @function getBillingInfo
+   * @async
+   * @description Queries the status of a CODI payment message from Banxico's API
+   *
+   * @param {Object} req - Express request object
+   * @param {Object} req.body - Request body containing query parameters
+   * @param {string} req.body.folioCodi - CODI reference number to query
+   * @param {number} req.body.tpg - Number of operations per page
+   * @param {number} req.body.npg - Page number to retrieve
+   * @param {string} req.body.fechaInicial - Start date for the query period
+   * @param {string} req.body.fechaFinal - End date for the query period
+   * @param {Object} res - Express response object
+   *
+   * @returns {Object} Response with success status and queried data
+   * @returns {boolean} response.success - Indicates if the operation was successful
+   * @returns {Object} [response.data] - Payment status data from Banxico (on success)
+   * @returns {string} [response.error] - Error message (on failure)
+   *
+   * @throws Will return a 400 response if signature verification fails
+   * @throws Will return a 400 response if Banxico returns an error code
+   * @throws Will return a 400 response if Banxico certificate doesn't match
+   * @throws Will return a 500 response for any other errors
+   */
   getBillingInfo: async (req, res) => {
     try {
       // Get payment data
@@ -142,10 +171,3 @@ module.exports = {
     }
   },
 };
-
-// Code to test the controller
-// **************************
-// return res.status(200).json({
-//   success: true,
-//   data: requestBody,
-// });

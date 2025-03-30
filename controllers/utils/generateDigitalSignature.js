@@ -3,6 +3,22 @@ const { signData } = require("./signData");
 const { cleanJsonObject } = require("./cleanJsonObject");
 const { hasPipeCharacter } = require("./hasPipeCharacter");
 
+/**
+ * Generates a digital signature for the provided data object
+ *
+ * @async
+ * @param {Object} object - The data object to be signed
+ * @param {number|string} epoch - The timestamp to append to the data before signing
+ * @returns {Promise<string>} The generated digital signature
+ * @throws {Error} When data contains pipe characters or if signature generation fails
+ *
+ * @description
+ * The function performs the following steps:
+ * 1. Validates that input data doesn't contain pipe characters
+ * 2. Cleans and processes the data object
+ * 3. Stringifies the processed JSON and appends the epoch
+ * 4. Signs the prepared data string
+ */
 async function generateSignature(object, epoch) {
   try {
     // console.log("\n Iniciando generación de sello digital...");
