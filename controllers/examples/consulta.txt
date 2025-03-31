@@ -1,0 +1,67 @@
+Request:  {
+  peticionConsulta: {
+    apiKey: 'f1ecf66afaa88f2c1530256e6d57c2fdc8e718bb5faa00125b194413f3b6bef432be3a1e6d16804454ce721c956ee14a25d242e7d594022c3a7face2030daf2d',
+    folioCodi: '329a2b1c9a',
+    tpg: 10,
+    npg: 1,
+    fechaInicial: '20250319',
+    fechaFinal: '0'
+  },
+  selloDigital: 'a82Eynaq4SDwRJCA4BGaQDHwg0RD66lDYozmzde6IP6A7LsGDswJPNy0hg+lBzTVehw7lJt/yMh9iHLodqupBpCxAeXhxUqLq8LmNy5bF650E5e67SG6d2CPPW+Fl76EzfDjXQOlCRpNmHgQ26N6dxszxffMsrctjfxsC4Ym8bfv8jhP/UMMA6KUGIVHSHCRgUJNPgezyCcQ1ROxDbEyzyeZARisICoVaaHIHl/Y7FhcTvIgqOyxQ+KQfRTUZr+4CkQQOBXnJfVk8fbfYqpXAiL54+GVHdkBS1/oLHfgKUA4/fSjAHbMO6veo2XMG6IGzoEPqcntICQqOkn/tEPx8WGvBdE6/MEbSMlaQYt14IIpBiZWmgNNJqrs6hbaGNnL5uQJzhKJnVAeM6oaszEJc4NqafiLzlSj3BwuNmxw/dp8HKL+Ux7jq7rsqvKlX0x5vI/HNmOCw5iPF4QQLO9ff8f5Us9T6Ts94kYE+3fLNi6A5p/dAGz5TxXOlvxgKTvSh6L0bwMMxjI8w13ogThJuMOIw7S64iVMlc0BezKzDwmlstuzdI2WiT7zsdrkJWfI6KZABuDq+e4Bcux4ykhu6E8VMAujO3dVJAKScbMz+LYA+wmQTlLDEMGcTlF1hRmELbKDkdlLKN/g5AE+ZHvwp+8QofVOzNfcQ+l97ybRzZc=',
+  epoch: 1743394833379,
+  crtLogin: '00000100000100015936',
+  crtOper: '00000100000100015936'
+}
+
+Response: {
+    "success": true,
+    "data": {
+        "resultado": {
+            "v": {
+                "tipoCta": 40,
+                "ctaBancaria": "997***********4710",
+                "cveInstit": 40997,
+                "nombre": "S*************** S* D* C*"
+            },
+            "lstDetalleMC": [
+                {
+                    "folioCodi": "329a2b1c9a327c0b4e5f",
+                    "concepto": "Boleto: de  evento mensual",
+                    "monto": "99.03",
+                    "refNum": 1234567,
+                    "tProc": 1743125210493,
+                    "tSolicitud": 1743125210493,
+                    "edoMC": 1,
+                    "cveRastreo": "202503084099311db8127cd43bbfbe",
+                    "c": {
+                        "tipoCta": 40,
+                        "ctaBancaria": "997***********4668",
+                        "cveInstit": 40993,
+                        "nombre": "P**** C*** P***** B"
+                    }
+                },
+                {
+                    "folioCodi": "329a2b1c9a327c0b2fb8",
+                    "concepto": "Boleto: de  evento mensual",
+                    "monto": "99.03",
+                    "refNum": 1234567,
+                    "tProc": 1743125160400,
+                    "tSolicitud": 1743125160400,
+                    "edoMC": 1,
+                    "cveRastreo": "2025030840993a761f4469f7569218",
+                    "c": {
+                        "tipoCta": 40,
+                        "ctaBancaria": "997***********4668",
+                        "cveInstit": 40993,
+                        "nombre": "P**** C*** P***** B"
+                    }
+                }
+            ]
+        },
+        "ultPag": true,
+        "crtBdeM": "00000100000100015974",
+        "selloDigital": "PO0rCFodDy2R6FpQgWf75/ldXjAeQ5yFNjA/kD2nHiDf9AxnwDRyo0Is9RJhMSZiKuqxhRDE5rfSCE8Cwop5bb38dB6VFlypG3Ii5VH3jiLJIebCYH8Nyw1GyiXhG0broWjda3pxRMknXvUQ2L6K+23n8ClDoKJcKaa8v0RzopfJjRzgL+mJTTSqgFnzR5B+qCIKdkiXJr5kkr2AZSR0gVbVHLRyAIVE8J7L+nyJSmKSjurmW87n7cMLwxOeF8v8QpDEfv8vFae5eEVWq2V1oCKI/1jdwbd/JZ1bVJWPaLf5NJBYSTKfl7fXoCwkfDtQLLWHGAL2wOwdIyMAnjwZXkz2vOM8h1PzNBYojfzUjqLLBumQw0Sf7JkCIFM0AYk/9gODF3Nnww/+u0GcFtk3BQ==",
+        "epoch": 1743394833977,
+        "edoPet": 0
+    }
+}
