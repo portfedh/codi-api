@@ -2,13 +2,11 @@
 
 - poner d = {} ?
 - Hacer una cédula de resultados
-- Error code handling
+- Error code handling: Generar errores y prevalidar en forms. Usar documentacion de guia.
 - Request validation
 - IP de Banxico para CORS
 - Cambiar fetch vs Axios
 - Tratar un URL de Banxico y si no otra
-- Añadir test de vigencia minima una vez establecida [ventana_vigencia]
-
 
 - HashiCorp Vault (Community Edition)
 - CyberArk Conjur Open Source
