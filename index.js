@@ -8,6 +8,7 @@ const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
 const rfs = require("rotating-file-stream");
+const supabase = require("./config/supabase");
 
 // Express
 // =======
@@ -124,6 +125,49 @@ app.use(limiter);
 const homeRoutes = require("./routes/home");
 app.use("/", homeRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+app.get("/test-db", async (req, res) => {
+  try {
+    const { data, error } = await supabase.from("users").select("*").limit(5);
+
+    if (error) throw error;
+
+    res.json({
+      message: "Successfully connected to Supabase!",
+      data: data,
+    });
+  } catch (error) {
+    console.error("Error connecting to Supabase:", error);
+    res.status(500).json({
+      message: "Failed to connect to Supabase",
+      error: error.message,
+    });
+  }
+});
+app.get("/test-db", async (req, res) => {
+  try {
+    // Get the table name from query params or use default
+    const tableName = req.query.table || "users";
+
+    // Log the query we're about to make
+    console.log(`Querying table: ${tableName}`);
+
+    const { data, error } = await supabase.from(tableName).select("*").limit(5);
+
+    if (error) throw error;
+
+    res.json({
+      message: "Successfully connected to Supabase!",
+      data: data,
+    });
+  } catch (error) {
+    console.error("Error connecting to Supabase:", error);
+    res.status(500).json({
+      message: "Failed to connect to Supabase",
+      error: error.message,
+    });
+  }
+});
 
 // Server Port
 // ===========
