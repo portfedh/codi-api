@@ -37,7 +37,7 @@ async function generateSignature(object, epoch) {
     // Step 3: Stringify JSON
     let stringifiedJson = `${JSON.stringify(processedJson)}${epoch}`;
     stringifiedJson = stringifiedJson.trim();
-    // console.log("\n Datos a firmar con epoch:", stringifiedJson);
+    console.log("\n Datos a firmar con epoch:", stringifiedJson);
 
     // Step 4: Sign the data
     const signature = signData(stringifiedJson);
