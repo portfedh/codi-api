@@ -76,11 +76,11 @@ function verifySignature(object, publicKeyCertificate) {
       // Add custom logic for resultado here
     } else if (object.cadenaInformacion) {
       sourceType = "cadenaInformacion";
-      inputJson = object.cadenaInformacion; //{ cadenaInformacion: object.cadenaInformacion };
+      inputJson = { cadenaInformacion: object.cadenaInformacion };
       jsonString =
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
-      epoch = object.cadenaInformacion.horaSolicitudMensajeCobro; //horaProcMensajeCobro; //horaEnvioMensaje;
-      stringifiedJson = `${jsonString}${epoch}`;
+      epoch = object.cadenaInformacion.horaEnvioMensaje;
+      stringifiedJson = `${jsonString}${epoch}}`;
       signatureBase64 = object.selloDigital;
       console.log("\nProcesando datos de tipo cadenaInformación");
       // Add custom logic for cadenaInformacion here
@@ -88,13 +88,13 @@ function verifySignature(object, publicKeyCertificate) {
       throw new Error("No valid data found in the object");
     }
 
-    // console.log(`\nTipo de fuente: ${sourceType}`);
-    // console.log("\nDatos a verificar:", inputJson);
-    // console.log("\nEpoch a verificar:", epoch);
-    // console.log("\nCadena a verificar:", stringifiedJson);
-    // console.log("\nFirma a verificar:", signatureBase64);
+    console.log(`\nTipo de fuente: ${sourceType}`);
+    console.log("\nDatos a verificar:", inputJson);
+    console.log("\nEpoch a verificar:", epoch);
+    console.log("\nCadena a verificar:", stringifiedJson);
+    console.log("\nFirma a verificar:", signatureBase64);
 
-    // console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
+    console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
 
     // Create verifier
     const verifier = crypto.createVerify("RSA-SHA512");
@@ -111,7 +111,7 @@ function verifySignature(object, publicKeyCertificate) {
       signatureBase64,
       "base64"
     );
-    // console.log("\nFirma verificada: ", isVerified);
+    console.log("\nFirma verificada: ", isVerified);
 
     return isVerified;
   } catch (error) {
