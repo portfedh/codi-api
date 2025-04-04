@@ -32,8 +32,7 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
-      console.log("\nProcesando datos de tipo datosMC");
-      // Add custom logic for datosMC here
+      // console.log("\nProcesando datos de tipo datosMC");
     } else if (object.peticionConsulta) {
       sourceType = "peticionConsulta";
       inputJson = object.peticionConsulta;
@@ -42,8 +41,7 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
-      console.log("\nProcesando datos de tipo peticionConsulta");
-      // Add custom logic for peticionConsulta here
+      // console.log("\nProcesando datos de tipo peticionConsulta");
     } else if (object.cadenaMC) {
       sourceType = "cadenaMC";
       inputJson = object.cadenaMC;
@@ -52,8 +50,7 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
-      console.log("\nProcesando datos de tipo cadenaMC");
-      // Add custom logic for cadenaMC here
+      // console.log("\nProcesando datos de tipo cadenaMC");
     } else if (object.folioCodi) {
       sourceType = "folioCodi";
       inputJson = object.folioCodi;
@@ -62,8 +59,7 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
-      console.log("\nProcesando datos de tipo folioCodi");
-      // Add custom logic for folioCodi here
+      // console.log("\nProcesando datos de tipo folioCodi");
     } else if (object.resultado) {
       sourceType = "resultado";
       inputJson = object.resultado;
@@ -72,8 +68,7 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
-      console.log("\nProcesando datos de tipo resultado");
-      // Add custom logic for resultado here
+      // console.log("\nProcesando datos de tipo resultado");
     } else if (object.cadenaInformacion) {
       sourceType = "cadenaInformacion";
       inputJson = { cadenaInformacion: object.cadenaInformacion };
@@ -82,19 +77,18 @@ function verifySignature(object, publicKeyCertificate) {
       epoch = object.cadenaInformacion.horaEnvioMensaje;
       stringifiedJson = `${jsonString}${epoch}}`;
       signatureBase64 = object.selloDigital;
-      console.log("\nProcesando datos de tipo cadenaInformación");
-      // Add custom logic for cadenaInformacion here
+      // console.log("\nProcesando datos de tipo cadenaInformación");
     } else {
       throw new Error("No valid data found in the object");
     }
 
-    console.log(`\nTipo de fuente: ${sourceType}`);
-    console.log("\nDatos a verificar:", inputJson);
-    console.log("\nEpoch a verificar:", epoch);
-    console.log("\nCadena a verificar:", stringifiedJson);
-    console.log("\nFirma a verificar:", signatureBase64);
+    // console.log(`\nTipo de fuente: ${sourceType}`);
+    // console.log("\nDatos a verificar:", inputJson);
+    // console.log("\nEpoch a verificar:", epoch);
+    // console.log("\nCadena a verificar:", stringifiedJson);
+    // console.log("\nFirma a verificar:", signatureBase64);
 
-    console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
+    // console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
 
     // Create verifier
     const verifier = crypto.createVerify("RSA-SHA512");
@@ -111,7 +105,7 @@ function verifySignature(object, publicKeyCertificate) {
       signatureBase64,
       "base64"
     );
-    console.log("\nFirma verificada: ", isVerified);
+    // console.log("\nFirma verificada: ", isVerified);
 
     return isVerified;
   } catch (error) {
