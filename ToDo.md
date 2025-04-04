@@ -3,20 +3,27 @@
 - poner d = {} ?
 - Guardar requests, responses en base de datos
 - Hacer una cédula de resultados
-- Error code handling: Generar errores y prevalidar en forms. Usar documentación de guía.
+- Error code handling: Generar errores y pre-validar en forms. Usar documentación de guía.
 - Request validation
-- IP de Banxico para CORS producción
+- IP de Banco de Mexico producción para CORS
 - Cambiar fetch vs Axios
-- Tratar un URL de Banxico y si no otra
+- Tratar un URL de Banco de Mexico y si tarda, intentar en la utl secundaria
 
-## Plan para API Keys
+## Efficiency Measures
 
+- Index database tables: Speed up queries
+- Cache management: Redis, node-cache, lru-cache
+
+## Security Measures
+
+- Usar HTTPS para comunicarse con todo el API
 - Rate limiting
-- Logging / monitoring
-- Store API key en KMS
+- Extensive Logging / monitoring
 - Create website api key and url endpoint for quick rotation
 
 ## Key management Options:
+
+Option: Store API key en KMS:
 
 - HashiCorp Vault (Community Edition)
 - CyberArk Conjur Open Source

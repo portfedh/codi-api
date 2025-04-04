@@ -8,7 +8,6 @@ const express = require("express");
 const router = express.Router();
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocs = require("../config/swagger");
-const supabase = require("../config/supabase");
 
 // Middleware
 const { validateApiKey } = require("../middleware/validateApiKey");
@@ -33,31 +32,6 @@ const { validateRequest } = require("../validators/validateRequest");
 // Swagger Documentation
 router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// Supabase Test Route
-router.get("/test-db", async (req, res) => {
-  try {
-    // Get the table name from query params or use default
-    const tableName = req.query.table || "users";
-
-    // Log the query we're about to make
-    console.log(`Querying table: ${tableName}`);
-
-    const { data, error } = await supabase.from(tableName).select("*").limit(5);
-
-    if (error) throw error;
-
-    res.json({
-      message: "Successfully connected to Supabase!",
-      data: data,
-    });
-  } catch (error) {
-    console.error("Error connecting to Supabase:", error);
-    res.status(500).json({
-      message: "Failed to connect to Supabase",
-      error: error.message,
-    });
-  }
-});
 
 /**
  * @swagger
