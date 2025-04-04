@@ -14,6 +14,7 @@ const { generateSignature } = require("./utils/generateDigitalSignature");
 const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
+const { insertRequestResponse } = require('./utils/insertRequestResponse');
 
 // Exports
 // *******
@@ -44,6 +45,11 @@ module.exports = {
    * @returns {string} [response.error] - Error message if operation failed
    */
   sendPushPayment: async (req, res) => {
+
+    //  Capture request timestamp
+    //  Modify to use Mexico City Time
+    const requestTimestamp = new Date(); 
+
     try {
       // Get payment data
       const { celularCliente, monto, referenciaNumerica, concepto, vigencia } =
@@ -118,6 +124,21 @@ module.exports = {
       });
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
+    //  Capture request timestamp
+    //  Modify to use Mexico City Time
+      const responseTimestamp = new Date();
+
+      //  Log the request and response
+      await insertRequestResponse(
+        '/v2/codi/push', //  Route
+        req, //  Request object containing body and headers
+        response.data, //  Response payload
+        response.status, //  Response status code
+        requestTimestamp,
+        responseTimestamp
+      );
+      // ToDo: Add verifications to DB
+
       // Verify Banxico response code
       const banxicoResult = verifyBanxicoResponse(response);
       if (!banxicoResult.success) {
@@ -153,6 +174,17 @@ module.exports = {
       });
     } catch (error) {
       console.error("Error enviando Push request: ", error);
+
+      const responseTimestamp = new Date(); // Capture response timestamp even in error case
+      await insertRequestResponse(
+        '/v2/codi/push',
+        req,
+        { error: error.message }, // Or the specific error details you want to log
+        500, // Or appropriate error code
+        requestTimestamp,
+        responseTimestamp
+      );
+
       return res.status(500).json({
         success: false,
         error: "Error processing Push request",
