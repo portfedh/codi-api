@@ -87,7 +87,9 @@ const corsOptions = {
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
+  exposedHeaders: ["Content-Range", "X-Content-Range"],
+  maxAge: 86400, // Cache preflight requests for 24 hours
 };
 app.use(cors(corsOptions));
 
@@ -112,11 +114,18 @@ app.use((req, res, next) => {
 
 // Rate Limiter
 const rateLimit = require("express-rate-limit");
-const limiter = rateLimit({
+
+// Global rate limiter
+const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 200, // Increased to 200 requests per windowMs
+  message: "Too many requests from this IP, please try again later",
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
-app.use(limiter);
+
+// Apply rate limiting to all routes
+app.use(globalLimiter);
 
 // Routes:
 // =======
