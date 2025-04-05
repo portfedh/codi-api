@@ -5,6 +5,7 @@
 // *******
 const axios = require("axios");
 const QRCode = require("qrcode");
+const moment = require("moment-timezone");
 require("dotenv").config({ path: "../config/.env" });
 const { getCodiQrUrl } = require("./utils/getCodiQrUrl");
 const { getSellerApiKey } = require("./utils/getSellerApiKey");
@@ -15,6 +16,7 @@ const { generateSignature } = require("./utils/generateDigitalSignature");
 const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
+const { insertRequestResponse } = require('./utils/insertRequestResponse');
 
 /**
  * @module sendQrPayment
@@ -39,6 +41,9 @@ const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
  */
 module.exports = {
   sendQrPayment: async (req, res) => {
+    // Capture request timestamp in Mexico City time
+    const requestTimestamp = moment().tz('America/Mexico_City');
+
     try {
       // Get payment data
       const { monto, referenciaNumerica, concepto, vigencia } = req.body;
@@ -96,6 +101,7 @@ module.exports = {
       // Verify the signature: Developer
       const isVerified = verifySignature(requestBody, publicKey);
       // console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
+      
       if (!isVerified) {
         return res.status(400).json({
           success: false,
@@ -110,6 +116,20 @@ module.exports = {
         },
       });
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
+
+      // Capture response timestamp in Mexico City time
+      const responseTimestamp = moment().tz('America/Mexico_City');
+
+      // Log the request and response
+      await insertRequestResponse(
+        '/v2/codi/qr', // Route
+        req.headers, // Request headers
+        requestBody, // Request payload
+        requestTimestamp, // Request timestamp
+        response.data, // Response payload
+        response.status, // Response status code
+        responseTimestamp // Response timestamp
+      );
 
       // Verify Banxico response code
       const banxicoResult = verifyBanxicoResponse(response);
@@ -158,6 +178,18 @@ module.exports = {
       });
     } catch (error) {
       console.error("Error enviando Código QR: ", error);
+
+      const responseTimestamp = moment().tz('America/Mexico_City');
+      await insertRequestResponse(
+        '/v2/codi/qr',
+        req.headers,
+        requestBody,
+        requestTimestamp,
+        { error: error.message },
+        500,
+        responseTimestamp
+      );
+
       return res.status(500).json({
         success: false,
         error: "Error processing QR request",

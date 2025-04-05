@@ -1,12 +1,15 @@
 # ToDo
 
 - poner d = {} ?
+- Epoch en mexico city time a UTC
+- Cambiar fetch vs Axios
 - Guardar requests, responses en base de datos
+- Verificar responses se guarden en base cuando hay todos los errores
+- Verificar que los error codes estén todos bien
 - Hacer una cédula de resultados
 - Error code handling: Generar errores y pre-validar en forms. Usar documentación de guía.
 - Request validation
 - IP de Banco de Mexico producción para CORS
-- Cambiar fetch vs Axios
 - Tratar un URL de Banco de Mexico y si tarda, intentar en la utl secundaria
 
 ## Efficiency Measures

@@ -4,28 +4,30 @@ const supabase = require('../../config/supabase');
  * Inserts an API request and its corresponding response into Supabase.
  *
  * @param {string} route - The API route (e.g., '/v2/codi/push').
- * @param {Object} req - Express request object containing body and headers
+ * @param {Object} requestHeaders - Request headers object
+ * @param {Object} requestPayload - The request payload to log
+ * @param {Date} requestTimestamp - Timestamp of the request.
  * @param {object} responsePayload - The response payload (JSON).
  * @param {number} responseStatus - The HTTP status code of the response.
- * @param {Date} requestTimestamp - Timestamp of the request.
  * @param {Date} responseTimestamp - Timestamp of the response.
  * @returns {Promise<void>}
  */
 async function insertRequestResponse(
   route,
-  req,
+  requestHeaders,
+  requestPayload,
+  requestTimestamp,
   responsePayload,
   responseStatus,
-  requestTimestamp,
   responseTimestamp
 ) {
   try {
     // Get API key from request headers
-    const apiKey = req.headers['x-api-key'];
+    const apiKey = requestHeaders['x-api-key'];
 
     // Ensure timestamps are in ISO format
-    const formattedRequestTimestamp = requestTimestamp.toISOString();
-    const formattedResponseTimestamp = responseTimestamp.toISOString();
+    const formattedRequestTimestamp = requestTimestamp.format()
+    const formattedResponseTimestamp = responseTimestamp.format()
 
     // 1. Insert the request
     const { data: requestData, error: requestError } = await supabase
@@ -33,7 +35,7 @@ async function insertRequestResponse(
       .insert([
         {
           route,
-          request_payload: req.body,
+          request_payload: requestPayload,
           request_timestamp: formattedRequestTimestamp,
           api_key: apiKey
         },

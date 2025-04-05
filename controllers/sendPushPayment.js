@@ -4,17 +4,18 @@
 // Imports
 // *******
 const axios = require("axios");
+const moment = require("moment-timezone");
 require("dotenv").config({ path: "../config/.env" });
 const { getCodiPushUrl } = require("./utils/getCodiPushUrl");
-const { getSellerApiKey } = require("./utils/getSellerApiKey");
+// const { getSellerApiKey } = require("./utils/getSellerApiKey");
 const { verifySignature } = require("./utils/verifySignature");
 const { getKeyCredentials } = require("./utils/getKeyCredentials");
 const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
 const { generateSignature } = require("./utils/generateDigitalSignature");
 const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
-const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
 const { insertRequestResponse } = require('./utils/insertRequestResponse');
+const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 
 // Exports
 // *******
@@ -46,9 +47,9 @@ module.exports = {
    */
   sendPushPayment: async (req, res) => {
 
-    //  Capture request timestamp
-    //  Modify to use Mexico City Time
-    const requestTimestamp = new Date(); 
+    //  Capture request timestamp in Mexico City time
+    const requestTimestamp = moment().tz('America/Mexico_City')
+    // console.log("Req Timestamp", requestTimestamp)
 
     try {
       // Get payment data
@@ -61,7 +62,8 @@ module.exports = {
       // console.log("\n🔵 Push Endpoint: ", codiApiPushEndpoint);
 
       // Get seller api key
-      const apiKey = getSellerApiKey();
+      const apiKey =  req.apiKey;
+      // const apiKey = getSellerApiKey();
       // console.log("\n🔵 Seller API Key: ", apiKey);
 
       // Get developer credentials
@@ -124,18 +126,19 @@ module.exports = {
       });
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
-    //  Capture request timestamp
-    //  Modify to use Mexico City Time
-      const responseTimestamp = new Date();
+      //  Capture response timestamp in Mexico City time
+      const responseTimestamp = moment().tz('America/Mexico_City')
+      // console.log("response timestamp", responseTimestamp)
 
       //  Log the request and response
       await insertRequestResponse(
         '/v2/codi/push', //  Route
-        req, //  Request object containing body and headers
+        req.headers, //  Request headers
+        requestBody, // Request payload
+        requestTimestamp, // Request timestamp
         response.data, //  Response payload
         response.status, //  Response status code
-        requestTimestamp,
-        responseTimestamp
+        responseTimestamp // Response timestamp
       );
       // ToDo: Add verifications to DB
 
@@ -175,12 +178,12 @@ module.exports = {
     } catch (error) {
       console.error("Error enviando Push request: ", error);
 
-      const responseTimestamp = new Date(); // Capture response timestamp even in error case
+      const responseTimestamp = moment().tz('America/Mexico_City')
       await insertRequestResponse(
         '/v2/codi/push',
         req,
-        { error: error.message }, // Or the specific error details you want to log
-        500, // Or appropriate error code
+        { error: error.message },
+        500,
         requestTimestamp,
         responseTimestamp
       );
