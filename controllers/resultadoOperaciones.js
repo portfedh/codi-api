@@ -136,7 +136,12 @@ module.exports = {
         resultado: 0,
       });
     } catch (error) {
-      console.error("Error processing resultadoOperaciones: ", error);
+      console.error("Error in resultadoOperaciones:", {
+        message: error.message,
+        stack: error.stack,
+        code: error.code,
+        response: error.response?.data
+      });
 
       const responseTimestamp = moment().tz('America/Mexico_City');
       
@@ -153,7 +158,8 @@ module.exports = {
 
       return res.status(500).json({
         resultado: -1,
-        error: "Error processing operation results"
+        error: "Error processing operation results",
+        details: error.message
       });
     }
   },

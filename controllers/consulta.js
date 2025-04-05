@@ -11,15 +11,15 @@
 const axios = require("axios");
 const moment = require("moment-timezone");
 require("dotenv").config({ path: "../config/.env" });
-const { getCodiStatusURL } = require("./utils/getCodiStatusUrl");
 const { verifySignature } = require("./utils/verifySignature");
+const { getCodiStatusURL } = require("./utils/getCodiStatusUrl");
 const { getKeyCredentials } = require("./utils/getKeyCredentials");
 const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
 const { generateSignature } = require("./utils/generateDigitalSignature");
 const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
-const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
 const { insertRequestResponse } = require('./utils/insertRequestResponse');
+const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 
 // Exports
 // *******

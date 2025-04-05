@@ -174,15 +174,23 @@ module.exports = {
         data: response.data,
       });
     } catch (error) {
-      console.error("Error enviando Push request: ", error);
+      console.error("Error in sendPushPayment:", {
+        message: error.message,
+        stack: error.stack,
+        code: error.code,
+        response: error.response?.data
+      });
 
-      const responseTimestamp = moment().tz('America/Mexico_City')
+      const responseTimestamp = moment().tz('America/Mexico_City');
+      
+      // Log the request and response with error details
       await insertRequestResponse(
         '/v2/codi/push',
-        req,
+        req.headers,
+        requestBody,
+        requestTimestamp,
         { error: error.message },
         500,
-        requestTimestamp,
         responseTimestamp
       );
 
