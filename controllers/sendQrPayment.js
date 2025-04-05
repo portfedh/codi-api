@@ -8,7 +8,6 @@ const QRCode = require("qrcode");
 const moment = require("moment-timezone");
 require("dotenv").config({ path: "../config/.env" });
 const { getCodiQrUrl } = require("./utils/getCodiQrUrl");
-const { getSellerApiKey } = require("./utils/getSellerApiKey");
 const { verifySignature } = require("./utils/verifySignature");
 const { getKeyCredentials } = require("./utils/getKeyCredentials");
 const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
@@ -54,7 +53,7 @@ module.exports = {
       // console.log("\n🔵 QR Endpoint: ", codiApiQrEndpoint);
 
       // Get seller api key
-      const apiKey = getSellerApiKey();
+      const apiKey = req.apiKey;
       // console.log("\n🔵 Seller API Key: ", apiKey);
 
       // Get developer credentials
@@ -101,7 +100,7 @@ module.exports = {
       // Verify the signature: Developer
       const isVerified = verifySignature(requestBody, publicKey);
       // console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
-      
+
       if (!isVerified) {
         return res.status(400).json({
           success: false,

@@ -9,9 +9,9 @@
 // Imports
 // *******
 const axios = require("axios");
+const moment = require("moment-timezone");
 require("dotenv").config({ path: "../config/.env" });
 const { getCodiStatusURL } = require("./utils/getCodiStatusUrl");
-const { getSellerApiKey } = require("./utils/getSellerApiKey");
 const { verifySignature } = require("./utils/verifySignature");
 const { getKeyCredentials } = require("./utils/getKeyCredentials");
 const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
@@ -19,6 +19,7 @@ const { generateSignature } = require("./utils/generateDigitalSignature");
 const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
+const { insertRequestResponse } = require('./utils/insertRequestResponse');
 
 // Exports
 // *******
@@ -48,6 +49,10 @@ module.exports = {
    * @throws Will return a 500 response for any other errors
    */
   getBillingInfo: async (req, res) => {
+    //  Capture request timestamp in Mexico City time
+    const requestTimestamp = moment().tz('America/Mexico_City')
+    // console.log("Req Timestamp", requestTimestamp)
+
     try {
       // Get payment data
       const { folioCodi, tpg, npg, fechaInicial, fechaFinal } = req.body;
@@ -58,7 +63,7 @@ module.exports = {
       // console.log("\n🔵 Consulta Endpoint: ", codiApiStatusEndpoint);
 
       // Get seller api key
-      const apiKey = getSellerApiKey();
+      const apiKey = req.apiKey;;
       // console.log("\n🔵 Seller API Key: ", apiKey);
 
       // Get developer credentials
@@ -122,6 +127,21 @@ module.exports = {
         },
       });
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
+
+      //  Capture response timestamp in Mexico City time
+      const responseTimestamp = moment().tz('America/Mexico_City')
+      // console.log("response timestamp", responseTimestamp)
+
+      //  Log the request and response
+      await insertRequestResponse(
+        '/v2/codi/consulta', //  Route
+        req.headers, //  Request headers
+        requestBody, // Request payload
+        requestTimestamp, // Request timestamp
+        response.data, //  Response payload
+        response.status, //  Response status code
+        responseTimestamp // Response timestamp
+      );
 
       // Verify Banxico response code
       const banxicoResult = verifyBanxicoResponse(response);

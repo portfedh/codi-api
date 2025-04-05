@@ -7,7 +7,6 @@ const axios = require("axios");
 const moment = require("moment-timezone");
 require("dotenv").config({ path: "../config/.env" });
 const { getCodiPushUrl } = require("./utils/getCodiPushUrl");
-// const { getSellerApiKey } = require("./utils/getSellerApiKey");
 const { verifySignature } = require("./utils/verifySignature");
 const { getKeyCredentials } = require("./utils/getKeyCredentials");
 const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
@@ -63,7 +62,6 @@ module.exports = {
 
       // Get seller api key
       const apiKey =  req.apiKey;
-      // const apiKey = getSellerApiKey();
       // console.log("\n🔵 Seller API Key: ", apiKey);
 
       // Get developer credentials
