@@ -1,6 +1,6 @@
 # ToDo
 
-- Implementar en produccion
+- Implementar en producción
 - Arreglar firma de resultado operaciones
 - poner d = {} ?
 - Hacer una cédula de resultados

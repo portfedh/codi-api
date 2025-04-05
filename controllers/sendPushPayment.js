@@ -6,7 +6,7 @@
 const axios = require("axios");
 const moment = require("moment-timezone");
 require("dotenv").config({ path: "../config/.env" });
-const { getCodiPushUrl } = require("./utils/getCodiPushUrl");
+const { getCodiPushUrls } = require("./utils/getCodiPushUrl");
 const { verifySignature } = require("./utils/verifySignature");
 const { getKeyCredentials } = require("./utils/getKeyCredentials");
 const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
@@ -15,6 +15,7 @@ const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
 const { insertRequestResponse } = require('./utils/insertRequestResponse');
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
+const { makeRequestWithFallback } = require("./utils/makeRequestWithFallback");
 
 // Exports
 // *******
@@ -52,16 +53,15 @@ module.exports = {
 
     try {
       // Get payment data
-      const { celularCliente, monto, referenciaNumerica, concepto, vigencia } =
-        req.body;
+      const { celularCliente, monto, referenciaNumerica, concepto, vigencia } = req.body;
       // console.log("\n🔵 Datos de pago: ", req.body);
 
-      // Get url endpoint
-      const codiApiPushEndpoint = getCodiPushUrl();
-      // console.log("\n🔵 Push Endpoint: ", codiApiPushEndpoint);
+      // Get url endpoints
+      const { primary: primaryUrl, secondary: secondaryUrl } = getCodiPushUrls();
+      // console.log("\n🔵 Push Endpoints: ", { primaryUrl, secondaryUrl });
 
       // Get seller api key
-      const apiKey =  req.apiKey;
+      const apiKey = req.apiKey;
       // console.log("\n🔵 Seller API Key: ", apiKey);
 
       // Get developer credentials
@@ -116,12 +116,13 @@ module.exports = {
         });
       }
 
-      // Send the data to Banxico
-      const response = await axios.post(codiApiPushEndpoint, requestBody, {
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-        },
-      });
+      // Send the data to Banxico with fallback
+      const response = await makeRequestWithFallback(
+        primaryUrl,
+        secondaryUrl,
+        requestBody,
+        { timeout: 3000 }
+      );
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
       //  Capture response timestamp in Mexico City time

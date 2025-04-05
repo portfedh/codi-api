@@ -1,20 +1,26 @@
 /**
- * Returns the appropriate CODI push notification URL based on the current environment.
+ * Returns the appropriate CODI Push URL endpoints based on the current environment.
+ * Uses environment variables to determine which URLs to return.
  *
- * @returns {string} The endpoint URL for CODI push notifications. Returns the production
- * URL if NODE_ENV is set to "production", otherwise returns the development URL.
+ * @returns {Object} An object containing both primary and secondary URLs for the current environment
  */
-function getCodiPushUrl() {
-  const endPoint =
-    process.env.NODE_ENV === "production"
-      ? process.env.SITIO_CODI_PUSH_PROD_2
-      : process.env.SITIO_CODI_PUSH_DEV_2;
-  return endPoint;
+function getCodiPushUrls() {
+  if (process.env.NODE_ENV === "production") {
+    return {
+      primary: process.env.SITIO_CODI_PUSH_PROD_1,
+      secondary: process.env.SITIO_CODI_PUSH_PROD_2
+    };
+  }
+  return {
+    primary: process.env.SITIO_CODI_PUSH_DEV_1,
+    secondary: process.env.SITIO_CODI_PUSH_DEV_2
+  };
 }
 
 /**
- * @module getCodiPushUrl
+ * Module exports.
+ * @module controllers/utils/getCodiPushUrl
  */
 module.exports = {
-  getCodiPushUrl,
+  getCodiPushUrls
 };

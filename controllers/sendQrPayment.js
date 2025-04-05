@@ -7,7 +7,7 @@ const axios = require("axios");
 const QRCode = require("qrcode");
 const moment = require("moment-timezone");
 require("dotenv").config({ path: "../config/.env" });
-const { getCodiQrUrl } = require("./utils/getCodiQrUrl");
+const { getCodiQrUrls } = require("./utils/getCodiQrUrl");
 const { verifySignature } = require("./utils/verifySignature");
 const { getKeyCredentials } = require("./utils/getKeyCredentials");
 const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
@@ -16,6 +16,7 @@ const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
 const { insertRequestResponse } = require('./utils/insertRequestResponse');
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
+const { makeRequestWithFallback } = require("./utils/makeRequestWithFallback");
 
 /**
  * @module sendQrPayment
@@ -48,9 +49,9 @@ module.exports = {
       const { monto, referenciaNumerica, concepto, vigencia } = req.body;
       // console.log("\n🔵 Datos de pago: ", req.body);
 
-      // Get url endpoint
-      const codiApiQrEndpoint = getCodiQrUrl();
-      // console.log("\n🔵 QR Endpoint: ", codiApiQrEndpoint);
+      // Get url endpoints
+      const { primary: primaryUrl, secondary: secondaryUrl } = getCodiQrUrls();
+      // console.log("\n🔵 QR Endpoints: ", { primaryUrl, secondaryUrl });
 
       // Get seller api key
       const apiKey = req.apiKey;
@@ -108,12 +109,13 @@ module.exports = {
         });
       }
 
-      // Send the data to Banxico
-      const response = await axios.post(codiApiQrEndpoint, requestBody, {
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-        },
-      });
+      // Send the data to Banxico with fallback
+      const response = await makeRequestWithFallback(
+        primaryUrl,
+        secondaryUrl,
+        requestBody,
+        { timeout: 3000 }
+      );
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
       // Capture response timestamp in Mexico City time

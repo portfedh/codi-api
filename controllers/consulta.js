@@ -12,7 +12,7 @@ const axios = require("axios");
 const moment = require("moment-timezone");
 require("dotenv").config({ path: "../config/.env" });
 const { verifySignature } = require("./utils/verifySignature");
-const { getCodiStatusURL } = require("./utils/getCodiStatusUrl");
+const { getCodiStatusUrls } = require("./utils/getCodiStatusUrl");
 const { getKeyCredentials } = require("./utils/getKeyCredentials");
 const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
 const { generateSignature } = require("./utils/generateDigitalSignature");
@@ -20,6 +20,7 @@ const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
 const { insertRequestResponse } = require('./utils/insertRequestResponse');
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
+const { makeRequestWithFallback } = require("./utils/makeRequestWithFallback");
 
 // Exports
 // *******
@@ -58,12 +59,12 @@ module.exports = {
       const { folioCodi, tpg, npg, fechaInicial, fechaFinal } = req.body;
       // console.log("\n🔵 Datos de pago: ", req.body);
 
-      // Get url endpoint
-      const codiApiStatusEndpoint = getCodiStatusURL();
-      // console.log("\n🔵 Consulta Endpoint: ", codiApiStatusEndpoint);
+      // Get url endpoints
+      const { primary: primaryUrl, secondary: secondaryUrl } = getCodiStatusUrls();
+      // console.log("\n🔵 Consulta Endpoints: ", { primaryUrl, secondaryUrl });
 
       // Get seller api key
-      const apiKey = req.apiKey;;
+      const apiKey = req.apiKey;
       // console.log("\n🔵 Seller API Key: ", apiKey);
 
       // Get developer credentials
@@ -120,12 +121,13 @@ module.exports = {
         });
       }
 
-      // Send the data to Banxico
-      const response = await axios.post(codiApiStatusEndpoint, requestBody, {
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-        },
-      });
+      // Send the data to Banxico with fallback
+      const response = await makeRequestWithFallback(
+        primaryUrl,
+        secondaryUrl,
+        requestBody,
+        { timeout: 3000 }
+      );
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
       //  Capture response timestamp in Mexico City time
@@ -140,10 +142,7 @@ module.exports = {
 
       // Verify that crtBdeM value matches our records
       const crtBanxicoVerified = compareCrtBanxico(crtBanxico, response.data);
-      // console.log(
-      //   "\n🔵 Certificado de Banxico verificado: ",
-      //   crtBanxicoVerified
-      // );
+      // console.log("\n🔵 Certificado de Banxico verificado: ", crtBanxicoVerified);
       if (!crtBanxicoVerified) {
         return res.status(400).json({
           success: false,
@@ -185,10 +184,7 @@ module.exports = {
         console.error("Error logging request/response:", logError);
       }
     } catch (error) {
-      console.error(
-        "Error en consulta del Estado de un Mensaje de Cobro: ",
-        error
-      );
+      console.error("Error en consulta del Estado de un Mensaje de Cobro: ", error);
 
       // Send error response immediately
       res.status(500).json({

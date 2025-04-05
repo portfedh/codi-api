@@ -1,22 +1,26 @@
 /**
- * Retrieves the appropriate CODI status consultation URL based on the current environment.
+ * Returns the appropriate CODI Status URL endpoints based on the current environment.
+ * Uses environment variables to determine which URLs to return.
  *
- * @returns {string} The CODI status consultation endpoint URL
- * @description Determines which endpoint to use by checking if the application
- *              is running in production. Returns the production URL if NODE_ENV
- *              is "production", otherwise returns the development URL.
+ * @returns {Object} An object containing both primary and secondary URLs for the current environment
  */
-function getCodiStatusURL() {
-  const endPoint =
-    process.env.NODE_ENV === "production"
-      ? process.env.SITIO_CODI_CONSULTA_PROD_2
-      : process.env.SITIO_CODI_CONSULTA_DEV_2;
-  return endPoint;
+function getCodiStatusUrls() {
+  if (process.env.NODE_ENV === "production") {
+    return {
+      primary: process.env.SITIO_CODI_CONSULTA_PROD_1,
+      secondary: process.env.SITIO_CODI_CONSULTA_PROD_2
+    };
+  }
+  return {
+    primary: process.env.SITIO_CODI_CONSULTA_DEV_1,
+    secondary: process.env.SITIO_CODI_CONSULTA_DEV_2
+  };
 }
 
 /**
- * @module getCodiStatusUrl
+ * Module exports.
+ * @module controllers/utils/getCodiStatusUrl
  */
 module.exports = {
-  getCodiStatusURL,
+  getCodiStatusUrls
 };
