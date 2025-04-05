@@ -133,15 +133,15 @@ module.exports = {
       // console.log("response timestamp", responseTimestamp)
 
       //  Log the request and response
-      await insertRequestResponse(
-        '/v2/codi/consulta',
-        req.headers,
-        requestBody,
-        requestTimestamp,
-        response.data,
-        response.status,
-        responseTimestamp
-      );
+      await insertRequestResponse({
+        route: '/v2/codi/consulta',
+        requestHeaders: req.headers,
+        requestPayload: req.body,
+        requestTimestamp: requestTimestamp,
+        responsePayload: response.data,
+        responseStatus: response.status,
+        responseTimestamp: responseTimestamp
+      });
 
       // Verify Banxico response code
       const banxicoResult = verifyBanxicoResponse(response);

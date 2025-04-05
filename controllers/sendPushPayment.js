@@ -129,15 +129,15 @@ module.exports = {
       // console.log("response timestamp", responseTimestamp)
 
       //  Log the request and response
-      await insertRequestResponse(
-        '/v2/codi/push',
-        req.headers,
-        requestBody,
-        requestTimestamp,
-        response.data,
-        response.status,
-        responseTimestamp
-      );
+      await insertRequestResponse({
+        route: '/v2/codi/push',
+        requestHeaders: req.headers,
+        requestPayload: req.body,
+        requestTimestamp: requestTimestamp,
+        responsePayload: response.data,
+        responseStatus: response.status,
+        responseTimestamp: responseTimestamp
+      });
       // ToDo: Add verifications to DB
 
       // Verify Banxico response code
@@ -184,15 +184,15 @@ module.exports = {
       const responseTimestamp = moment().tz('America/Mexico_City');
       
       // Log the request and response with error details
-      await insertRequestResponse(
-        '/v2/codi/push',
-        req.headers,
-        requestBody,
-        requestTimestamp,
-        { error: error.message },
-        500,
-        responseTimestamp
-      );
+      await insertRequestResponse({
+        route: '/v2/codi/push',
+        requestHeaders: req.headers,
+        requestPayload: req.body,
+        requestTimestamp: requestTimestamp,
+        responsePayload: { error: error.message },
+        responseStatus: 500,
+        responseTimestamp: responseTimestamp
+      });
 
       return res.status(500).json({
         success: false,

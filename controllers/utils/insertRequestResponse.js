@@ -3,16 +3,17 @@ const supabase = require('../../config/supabase');
 /**
  * Inserts an API request and its corresponding response into Supabase.
  *
- * @param {string} route - The API route (e.g., '/v2/codi/push').
- * @param {Object} requestHeaders - Request headers object
- * @param {Object} requestPayload - The request payload to log
- * @param {Date} requestTimestamp - Timestamp of the request.
- * @param {object} responsePayload - The response payload (JSON).
- * @param {number} responseStatus - The HTTP status code of the response.
- * @param {Date} responseTimestamp - Timestamp of the response.
+ * @param {Object} params
+ * @param {string} params.route - The API route (e.g., '/v2/codi/push').
+ * @param {Object} params.requestHeaders - Request headers object
+ * @param {Object} params.requestPayload - The request payload to log
+ * @param {Date} params.requestTimestamp - Timestamp of the request.
+ * @param {object} params.responsePayload - The response payload (JSON).
+ * @param {number} params.responseStatus - The HTTP status code of the response.
+ * @param {Date} params.responseTimestamp - Timestamp of the response.
  * @returns {Promise<void>}
  */
-async function insertRequestResponse(
+async function insertRequestResponse({
   route,
   requestHeaders,
   requestPayload,
@@ -20,7 +21,7 @@ async function insertRequestResponse(
   responsePayload,
   responseStatus,
   responseTimestamp
-) {
+}) {
   try {
     // Get API key from request headers
     const apiKey = requestHeaders['x-api-key'];

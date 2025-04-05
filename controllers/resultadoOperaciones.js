@@ -44,6 +44,7 @@ module.exports = {
   resultadoOperaciones: async (req, res) => {
     //  Capture request timestamp in Mexico City time
     const requestTimestamp = moment().tz('America/Mexico_City');
+    let responsePayload = { resultado: 0 }; // Default success response
 
     try {
       const resultado = req.body;
@@ -52,89 +53,53 @@ module.exports = {
       const { publicKeyBanxico } = getBanxicoCredentials();
 
       const isVerified = verifySignature(resultado, publicKeyBanxico);
+      
       if (!isVerified) {
         console.log("Signature verification failed. Resultado -8");
-        
-        //  Capture response timestamp in Mexico City time
-        const responseTimestamp = moment().tz('America/Mexico_City');
-        // console.log("Response timestamp", responseTimestamp)
-        
-        //  Log the request and response
-        await insertRequestResponse(
-          '/resultadoOperaciones',
-          req.headers,
-          req.body,
-          requestTimestamp,
-          { resultado: -8 }, //  Response payload
-          200,
-          responseTimestamp
-        );
+        responsePayload = { resultado: -8 };
+      } else {
+        const checks = [
+          verifyParameters, // Check All fields and sub-fields present
+          verifyDigit, // Check digitoVerificadorCliente is a number of 1-9 digits
+          verifyCellPhone, // Check celularCliente is a 10-digit number in a string
+          verifyCrtDeveloper, // Compare certComercioProveedor with crtOper (Developer) in env file
+          verifyCrtBanxico, // Compare certBdeM with crtBanxico in env file
+          verifyResultadoMensajeDeCobro, // Check resultadoMensajeCobro is a valid response number
+          verifyIdMensajeCobro, // Check idMensajeCobro is a string of 10 or 20 characters
+          verifyMensajeCobro, // Check concepto is a string of at least 1 character
+          verifyTimeStamps, // Check all timestamps are valid and in order
+        ];
 
-        return res.status(200).json({
-          resultado: -8,
-        });
-      }
+        for (let i = 0; i < checks.length; i++) {
+          const checkResult = checks[i](resultado);
+          if (checkResult !== 0) {
+            console.log(`Check ${checks[i].name} failed with result ${checkResult}`);
+            responsePayload = { resultado: checkResult };
+            break;
+          }
+        }
 
-      const checks = [
-        verifyParameters, // Check All fields and sub-fields present
-        verifyDigit, // Check digitoVerificadorCliente is a number of 1-9 digits
-        verifyCellPhone, // Check celularCliente is a 10-digit number in a string
-        verifyCrtDeveloper, // Compare certComercioProveedor with crtOper (Developer) in env file
-        verifyCrtBanxico, // Compare certBdeM with crtBanxico in env file
-        verifyResultadoMensajeDeCobro, // Check resultadoMensajeCobro is a valid response number
-        verifyIdMensajeCobro, // Check idMensajeCobro is a string of 10 or 20 characters
-        verifyMensajeCobro, // Check concepto is a string of at least 1 character
-        verifyTimeStamps, // Check all timestamps are valid and in order
-      ];
-
-      for (let i = 0; i < checks.length; i++) {
-        const checkResult = checks[i](resultado);
-        if (checkResult !== 0) {
-          console.log(
-            `Check ${checks[i].name} failed with result ${checkResult}`
-          );
-
-          //  Capture response timestamp in Mexico City time
-          const responseTimestamp = moment().tz('America/Mexico_City');
-          
-          //  Log the request and response
-          await insertRequestResponse(
-            '/resultadoOperaciones',
-            req.headers,
-            req.body,
-            requestTimestamp,
-            { resultado: checkResult, temp_request_body: req.body }, //  Response payload
-            200,
-            responseTimestamp
-          );
-
-          return res.status(200).json({
-            resultado: checkResult,
-            temp_request_body: req.body,
-          });
+        if (responsePayload.resultado === 0) {
+          console.log("All checks passed. Processing request.... Resultado 0");
         }
       }
-
-      // If all checks pass
-      console.log("All checks passed. Processing request.... Resultado 0");
 
       //  Capture response timestamp in Mexico City time
       const responseTimestamp = moment().tz('America/Mexico_City');
       
       //  Log the request and response
-      await insertRequestResponse(
-        '/resultadoOperaciones',
-        req.headers,
-        req.body,
-        requestTimestamp,
-        { resultado: 0 }, //  Response payload
-        200,
-        responseTimestamp
-      );
-
-      return res.status(200).json({
-        resultado: 0,
+      await insertRequestResponse({
+        route: '/resultadoOperaciones',
+        requestHeaders: req.headers,
+        requestPayload: req.body,
+        requestTimestamp: requestTimestamp,
+        responsePayload: responsePayload,
+        responseStatus: 200,
+        responseTimestamp: responseTimestamp
       });
+
+      return res.status(200).json(responsePayload);
+
     } catch (error) {
       console.error("Error in resultadoOperaciones:", {
         message: error.message,
@@ -144,23 +109,24 @@ module.exports = {
       });
 
       const responseTimestamp = moment().tz('America/Mexico_City');
-      
-      //  Log the request and error response
-      await insertRequestResponse(
-        '/resultadoOperaciones',
-        req.headers,
-        req.body,
-        requestTimestamp,
-        { error: error.message },
-        500,
-        responseTimestamp
-      );
-
-      return res.status(500).json({
+      const errorResponse = { 
         resultado: -1,
         error: "Error processing operation results",
-        details: error.message
+        details: error.message 
+      };
+      
+      //  Log the request and error response
+      await insertRequestResponse({
+        route: '/resultadoOperaciones',
+        requestHeaders: req.headers,
+        requestPayload: req.body,
+        requestTimestamp: requestTimestamp,
+        responsePayload: errorResponse,
+        responseStatus: 500,
+        responseTimestamp: responseTimestamp
       });
+
+      return res.status(500).json(errorResponse);
     }
   },
 };

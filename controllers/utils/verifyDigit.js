@@ -16,7 +16,7 @@ function verifyDigit(resultado) {
     digitoVerificadorCliente < 0 ||
     digitoVerificadorCliente > 999999999
   ) {
-    return -6;
+    return -2;
   }
 
   // If all checks pass
