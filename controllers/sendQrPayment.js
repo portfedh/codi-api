@@ -119,17 +119,6 @@ module.exports = {
       // Capture response timestamp in Mexico City time
       const responseTimestamp = moment().tz('America/Mexico_City');
 
-      // Log the request and response
-      await insertRequestResponse({
-        route: '/v2/codi/qr',
-        requestHeaders: req.headers,
-        requestPayload: req.body,
-        requestTimestamp: requestTimestamp,
-        responsePayload: response.data,
-        responseStatus: response.status,
-        responseTimestamp: responseTimestamp
-      });
-
       // Verify Banxico response code
       const banxicoResult = verifyBanxicoResponse(response);
       if (!banxicoResult.success) {
@@ -170,11 +159,29 @@ module.exports = {
       });
       // console.log("\n🔵 QR Code: ", qrCode);
 
-      // Send the QR code to the client
-      return res.status(200).json({
+      // Prepare the response data
+      const responseData = {
         qrCode,
         data: response.data,
-      });
+      };
+
+      // Send response immediately
+      res.status(200).json(responseData);
+
+      // Log the request and response asynchronously
+      try {
+        await insertRequestResponse({
+          route: '/v2/codi/qr',
+          requestHeaders: req.headers,
+          requestPayload: req.body,
+          requestTimestamp: requestTimestamp,
+          responsePayload: response.data,
+          responseStatus: 200,
+          responseTimestamp: responseTimestamp
+        });
+      } catch (logError) {
+        console.error("Error logging request/response:", logError);
+      }
     } catch (error) {
       console.error("Error in sendQrPayment:", {
         message: error.message,
@@ -183,23 +190,26 @@ module.exports = {
         response: error.response?.data
       });
 
-      const responseTimestamp = moment().tz('America/Mexico_City');
-      
-      // Log the request and response with error details
-      await insertRequestResponse({
-        route: '/v2/codi/qr',
-        requestHeaders: req.headers,
-        requestPayload: req.body,
-        requestTimestamp: requestTimestamp,
-        responsePayload: { error: error.message },
-        responseStatus: 500,
-        responseTimestamp: responseTimestamp
-      });
-
-      return res.status(500).json({
+      // Send error response immediately
+      res.status(500).json({
         success: false,
         error: "Error processing QR request",
       });
+
+      // Log the error asynchronously
+      try {
+        await insertRequestResponse({
+          route: '/v2/codi/qr',
+          requestHeaders: req.headers,
+          requestPayload: req.body,
+          requestTimestamp: requestTimestamp,
+          responsePayload: { error: error.message },
+          responseStatus: 500,
+          responseTimestamp: moment().tz('America/Mexico_City')
+        });
+      } catch (logError) {
+        console.error("Error logging error response:", logError);
+      }
     }
   },
 };

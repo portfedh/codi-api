@@ -87,18 +87,23 @@ module.exports = {
       //  Capture response timestamp in Mexico City time
       const responseTimestamp = moment().tz('America/Mexico_City');
       
-      //  Log the request and response
-      await insertRequestResponse({
-        route: '/resultadoOperaciones',
-        requestHeaders: req.headers,
-        requestPayload: req.body,
-        requestTimestamp: requestTimestamp,
-        responsePayload: responsePayload,
-        responseStatus: 200,
-        responseTimestamp: responseTimestamp
-      });
+      // Send response immediately
+      res.status(200).json(responsePayload);
 
-      return res.status(200).json(responsePayload);
+      // Log the request and response asynchronously
+      try {
+        await insertRequestResponse({
+          route: '/resultadoOperaciones',
+          requestHeaders: req.headers,
+          requestPayload: req.body,
+          requestTimestamp: requestTimestamp,
+          responsePayload: responsePayload,
+          responseStatus: 200,
+          responseTimestamp: responseTimestamp
+        });
+      } catch (logError) {
+        console.error("Error logging request/response:", logError);
+      }
 
     } catch (error) {
       console.error("Error in resultadoOperaciones:", {
@@ -108,25 +113,29 @@ module.exports = {
         response: error.response?.data
       });
 
-      const responseTimestamp = moment().tz('America/Mexico_City');
       const errorResponse = { 
         resultado: -1,
         error: "Error processing operation results",
         details: error.message 
       };
-      
-      //  Log the request and error response
-      await insertRequestResponse({
-        route: '/resultadoOperaciones',
-        requestHeaders: req.headers,
-        requestPayload: req.body,
-        requestTimestamp: requestTimestamp,
-        responsePayload: errorResponse,
-        responseStatus: 500,
-        responseTimestamp: responseTimestamp
-      });
 
-      return res.status(500).json(errorResponse);
+      // Send error response immediately
+      res.status(500).json(errorResponse);
+
+      // Log the error asynchronously
+      try {
+        await insertRequestResponse({
+          route: '/resultadoOperaciones',
+          requestHeaders: req.headers,
+          requestPayload: req.body,
+          requestTimestamp: requestTimestamp,
+          responsePayload: errorResponse,
+          responseStatus: 500,
+          responseTimestamp: moment().tz('America/Mexico_City')
+        });
+      } catch (logError) {
+        console.error("Error logging error response:", logError);
+      }
     }
   },
 };

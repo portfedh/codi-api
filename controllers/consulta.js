@@ -132,17 +132,6 @@ module.exports = {
       const responseTimestamp = moment().tz('America/Mexico_City')
       // console.log("response timestamp", responseTimestamp)
 
-      //  Log the request and response
-      await insertRequestResponse({
-        route: '/v2/codi/consulta',
-        requestHeaders: req.headers,
-        requestPayload: req.body,
-        requestTimestamp: requestTimestamp,
-        responsePayload: response.data,
-        responseStatus: response.status,
-        responseTimestamp: responseTimestamp
-      });
-
       // Verify Banxico response code
       const banxicoResult = verifyBanxicoResponse(response);
       if (!banxicoResult.success) {
@@ -175,19 +164,52 @@ module.exports = {
         });
       }
 
-      return res.status(200).json({
+      // Send response immediately
+      res.status(200).json({
         success: true,
         data: response.data,
       });
+
+      // Log the request and response asynchronously
+      try {
+        await insertRequestResponse({
+          route: '/v2/codi/consulta',
+          requestHeaders: req.headers,
+          requestPayload: req.body,
+          requestTimestamp: requestTimestamp,
+          responsePayload: response.data,
+          responseStatus: 200,
+          responseTimestamp: responseTimestamp
+        });
+      } catch (logError) {
+        console.error("Error logging request/response:", logError);
+      }
     } catch (error) {
       console.error(
         "Error en consulta del Estado de un Mensaje de Cobro: ",
         error
       );
-      return res.status(500).json({
+
+      // Send error response immediately
+      res.status(500).json({
         success: false,
         error: "Error processing QR request",
       });
+
+      // Log the error asynchronously
+      try {
+        await insertRequestResponse({
+          route: '/v2/codi/consulta',
+          requestHeaders: req.headers,
+          requestPayload: req.body,
+          requestTimestamp: requestTimestamp,
+          responsePayload: { error: error.message },
+          responseStatus: 500,
+          responseTimestamp: moment().tz('America/Mexico_City')
+        });
+      } catch (logError) {
+        console.error("Error logging error response:", logError);
+      }
     }
   },
 };
