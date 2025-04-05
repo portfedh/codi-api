@@ -4,7 +4,6 @@
 - Arreglar firma de resultado operaciones
 - poner d = {} ?
 - Hacer una cédula de resultados
-- IP de Banco de Mexico producción para CORS
 - Tratar un URL de Banco de Mexico y si tarda, intentar en la utl secundaria
 - Add unit tests to all code
 - Update descriptions
@@ -14,7 +13,6 @@
 ## Efficiency Measures
 
 - Index database tables: Speed up queries
-- Cache management: Redis, node-cache, lru-cache
 
 ## Security Measures
 
