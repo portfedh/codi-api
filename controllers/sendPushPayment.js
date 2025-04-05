@@ -130,13 +130,13 @@ module.exports = {
 
       //  Log the request and response
       await insertRequestResponse(
-        '/v2/codi/push', //  Route
-        req.headers, //  Request headers
-        requestBody, // Request payload
-        requestTimestamp, // Request timestamp
-        response.data, //  Response payload
-        response.status, //  Response status code
-        responseTimestamp // Response timestamp
+        '/v2/codi/push',
+        req.headers,
+        requestBody,
+        requestTimestamp,
+        response.data,
+        response.status,
+        responseTimestamp
       );
       // ToDo: Add verifications to DB
 

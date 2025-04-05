@@ -1,9 +1,6 @@
 # ToDo
 
 - poner d = {} ?
-- Epoch en mexico city time a UTC
-- Cambiar fetch vs Axios
-- Guardar requests, responses en base de datos
 - Verificar responses se guarden en base cuando hay todos los errores
 - Verificar que los error codes estén todos bien
 - Hacer una cédula de resultados
@@ -11,6 +8,9 @@
 - Request validation
 - IP de Banco de Mexico producción para CORS
 - Tratar un URL de Banco de Mexico y si tarda, intentar en la utl secundaria
+- Add unit tests to all code
+- Update descriptions
+- Update swagger
 
 ## Efficiency Measures
 
@@ -24,7 +24,7 @@
 - Extensive Logging / monitoring
 - Create website api key and url endpoint for quick rotation
 
-## Key management Options:
+## Future: Key management Options
 
 Option: Store API key en KMS:
 

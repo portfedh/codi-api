@@ -57,17 +57,17 @@ module.exports = {
         
         //  Capture response timestamp in Mexico City time
         const responseTimestamp = moment().tz('America/Mexico_City');
-        console.log("Response timestamp", responseTimestamp)
+        // console.log("Response timestamp", responseTimestamp)
         
         //  Log the request and response
         await insertRequestResponse(
-          '/resultadoOperaciones', //  Route
-          req.headers, //  Request headers
-          req.body, // Request payload
-          requestTimestamp, // Request timestamp
+          '/resultadoOperaciones',
+          req.headers,
+          req.body,
+          requestTimestamp,
           { resultado: -8 }, //  Response payload
-          200, //  Response status code
-          responseTimestamp // Response timestamp
+          200,
+          responseTimestamp
         );
 
         return res.status(200).json({
@@ -99,13 +99,13 @@ module.exports = {
           
           //  Log the request and response
           await insertRequestResponse(
-            '/resultadoOperaciones', //  Route
-            req.headers, //  Request headers
-            req.body, // Request payload
-            requestTimestamp, // Request timestamp
+            '/resultadoOperaciones',
+            req.headers,
+            req.body,
+            requestTimestamp,
             { resultado: checkResult, temp_request_body: req.body }, //  Response payload
-            200, //  Response status code
-            responseTimestamp // Response timestamp
+            200,
+            responseTimestamp
           );
 
           return res.status(200).json({
@@ -123,13 +123,13 @@ module.exports = {
       
       //  Log the request and response
       await insertRequestResponse(
-        '/resultadoOperaciones', //  Route
-        req.headers, //  Request headers
-        req.body, // Request payload
-        requestTimestamp, // Request timestamp
+        '/resultadoOperaciones',
+        req.headers,
+        req.body,
+        requestTimestamp,
         { resultado: 0 }, //  Response payload
-        200, //  Response status code
-        responseTimestamp // Response timestamp
+        200,
+        responseTimestamp
       );
 
       return res.status(200).json({
