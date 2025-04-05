@@ -14,7 +14,6 @@ const qrValidationRules = [
       const hasTwoDecimals = /^\d+(\.\d{1,2})?$/.test(value);
       // Ensure it is within the valid range
       // 0 is allowed: User will define the amount.
-      // To DO: Check minimum allowed amount with Banxico
       return hasTwoDecimals && numValue >= 0 && numValue <= 999999999999.99;
     })
     .withMessage(
@@ -34,7 +33,7 @@ const qrValidationRules = [
       return isValid;
     })
     .withMessage(
-      "ReferenciaNumerica must be an alphanumeric string or number with a maximum length of 7 characters and no special characters"
+      "ReferenciaNumerica must be a string or number with a maximum length of 7 characters and no special characters"
     ),
 
   body("concepto")
