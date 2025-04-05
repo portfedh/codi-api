@@ -1,6 +1,43 @@
+/**
+ * @module validators/consultaValidationRules
+ * @description Validation rules for payment consultation requests
+ * 
+ * This module contains validation rules for payment consultation requests using express-validator.
+ * It validates the following fields:
+ * - folioCodi: CODI payment reference number
+ * - tpg: Payment type group
+ * - npg: Payment number group
+ * - fechaInicial: Initial date for consultation
+ * - fechaFinal: Final date for consultation
+ */
+
 const { body } = require("express-validator");
 
+/**
+ * @constant {Array} consultaValidationRules
+ * @description Array of validation rules for payment consultation requests
+ * 
+ * @example
+ * // Valid request body example:
+ * {
+ *   folioCodi: "1234567890",
+ *   tpg: 1,
+ *   npg: 1,
+ *   fechaInicial: "20230101",
+ *   fechaFinal: "20230131"
+ * }
+ */
 const consultaValidationRules = [
+  /**
+   * @name folioCodi
+   * @description Validates the CODI payment reference number
+   * @type {string}
+   * @rules
+   * - Must be a string
+   * - Must not be empty
+   * - Must be exactly 10 or 20 characters long
+   * @example "1234567890" or "12345678901234567890"
+   */
   body("folioCodi")
     .isString()
     .notEmpty()
@@ -10,6 +47,15 @@ const consultaValidationRules = [
     })
     .withMessage("FolioCodi must be 10 or 20 characters long"),
 
+  /**
+   * @name tpg
+   * @description Validates the payment type group
+   * @type {number|string}
+   * @rules
+   * - Must not be empty
+   * - Must be a number between 1 and 100
+   * @example 1 or "1"
+   */
   body("tpg")
     .notEmpty()
     .withMessage("tpg is required")
@@ -19,6 +65,15 @@ const consultaValidationRules = [
     })
     .withMessage("tpg must be a number between 1 and 100"),
 
+  /**
+   * @name npg
+   * @description Validates the payment number group
+   * @type {number|string}
+   * @rules
+   * - Must not be empty
+   * - Must be a number between 1 and 2147483647
+   * @example 1 or "1"
+   */
   body("npg")
     .notEmpty()
     .withMessage("npg is required")
@@ -28,6 +83,17 @@ const consultaValidationRules = [
     })
     .withMessage("npg must be a number between 1 and 2147483647"),
 
+  /**
+   * @name fechaInicial
+   * @description Validates the initial date for consultation
+   * @type {string}
+   * @rules
+   * - Must not be empty
+   * - Must be exactly 8 characters in YYYYMMDD format
+   * - Must contain only digits
+   * - Must be a valid date
+   * @example "20230101" (January 1, 2023)
+   */
   body("fechaInicial")
     .notEmpty()
     .withMessage("fechaInicial is required")
@@ -51,6 +117,20 @@ const consultaValidationRules = [
     })
     .withMessage("fechaInicial must be a valid date in YYYYMMDD format"),
 
+  /**
+   * @name fechaFinal
+   * @description Validates the final date for consultation
+   * @type {string}
+   * @rules
+   * - Must not be empty
+   * - Can be "0" (no end date)
+   * - If not "0", must be exactly 8 characters in YYYYMMDD format
+   * - Must contain only digits
+   * - Must be a valid date
+   * - Must be after fechaInicial
+   * - Must not be in the future
+   * @example "20230131" (January 31, 2023) or "0"
+   */
   body("fechaFinal")
     .notEmpty()
     .withMessage("fechaFinal is required")

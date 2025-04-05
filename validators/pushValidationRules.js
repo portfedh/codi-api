@@ -1,7 +1,44 @@
+/**
+ * @module validators/pushValidationRules
+ * @description Validation rules for push payment requests
+ * 
+ * This module contains validation rules for push payment requests using express-validator.
+ * It validates the following fields:
+ * - celularCliente: Client's phone number
+ * - monto: Payment amount
+ * - referenciaNumerica: Numeric reference
+ * - concepto: Payment concept
+ * - vigencia: Payment validity period
+ */
+
 const { body } = require("express-validator");
 const validAsciiCharacters = require("../config/validAsciiCharacters");
 
+/**
+ * @constant {Array} pushValidationRules
+ * @description Array of validation rules for push payment requests
+ * 
+ * @example
+ * // Valid request body example:
+ * {
+ *   celularCliente: "5512345678",
+ *   monto: 95.63,
+ *   referenciaNumerica: "1234567",
+ *   concepto: "Payment for services",
+ *   vigencia: "0"
+ * }
+ */
 const pushValidationRules = [
+  /**
+   * @name celularCliente
+   * @description Validates the client's phone number
+   * @type {string|number}
+   * @rules
+   * - Must not be empty
+   * - Must contain exactly 10 numeric digits
+   * - Can be provided as string or number
+   * @example "5512345678" or 5512345678
+   */
   body("celularCliente")
     .notEmpty()
     .withMessage("celularCliente cannot be empty")
@@ -13,6 +50,17 @@ const pushValidationRules = [
     })
     .withMessage("CelularCliente must contain exactly 10 numeric digits"),
 
+  /**
+   * @name monto
+   * @description Validates the payment amount
+   * @type {number|string}
+   * @rules
+   * - Must not be empty
+   * - Must be a numeric value
+   * - Must have at most 2 decimal places
+   * - Must be between 0 and 999,999,999,999.99
+   * @example 95.63 or "95.63"
+   */
   body("monto")
     .notEmpty()
     .withMessage("Monto cannot be empty")
@@ -31,6 +79,17 @@ const pushValidationRules = [
       "Monto must be a number between 0 and 999,999,999,999.99 with at most two decimal places"
     ),
 
+  /**
+   * @name referenciaNumerica
+   * @description Validates the numeric reference
+   * @type {string|number}
+   * @rules
+   * - Can be empty (will be converted to "0")
+   * - Must be alphanumeric
+   * - Maximum length of 7 characters
+   * - No special characters allowed
+   * @example "1234567" or 1234567
+   */
   body("referenciaNumerica")
     .customSanitizer((value) => {
       // If the value is an empty string, convert it to "0"
@@ -47,6 +106,16 @@ const pushValidationRules = [
       "ReferenciaNumerica must be a string or number with a maximum length of 7 characters and no special characters"
     ),
 
+  /**
+   * @name concepto
+   * @description Validates the payment concept
+   * @type {string}
+   * @rules
+   * - Must be a string
+   * - Length between 1 and 40 characters
+   * - Only allowed ASCII characters (defined in validAsciiCharacters config)
+   * @example "Payment for services"
+   */
   body("concepto")
     .isString()
     .isLength({ min: 1, max: 40 })
@@ -67,6 +136,21 @@ const pushValidationRules = [
     })
     .withMessage("Concepto contains invalid characters"),
 
+  /**
+   * @name vigencia
+   * @description Validates the payment validity period
+   * @type {string|number}
+   * @rules
+   * - Must not be empty
+   * - Special case: "0" is valid (no expiration)
+   * - Must be numeric if not "0"
+   * - Maximum length of 15 digits
+   * - Must be a valid timestamp
+   * - Must be in the future
+   * - Cannot exceed one year from now
+   * - Accepts both seconds and milliseconds timestamps
+   * @example "0" or "1672531200000" (milliseconds) or "1672531200" (seconds)
+   */
   body("vigencia")
     .notEmpty()
     .withMessage("Vigencia cannot be empty")
