@@ -32,7 +32,6 @@ const { validateRequest } = require("../validators/validateRequest");
 // Swagger Documentation
 router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-
 /**
  * @swagger
  * /v2/codi/qr:
@@ -371,97 +370,6 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-
-/**
- * @swagger
- * /v2/resultadoOperaciones:
- *   post:
- *     summary: Process operation results (v2)
- *     description: Handles callbacks with operation results (current version)
- *     tags: [Operations]
- *     security:
- *       - ApiKeyAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - operationId
- *               - status
- *             properties:
- *               operationId:
- *                 type: string
- *                 description: ID of the operation
- *                 example: "OP-2023-78901"
- *               status:
- *                 type: string
- *                 description: Status of the operation
- *                 enum: [COMPLETED, REJECTED, PENDING, CANCELLED]
- *                 example: "COMPLETED"
- *               timestamp:
- *                 type: string
- *                 format: date-time
- *                 description: Time when the operation status changed
- *                 example: "2023-04-15T14:30:45Z"
- *               details:
- *                 type: object
- *                 description: Additional operation details
- *           examples:
- *             successfulOperation:
- *               summary: Successful operation
- *               value:
- *                 operationId: "OP-2023-78901"
- *                 status: "COMPLETED"
- *                 timestamp: "2023-04-15T14:30:45Z"
- *             failedOperation:
- *               summary: Failed operation
- *               value:
- *                 operationId: "OP-2023-78902"
- *                 status: "REJECTED"
- *                 timestamp: "2023-04-15T14:35:22Z"
- *                 details:
- *                   reason: "Insufficient funds"
- *                   code: "INS_FUNDS"
- *     responses:
- *       200:
- *         description: Operation results processed successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: "Operation result processed successfully"
- *                 processingId:
- *                   type: string
- *                   description: ID of the processing job
- *                   example: "PROC-12345"
- *       400:
- *         description: Invalid request data
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *             examples:
- *               invalidOperation:
- *                 summary: Invalid operation ID
- *                 value:
- *                   message: "Operation not found"
- *                   code: "OP_NOT_FOUND"
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
-router.post("/resultadoOperaciones", resultado.resultadoOperaciones);
 
 /**
  * @swagger

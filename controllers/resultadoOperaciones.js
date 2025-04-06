@@ -21,7 +21,7 @@ const { verifyMensajeCobro } = require("./utils/verifyMensajeCobro");
 const { verifyCrtDeveloper } = require("./utils/verifyCrtDeveloper");
 const { verifyIdMensajeCobro } = require("./utils/verifyIdMensajeCobro");
 const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
-const { insertRequestResponse } = require('./utils/insertRequestResponse');
+const { insertRequestResponse } = require("./utils/insertRequestResponse");
 const {
   verifyResultadoMensajeDeCobro,
 } = require("./utils/verifyResultadoMensajeCobro");
@@ -42,9 +42,10 @@ module.exports = {
    *                   0 if successful, negative values for specific errors
    */
   resultadoOperaciones: async (req, res) => {
-    console.log("Request body: ", req.body)
+    // console.log("Request body: ", req.body);
+
     //  Capture request timestamp in Mexico City time
-    const requestTimestamp = moment().tz('America/Mexico_City');
+    const requestTimestamp = moment().tz("America/Mexico_City");
     let responsePayload = { resultado: 0 }; // Default success response
 
     try {
@@ -54,7 +55,7 @@ module.exports = {
       const { publicKeyBanxico } = getBanxicoCredentials();
 
       const isVerified = verifySignature(resultado, publicKeyBanxico);
-      
+
       if (!isVerified) {
         console.log("Signature verification failed. Resultado -8");
         responsePayload = { resultado: -8 };
@@ -74,7 +75,9 @@ module.exports = {
         for (let i = 0; i < checks.length; i++) {
           const checkResult = checks[i](resultado);
           if (checkResult !== 0) {
-            console.log(`Check ${checks[i].name} failed with result ${checkResult}`);
+            console.log(
+              `Check ${checks[i].name} failed with result ${checkResult}`
+            );
             responsePayload = { resultado: checkResult };
             break;
           }
@@ -86,38 +89,37 @@ module.exports = {
       }
 
       //  Capture response timestamp in Mexico City time
-      const responseTimestamp = moment().tz('America/Mexico_City');
-      
+      const responseTimestamp = moment().tz("America/Mexico_City");
+
       // Send response immediately
       res.status(200).json(responsePayload);
 
       // Log the request and response asynchronously
       try {
         await insertRequestResponse({
-          route: '/resultadoOperaciones',
+          route: "/v2/resultadoOperaciones",
           requestHeaders: req.headers,
           requestPayload: req.body,
           requestTimestamp: requestTimestamp,
           responsePayload: responsePayload,
           responseStatus: 200,
-          responseTimestamp: responseTimestamp
+          responseTimestamp: responseTimestamp,
         });
       } catch (logError) {
         console.error("Error logging request/response:", logError);
       }
-
     } catch (error) {
       console.error("Error in resultadoOperaciones:", {
         message: error.message,
         stack: error.stack,
         code: error.code,
-        response: error.response?.data
+        response: error.response?.data,
       });
 
-      const errorResponse = { 
+      const errorResponse = {
         resultado: -1,
         error: "Error processing operation results",
-        details: error.message 
+        details: error.message,
       };
 
       // Send error response immediately
@@ -126,13 +128,13 @@ module.exports = {
       // Log the error asynchronously
       try {
         await insertRequestResponse({
-          route: '/resultadoOperaciones',
+          route: "/v2/resultadoOperaciones",
           requestHeaders: req.headers,
           requestPayload: req.body,
           requestTimestamp: requestTimestamp,
           responsePayload: errorResponse,
           responseStatus: 500,
-          responseTimestamp: moment().tz('America/Mexico_City')
+          responseTimestamp: moment().tz("America/Mexico_City"),
         });
       } catch (logError) {
         console.error("Error logging error response:", logError);

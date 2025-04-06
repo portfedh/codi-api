@@ -25,6 +25,7 @@ function verifySignature(object, publicKeyCertificate) {
     let signatureBase64;
 
     if (object.datosMC) {
+      // console.log("\nProcesando datos de tipo datosMC");
       sourceType = "datosMC";
       inputJson = object.datosMC;
       epoch = object.epoch;
@@ -32,8 +33,8 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
-      // console.log("\nProcesando datos de tipo datosMC");
     } else if (object.peticionConsulta) {
+      // console.log("\nProcesando datos de tipo peticionConsulta");
       sourceType = "peticionConsulta";
       inputJson = object.peticionConsulta;
       epoch = object.epoch;
@@ -41,8 +42,8 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
-      // console.log("\nProcesando datos de tipo peticionConsulta");
     } else if (object.cadenaMC) {
+      // console.log("\nProcesando datos de tipo cadenaMC");
       sourceType = "cadenaMC";
       inputJson = object.cadenaMC;
       epoch = object.epoch;
@@ -50,8 +51,8 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
-      // console.log("\nProcesando datos de tipo cadenaMC");
     } else if (object.folioCodi) {
+      // console.log("\nProcesando datos de tipo folioCodi");
       sourceType = "folioCodi";
       inputJson = object.folioCodi;
       epoch = object.epoch;
@@ -59,8 +60,8 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
-      // console.log("\nProcesando datos de tipo folioCodi");
     } else if (object.resultado) {
+      // console.log("\nProcesando datos de tipo resultado");
       sourceType = "resultado";
       inputJson = object.resultado;
       epoch = object.epoch;
@@ -68,16 +69,14 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
-      // console.log("\nProcesando datos de tipo resultado");
     } else if (object.cadenaInformacion) {
+      // console.log("\nProcesando datos de tipo cadenaInformación");
       sourceType = "cadenaInformacion";
-      inputJson = { cadenaInformacion: object.cadenaInformacion };
+      inputJson = object.cadenaInformacion;
       jsonString =
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
-      epoch = object.cadenaInformacion.horaEnvioMensaje;
-      stringifiedJson = `${jsonString}${epoch}}`;
+      stringifiedJson = `${jsonString}`;
       signatureBase64 = object.selloDigital;
-      // console.log("\nProcesando datos de tipo cadenaInformación");
     } else {
       throw new Error("No valid data found in the object");
     }
@@ -87,7 +86,6 @@ function verifySignature(object, publicKeyCertificate) {
     // console.log("\nEpoch a verificar:", epoch);
     // console.log("\nCadena a verificar:", stringifiedJson);
     // console.log("\nFirma a verificar:", signatureBase64);
-
     // console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
 
     // Create verifier
@@ -105,6 +103,7 @@ function verifySignature(object, publicKeyCertificate) {
       signatureBase64,
       "base64"
     );
+
     // console.log("\nFirma verificada: ", isVerified);
 
     return isVerified;
