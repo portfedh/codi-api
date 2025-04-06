@@ -4,11 +4,12 @@
 - Arreglar firma de resultado operaciones
 - poner d = {} ?
 - Hacer una cédula de resultados
-- Tratar un URL de Banco de Mexico y si tarda, intentar en la utl secundaria
 - Add unit tests to all code
 - Update descriptions
 - Update swagger
 - Update unit tests
+- Health check endpoints
+- Blue green deployment
 
 ## Efficiency Measures
 
@@ -29,3 +30,5 @@ Option: Store API key en KMS:
 - CyberArk Conjur Open Source
 - AWS Key Management Service (KMS)
 - Google Cloud KMS
+
+## Notes
