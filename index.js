@@ -6,7 +6,6 @@ const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
 const rfs = require("rotating-file-stream");
-const supabase = require("./config/supabase");
 
 // Express
 // =======
@@ -87,7 +86,13 @@ const corsOptions = {
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+    "Origin",
+  ],
   exposedHeaders: ["Content-Range", "X-Content-Range"],
   maxAge: 86400, // Cache preflight requests for 24 hours
 };
