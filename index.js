@@ -29,8 +29,8 @@ const accessLogStream = rfs.createStream("access.log", {
 });
 
 // Setup morgan logging
-// Use 'combined' format for production and 'dev' for development
-const morganFormat = process.env.NODE_ENV === "production" ? "combined" : "dev";
+// Use a custom format to always include the IP address
+const morganFormat = ":remote-addr - :method :url :status :response-time ms";
 app.use(morgan(morganFormat, { stream: accessLogStream })); // Log to file
 app.use(morgan(morganFormat)); // Also log to console
 
