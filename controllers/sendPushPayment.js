@@ -13,7 +13,7 @@ const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
 const { generateSignature } = require("./utils/generateDigitalSignature");
 const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
-const { insertRequestResponse } = require('./utils/insertRequestResponse');
+const { insertRequestResponse } = require("./utils/insertRequestResponse");
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 const { makeRequestWithFallback } = require("./utils/makeRequestWithFallback");
 
@@ -46,18 +46,19 @@ module.exports = {
    * @returns {string} [response.error] - Error message if operation failed
    */
   sendPushPayment: async (req, res) => {
-
     //  Capture request timestamp in Mexico City time
-    const requestTimestamp = moment().tz('America/Mexico_City')
+    const requestTimestamp = moment().tz("America/Mexico_City");
     // console.log("Req Timestamp", requestTimestamp)
 
     try {
       // Get payment data
-      const { celularCliente, monto, referenciaNumerica, concepto, vigencia } = req.body;
+      const { celularCliente, monto, referenciaNumerica, concepto, vigencia } =
+        req.body;
       // console.log("\n🔵 Datos de pago: ", req.body);
 
       // Get url endpoints
-      const { primary: primaryUrl, secondary: secondaryUrl } = getCodiPushUrls();
+      const { primary: primaryUrl, secondary: secondaryUrl } =
+        getCodiPushUrls();
       // console.log("\n🔵 Push Endpoints: ", { primaryUrl, secondaryUrl });
 
       // Get seller api key
@@ -126,7 +127,7 @@ module.exports = {
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
       //  Capture response timestamp in Mexico City time
-      const responseTimestamp = moment().tz('America/Mexico_City')
+      const responseTimestamp = moment().tz("America/Mexico_City");
       // console.log("response timestamp", responseTimestamp)
 
       // Verify Banxico response code
@@ -167,13 +168,13 @@ module.exports = {
       // Log the request and response asynchronously
       try {
         await insertRequestResponse({
-          route: '/v2/codi/push',
+          route: "/v2/codi/push",
           requestHeaders: req.headers,
           requestPayload: req.body,
           requestTimestamp: requestTimestamp,
           responsePayload: response.data,
           responseStatus: 200,
-          responseTimestamp: responseTimestamp
+          responseTimestamp: responseTimestamp,
         });
       } catch (logError) {
         console.error("Error logging request/response:", logError);
@@ -183,7 +184,7 @@ module.exports = {
         message: error.message,
         stack: error.stack,
         code: error.code,
-        response: error.response?.data
+        response: error.response?.data,
       });
 
       // Send error response immediately
@@ -195,13 +196,13 @@ module.exports = {
       // Log the error asynchronously
       try {
         await insertRequestResponse({
-          route: '/v2/codi/push',
+          route: "/v2/codi/push",
           requestHeaders: req.headers,
           requestPayload: req.body,
           requestTimestamp: requestTimestamp,
           responsePayload: { error: error.message },
           responseStatus: 500,
-          responseTimestamp: moment().tz('America/Mexico_City')
+          responseTimestamp: moment().tz("America/Mexico_City"),
         });
       } catch (logError) {
         console.error("Error logging error response:", logError);

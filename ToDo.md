@@ -1,8 +1,9 @@
 # ToDo
 
-- poner d = {} ?
+- poner d = {} (QR)
 - Hacer una cédula de resultados
-- Firewall con IP blocking
+- Poner en db si es prod o dev
+- Seguir documentación para envío: string o int
 - Add unit tests to all code
 - Update descriptions
 - Update swagger
@@ -18,6 +19,8 @@
 
 - Usar HTTPS para comunicarse con todo el API
 - Rate limiting
+- IP banning
+- Encryption at rest
 - Extensive Logging / monitoring
 
 - Use .htaccess or equivalent server rules to block access to hidden files (e.g., .env, .git).
