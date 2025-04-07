@@ -42,7 +42,7 @@ module.exports = {
    *                   0 if successful, negative values for specific errors
    */
   resultadoOperaciones: async (req, res) => {
-    // console.log("Request body: ", req.body);
+    console.log("Request body: ", req.body);
 
     //  Capture request timestamp in Mexico City time
     const requestTimestamp = moment().tz("America/Mexico_City");
