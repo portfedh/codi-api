@@ -50,6 +50,7 @@ const allowedOrigins = [
   // Development domains
   "http://localhost:5173",
   "http://localhost:2121",
+  "http://localhost:3131",
   // Salsa Candela domains
   "https://codi.salsa-candela.com",
   "https://salsa-candela.com",
@@ -92,6 +93,7 @@ const corsOptions = {
     "X-Requested-With",
     "Accept",
     "Origin",
+    "x-api-key",
   ],
   exposedHeaders: ["Content-Range", "X-Content-Range"],
   maxAge: 86400, // Cache preflight requests for 24 hours
