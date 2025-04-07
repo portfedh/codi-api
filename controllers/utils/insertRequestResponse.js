@@ -1,5 +1,5 @@
-const supabase = require('../../config/supabase');
-
+const supabase = require("../../config/supabase");
+const environment = process.env.NODE_ENV || "N/A";
 /**
  * Inserts an API request and its corresponding response into Supabase.
  *
@@ -20,56 +20,56 @@ async function insertRequestResponse({
   requestTimestamp,
   responsePayload,
   responseStatus,
-  responseTimestamp
+  responseTimestamp,
 }) {
   try {
     // Get API key from request headers
-    const apiKey = requestHeaders['x-api-key'];
+    const apiKey = requestHeaders["x-api-key"];
 
     // Ensure timestamps are in ISO format
-    const formattedRequestTimestamp = requestTimestamp.format()
-    const formattedResponseTimestamp = responseTimestamp.format()
+    const formattedRequestTimestamp = requestTimestamp.format();
+    const formattedResponseTimestamp = responseTimestamp.format();
 
     // 1. Insert the request
     const { data: requestData, error: requestError } = await supabase
-      .from('requests')
+      .from("requests")
       .insert([
         {
           route,
           request_payload: requestPayload,
           request_timestamp: formattedRequestTimestamp,
-          api_key: apiKey
+          api_key: apiKey,
+          environment,
         },
       ])
-      .select('id') //  Important: Retrieve the generated request ID
+      .select("id") //  Important: Retrieve the generated request ID
       .single();
 
     if (requestError) {
-      console.error('Error inserting API request:', requestError);
+      console.error("Error inserting API request:", requestError);
       return; //  Or throw an error if you want to halt execution
     }
 
     const apiRequestId = requestData.id;
 
     // 2. Insert the response, linking it to the request
-    const { error: responseError } = await supabase
-      .from('responses')
-      .insert([
-        {
-          api_request_id: apiRequestId,
-          response_payload: responsePayload,
-          response_timestamp: formattedResponseTimestamp,
-          response_status: responseStatus,
-        },
-      ]);
+    const { error: responseError } = await supabase.from("responses").insert([
+      {
+        api_request_id: apiRequestId,
+        response_payload: responsePayload,
+        response_timestamp: formattedResponseTimestamp,
+        response_status: responseStatus,
+        environment,
+      },
+    ]);
 
     if (responseError) {
-      console.error('Error inserting API response:', responseError);
+      console.error("Error inserting API response:", responseError);
     } else {
-      console.log('API request and response logged successfully.');
+      console.log("API request and response logged successfully.");
     }
   } catch (error) {
-    console.error('Error logging API data:', error);
+    console.error("Error logging API data:", error);
   }
 }
 
