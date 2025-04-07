@@ -105,6 +105,17 @@ module.exports = {
         crtLogIn,
         crtOper,
       };
+
+      // const oldRequestBody = {
+      //   datosMC,
+      //   selloDigital,
+      //   epoch,
+      //   crtLogIn,
+      //   crtOper,
+      // };
+
+      // const requestBody = `d=${JSON.stringify(oldRequestBody)}`;
+
       // console.log("\n🔵 Request body a Banxico: ", requestBody);
 
       const isVerified = verifySignature(requestBody, publicKey);
@@ -139,6 +150,7 @@ module.exports = {
       // Verify that crtBdeM value matches our records
       const crtBanxicoVerified = compareCrtBanxico(crtBanxico, response.data);
       // console.log("\n🔵 Certificado de Banxico verificado: ", crtBanxicoVerified);
+
       if (!crtBanxicoVerified) {
         return res.status(400).json({
           success: false,

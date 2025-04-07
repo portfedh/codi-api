@@ -25,7 +25,7 @@ function verifySignature(object, publicKeyCertificate) {
     let signatureBase64;
 
     if (object.datosMC) {
-      // console.log("\nProcesando datos de tipo datosMC");
+      console.log("\nProcesando datos de tipo datosMC");
       sourceType = "datosMC";
       inputJson = object.datosMC;
       epoch = object.epoch;
@@ -34,7 +34,7 @@ function verifySignature(object, publicKeyCertificate) {
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
     } else if (object.peticionConsulta) {
-      // console.log("\nProcesando datos de tipo peticionConsulta");
+      console.log("\nProcesando datos de tipo peticionConsulta");
       sourceType = "peticionConsulta";
       inputJson = object.peticionConsulta;
       epoch = object.epoch;
@@ -52,7 +52,7 @@ function verifySignature(object, publicKeyCertificate) {
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
     } else if (object.folioCodi) {
-      // console.log("\nProcesando datos de tipo folioCodi");
+      console.log("\nProcesando datos de tipo folioCodi");
       sourceType = "folioCodi";
       inputJson = object.folioCodi;
       epoch = object.epoch;
@@ -61,7 +61,7 @@ function verifySignature(object, publicKeyCertificate) {
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
     } else if (object.resultado) {
-      // console.log("\nProcesando datos de tipo resultado");
+      console.log("\nProcesando datos de tipo resultado");
       sourceType = "resultado";
       inputJson = object.resultado;
       epoch = object.epoch;
@@ -70,7 +70,7 @@ function verifySignature(object, publicKeyCertificate) {
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
     } else if (object.cadenaInformacion) {
-      // console.log("\nProcesando datos de tipo cadenaInformación");
+      console.log("\nProcesando datos de tipo cadenaInformación");
       sourceType = "cadenaInformacion";
       inputJson = object.cadenaInformacion;
       jsonString =
@@ -81,12 +81,12 @@ function verifySignature(object, publicKeyCertificate) {
       throw new Error("No valid data found in the object");
     }
 
-    // console.log(`\nTipo de fuente: ${sourceType}`);
-    // console.log("\nDatos a verificar:", inputJson);
-    // console.log("\nEpoch a verificar:", epoch);
-    // console.log("\nCadena a verificar:", stringifiedJson);
-    // console.log("\nFirma a verificar:", signatureBase64);
-    // console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
+    console.log(`\nTipo de fuente: ${sourceType}`);
+    console.log("\nDatos a verificar:", inputJson);
+    console.log("\nEpoch a verificar:", epoch);
+    console.log("\nCadena a verificar:", stringifiedJson);
+    console.log("\nFirma a verificar:", signatureBase64);
+    console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
 
     // Create verifier
     const verifier = crypto.createVerify("RSA-SHA512");

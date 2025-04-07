@@ -7,4 +7,5 @@ pm2.log
 pm2.pid
 coverage
 access.log
+hacking_attempts.txt
 *.log
