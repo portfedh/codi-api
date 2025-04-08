@@ -116,10 +116,10 @@ module.exports = {
 
       // const requestBody = `d=${JSON.stringify(oldRequestBody)}`;
 
-      // console.log("\n🔵 Request body a Banxico: ", requestBody);
+      console.log("\n🔵 Request body a Banxico: ", requestBody);
 
       const isVerified = verifySignature(requestBody, publicKey);
-      // console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
+      console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
 
       if (!isVerified) {
         return res.status(400).json({

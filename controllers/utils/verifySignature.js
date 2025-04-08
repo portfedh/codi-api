@@ -3,9 +3,9 @@ const forge = require("node-forge");
 
 function verifySignature(object, publicKeyCertificate) {
   try {
-    // console.log("\nIniciando proceso de verificación de firma:");
-    // console.log("\nCertificado Publico: ", publicKeyCertificate);
-    // console.log("\nObjeto a verificar: ", object);
+    console.log("\nIniciando proceso de verificación de firma:");
+    console.log("\nCertificado Publico: ", publicKeyCertificate);
+    console.log("\nObjeto a verificar: ", object);
 
     // Convert the certificate from PEM format to a forge certificate object
     const cert = forge.pki.certificateFromPem(publicKeyCertificate);
@@ -15,7 +15,6 @@ function verifySignature(object, publicKeyCertificate) {
     const publicKey = forge.pki.publicKeyToPem(cert.publicKey);
     // console.log("\nLlave pública de cert forge: ", publicKey);
 
-    // Prepare the data to be verified
     // Determine which property to use as input and apply specific logic
     let sourceType;
     let inputJson;
@@ -24,8 +23,9 @@ function verifySignature(object, publicKeyCertificate) {
     let stringifiedJson;
     let signatureBase64;
 
+    // Request: QR or Push
     if (object.datosMC) {
-      console.log("\nProcesando datos de tipo datosMC");
+      console.log("\nCase: Req. Mensaje de Cobro via QR o Push");
       sourceType = "datosMC";
       inputJson = object.datosMC;
       epoch = object.epoch;
@@ -33,17 +33,10 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
-    } else if (object.peticionConsulta) {
-      console.log("\nProcesando datos de tipo peticionConsulta");
-      sourceType = "peticionConsulta";
-      inputJson = object.peticionConsulta;
-      epoch = object.epoch;
-      jsonString =
-        typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
-      stringifiedJson = `${jsonString}${epoch}`;
-      signatureBase64 = object.selloDigital;
+
+      // Response: QR
     } else if (object.cadenaMC) {
-      // console.log("\nProcesando datos de tipo cadenaMC");
+      console.log("\nCase: Res. Mensaje de Cobro via QR");
       sourceType = "cadenaMC";
       inputJson = object.cadenaMC;
       epoch = object.epoch;
@@ -51,8 +44,10 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
+
+      // Response: Push
     } else if (object.folioCodi) {
-      console.log("\nProcesando datos de tipo folioCodi");
+      console.log("\nCase: Res. Mensaje de Cobro via Push");
       sourceType = "folioCodi";
       inputJson = object.folioCodi;
       epoch = object.epoch;
@@ -60,8 +55,21 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
+
+      // Request: Consulta
+    } else if (object.peticionConsulta) {
+      console.log("\nCase: Req. Consulta Estado Mensaje de Cobro");
+      sourceType = "peticionConsulta";
+      inputJson = object.peticionConsulta;
+      epoch = object.epoch;
+      jsonString =
+        typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
+      stringifiedJson = `${jsonString}${epoch}`;
+      signatureBase64 = object.selloDigital;
+
+      // Response: Consulta
     } else if (object.resultado) {
-      console.log("\nProcesando datos de tipo resultado");
+      console.log("\nProcesando: Res. Resultado Estado Mensaje de Cobro V2");
       sourceType = "resultado";
       inputJson = object.resultado;
       epoch = object.epoch;
@@ -69,19 +77,23 @@ function verifySignature(object, publicKeyCertificate) {
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}${epoch}`;
       signatureBase64 = object.selloDigital;
+
+      // Request: Resultado Operaciones
     } else if (object.cadenaInformacion) {
-      console.log("\nProcesando datos de tipo cadenaInformación");
+      console.log("\nProcesando: Req. Resultado de Mensaje de Cobro");
       sourceType = "cadenaInformacion";
       inputJson = object.cadenaInformacion;
       jsonString =
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
       stringifiedJson = `${jsonString}`;
       signatureBase64 = object.selloDigital;
+
+      // Error: No valid data found
     } else {
       throw new Error("No valid data found in the object");
     }
 
-    console.log(`\nTipo de fuente: ${sourceType}`);
+    console.log(`\nFuente a verificar: ${sourceType}`);
     console.log("\nDatos a verificar:", inputJson);
     console.log("\nEpoch a verificar:", epoch);
     console.log("\nCadena a verificar:", stringifiedJson);
@@ -105,7 +117,6 @@ function verifySignature(object, publicKeyCertificate) {
     );
 
     // console.log("\nFirma verificada: ", isVerified);
-
     return isVerified;
   } catch (error) {
     console.error("Error verifying signature:", error);
