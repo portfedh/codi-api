@@ -116,7 +116,7 @@ function verifySignature(object, publicKeyCertificate) {
       "base64"
     );
 
-    console.log("\nFirma verificada: ", isVerified);
+    // console.log("\nFirma verificada: ", isVerified);
 
     return isVerified;
   } catch (error) {

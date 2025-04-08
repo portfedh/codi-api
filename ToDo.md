@@ -1,9 +1,7 @@
 # ToDo
 
-- poner d = {} (QR)
 - Hacer una cédula de resultados
-- Poner en db si es prod o dev
-- Seguir documentación para envío: string o int
+- Seguir documentación para checks de envío: string o int
 - Add unit tests to all code
 - Update descriptions
 - Update swagger
@@ -22,7 +20,6 @@
 - IP banning
 - Encryption at rest
 - Extensive Logging / monitoring
-
 - Use .htaccess or equivalent server rules to block access to hidden files (e.g., .env, .git).
 - Use a Web Application Firewall (WAF) to block malicious requests.
 - Block IPs or ranges that are repeatedly attempting unauthorized access.
