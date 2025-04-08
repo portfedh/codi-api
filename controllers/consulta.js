@@ -18,7 +18,7 @@ const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
 const { generateSignature } = require("./utils/generateDigitalSignature");
 const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
-const { insertRequestResponse } = require('./utils/insertRequestResponse');
+const { insertRequestResponse } = require("./utils/insertRequestResponse");
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 const { makeRequestWithFallback } = require("./utils/makeRequestWithFallback");
 
@@ -51,7 +51,7 @@ module.exports = {
    */
   getBillingInfo: async (req, res) => {
     //  Capture request timestamp in Mexico City time
-    const requestTimestamp = moment().tz('America/Mexico_City')
+    const requestTimestamp = moment().tz("America/Mexico_City");
     // console.log("Req Timestamp", requestTimestamp)
 
     try {
@@ -60,7 +60,8 @@ module.exports = {
       // console.log("\n🔵 Datos de pago: ", req.body);
 
       // Get url endpoints
-      const { primary: primaryUrl, secondary: secondaryUrl } = getCodiStatusUrls();
+      const { primary: primaryUrl, secondary: secondaryUrl } =
+        getCodiStatusUrls();
       // console.log("\n🔵 Consulta Endpoints: ", { primaryUrl, secondaryUrl });
 
       // Get seller api key
@@ -100,18 +101,21 @@ module.exports = {
       const selloDigital = await generateSignature(peticionConsulta, epoch);
       // console.log("\n🔵 Sello digital: ", selloDigital);
 
-      // Create request body
-      const requestBody = {
+      // Create request object
+      const requestObject = {
         peticionConsulta,
         selloDigital,
         epoch,
         crtLogin,
         crtOper,
       };
+      // console.log("\n🔵 Request object: ", requestObject);
+
+      const requestBody = `d=${JSON.stringify(requestObject)}`;
       // console.log("\n🔵 Request body a Banxico: ", requestBody);
 
       // Verify the signature
-      const isVerified = verifySignature(requestBody, publicKey);
+      const isVerified = verifySignature(requestObject, publicKey);
       // console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
 
       if (!isVerified) {
@@ -131,7 +135,7 @@ module.exports = {
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
       //  Capture response timestamp in Mexico City time
-      const responseTimestamp = moment().tz('America/Mexico_City')
+      const responseTimestamp = moment().tz("America/Mexico_City");
       // console.log("response timestamp", responseTimestamp)
 
       // Verify Banxico response code
@@ -172,19 +176,22 @@ module.exports = {
       // Log the request and response asynchronously
       try {
         await insertRequestResponse({
-          route: '/v2/codi/consulta',
+          route: "/v2/codi/consulta",
           requestHeaders: req.headers,
           requestPayload: req.body,
           requestTimestamp: requestTimestamp,
           responsePayload: response.data,
           responseStatus: 200,
-          responseTimestamp: responseTimestamp
+          responseTimestamp: responseTimestamp,
         });
       } catch (logError) {
         console.error("Error logging request/response:", logError);
       }
     } catch (error) {
-      console.error("Error en consulta del Estado de un Mensaje de Cobro: ", error);
+      console.error(
+        "Error en consulta del Estado de un Mensaje de Cobro: ",
+        error
+      );
 
       // Send error response immediately
       res.status(500).json({
@@ -195,13 +202,13 @@ module.exports = {
       // Log the error asynchronously
       try {
         await insertRequestResponse({
-          route: '/v2/codi/consulta',
+          route: "/v2/codi/consulta",
           requestHeaders: req.headers,
           requestPayload: req.body,
           requestTimestamp: requestTimestamp,
           responsePayload: { error: error.message },
           responseStatus: 500,
-          responseTimestamp: moment().tz('America/Mexico_City')
+          responseTimestamp: moment().tz("America/Mexico_City"),
         });
       } catch (logError) {
         console.error("Error logging error response:", logError);

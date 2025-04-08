@@ -97,29 +97,21 @@ module.exports = {
       const selloDigital = await generateSignature(datosMC, epoch);
       // console.log("\n🔵 Sello digital: ", selloDigital);
 
-      // Create request body
-      const requestBody = {
+      // Create request object
+      const requestObject = {
         datosMC,
         selloDigital,
         epoch,
         crtLogIn,
         crtOper,
       };
+      // console.log("\n🔵 Request object: ", requestObject);
 
-      // const oldRequestBody = {
-      //   datosMC,
-      //   selloDigital,
-      //   epoch,
-      //   crtLogIn,
-      //   crtOper,
-      // };
+      const requestBody = `d=${JSON.stringify(requestObject)}`;
+      // console.log("\n🔵 Request body enviado a Banxico: ", requestBody);
 
-      // const requestBody = `d=${JSON.stringify(oldRequestBody)}`;
-
-      console.log("\n🔵 Request body a Banxico: ", requestBody);
-
-      const isVerified = verifySignature(requestBody, publicKey);
-      console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
+      const isVerified = verifySignature(requestObject, publicKey);
+      // console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
 
       if (!isVerified) {
         return res.status(400).json({

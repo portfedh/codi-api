@@ -14,7 +14,7 @@ const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
 const { generateSignature } = require("./utils/generateDigitalSignature");
 const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { verifyBanxicoResponse } = require("./utils/verifyBanxicoResponse");
-const { insertRequestResponse } = require('./utils/insertRequestResponse');
+const { insertRequestResponse } = require("./utils/insertRequestResponse");
 const { getDeveloperCredentials } = require("./utils/getDeveloperCredentials");
 const { makeRequestWithFallback } = require("./utils/makeRequestWithFallback");
 
@@ -42,7 +42,7 @@ const { makeRequestWithFallback } = require("./utils/makeRequestWithFallback");
 module.exports = {
   sendQrPayment: async (req, res) => {
     // Capture request timestamp in Mexico City time
-    const requestTimestamp = moment().tz('America/Mexico_City');
+    const requestTimestamp = moment().tz("America/Mexico_City");
 
     try {
       // Get payment data
@@ -88,18 +88,21 @@ module.exports = {
       const selloDigital = await generateSignature(datosMC, epoch);
       // console.log("\n🔵 Sello digital: ", selloDigital);
 
-      // Create request body
-      const requestBody = {
+      // Create request object
+      const requestObject = {
         datosMC,
         selloDigital,
         epoch,
         crtLogIn,
         crtOper,
       };
-      // console.log("\n🔵 Request body a Banxico: ", requestBody);
+      // console.log("\n🔵 Request object: ", requestObject);
+
+      const requestBody = `d=${JSON.stringify(requestObject)}`;
+      // console.log("\n🔵 Request body enviado a Banxico: ", requestBody);
 
       // Verify the signature: Developer
-      const isVerified = verifySignature(requestBody, publicKey);
+      const isVerified = verifySignature(requestObject, publicKey);
       // console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
 
       if (!isVerified) {
@@ -119,7 +122,7 @@ module.exports = {
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
       // Capture response timestamp in Mexico City time
-      const responseTimestamp = moment().tz('America/Mexico_City');
+      const responseTimestamp = moment().tz("America/Mexico_City");
 
       // Verify Banxico response code
       const banxicoResult = verifyBanxicoResponse(response);
@@ -173,13 +176,13 @@ module.exports = {
       // Log the request and response asynchronously
       try {
         await insertRequestResponse({
-          route: '/v2/codi/qr',
+          route: "/v2/codi/qr",
           requestHeaders: req.headers,
           requestPayload: req.body,
           requestTimestamp: requestTimestamp,
           responsePayload: response.data,
           responseStatus: 200,
-          responseTimestamp: responseTimestamp
+          responseTimestamp: responseTimestamp,
         });
       } catch (logError) {
         console.error("Error logging request/response:", logError);
@@ -189,7 +192,7 @@ module.exports = {
         message: error.message,
         stack: error.stack,
         code: error.code,
-        response: error.response?.data
+        response: error.response?.data,
       });
 
       // Send error response immediately
@@ -201,13 +204,13 @@ module.exports = {
       // Log the error asynchronously
       try {
         await insertRequestResponse({
-          route: '/v2/codi/qr',
+          route: "/v2/codi/qr",
           requestHeaders: req.headers,
           requestPayload: req.body,
           requestTimestamp: requestTimestamp,
           responsePayload: { error: error.message },
           responseStatus: 500,
-          responseTimestamp: moment().tz('America/Mexico_City')
+          responseTimestamp: moment().tz("America/Mexico_City"),
         });
       } catch (logError) {
         console.error("Error logging error response:", logError);

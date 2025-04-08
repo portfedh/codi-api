@@ -1,8 +1,8 @@
-const axios = require('axios');
+const axios = require("axios");
 
 /**
  * Makes a request to a primary URL with a timeout, falling back to a secondary URL if needed.
- * 
+ *
  * @param {string} primaryUrl - The primary URL to try first
  * @param {string} secondaryUrl - The fallback URL to try if primary fails
  * @param {Object} requestData - The data to send in the request
@@ -11,8 +11,15 @@ const axios = require('axios');
  * @returns {Promise<Object>} The response from the successful request
  * @throws {Error} If both requests fail
  */
-async function makeRequestWithFallback(primaryUrl, secondaryUrl, requestData, options = {}) {
+async function makeRequestWithFallback(
+  primaryUrl,
+  secondaryUrl,
+  requestData,
+  options = {}
+) {
   const { timeout = 3000 } = options;
+
+  // console.log("Request Data:", requestData);
 
   // Function to make a request with timeout
   const makeRequest = async (url) => {
@@ -20,9 +27,10 @@ async function makeRequestWithFallback(primaryUrl, secondaryUrl, requestData, op
       const response = await axios.post(url, requestData, {
         timeout,
         headers: {
-          'Content-Type': 'application/json; charset=utf-8'
-        }
+          "Content-Type": "text/plain",
+        },
       });
+
       return { url, response };
     } catch (error) {
       return { url, error };
@@ -41,9 +49,11 @@ async function makeRequestWithFallback(primaryUrl, secondaryUrl, requestData, op
     return secondaryResult.response;
   }
 
-  throw new Error(`Both requests failed. Primary error: ${primaryResult.error?.message}, Secondary error: ${secondaryResult.error?.message}`);
+  throw new Error(
+    `Both requests failed. Primary error: ${primaryResult.error?.message}, Secondary error: ${secondaryResult.error?.message}`
+  );
 }
 
 module.exports = {
-  makeRequestWithFallback
-}; 
+  makeRequestWithFallback,
+};
