@@ -92,12 +92,12 @@ function verifySignature(object, publicKeyCertificate) {
       throw new Error("No valid data found in the object");
     }
 
-    console.log(`\nFuente a verificar: ${sourceType}`);
-    console.log("\nDatos a verificar:", inputJson);
-    console.log("\nEpoch a verificar:", epoch);
-    console.log("\nCadena a verificar:", stringifiedJson);
-    console.log("\nFirma a verificar:", signatureBase64);
-    console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
+    // console.log(`\nFuente a verificar: ${sourceType}`);
+    // console.log("\nDatos a verificar:", inputJson);
+    // console.log("\nEpoch a verificar:", epoch);
+    // console.log("\nCadena a verificar:", stringifiedJson);
+    // console.log("\nFirma a verificar:", signatureBase64);
+    // console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
 
     // Create verifier
     const verifier = crypto.createVerify("RSA-SHA512");
