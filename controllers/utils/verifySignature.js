@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const forge = require("node-forge");
+const formatMonto = require("./formatMonto");
 
 function verifySignature(object, publicKeyCertificate) {
   try {
@@ -80,12 +81,10 @@ function verifySignature(object, publicKeyCertificate) {
 
       // Request: Resultado Operaciones
     } else if (object.cadenaInformacion) {
-      console.log("\nProcesando: Req. Resultado de Mensaje de Cobro");
-      sourceType = "cadenaInformacion";
       inputJson = object.cadenaInformacion;
       jsonString =
         typeof inputJson === "string" ? inputJson : JSON.stringify(inputJson);
-      stringifiedJson = `${jsonString}`;
+      stringifiedJson = formatMonto(jsonString);
       signatureBase64 = object.selloDigital;
 
       // Error: No valid data found
@@ -93,12 +92,12 @@ function verifySignature(object, publicKeyCertificate) {
       throw new Error("No valid data found in the object");
     }
 
-    // console.log(`\nFuente a verificar: ${sourceType}`);
-    // console.log("\nDatos a verificar:", inputJson);
-    // console.log("\nEpoch a verificar:", epoch);
-    // console.log("\nCadena a verificar:", stringifiedJson);
-    // console.log("\nFirma a verificar:", signatureBase64);
-    // console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
+    console.log(`\nFuente a verificar: ${sourceType}`);
+    console.log("\nDatos a verificar:", inputJson);
+    console.log("\nEpoch a verificar:", epoch);
+    console.log("\nCadena a verificar:", stringifiedJson);
+    console.log("\nFirma a verificar:", signatureBase64);
+    console.log("\nDatos a verificar stringify con epoch:", stringifiedJson);
 
     // Create verifier
     const verifier = crypto.createVerify("RSA-SHA512");
