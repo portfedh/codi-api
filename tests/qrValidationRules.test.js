@@ -250,4 +250,18 @@ describe("qrValidationRules direct tests", () => {
     });
     expect(result.isEmpty()).toBe(true);
   });
+
+  test("vigencia must throw an error if isNaN(timestamp)", async () => {
+    const result = await runValidation({
+      monto: 95.63,
+      referenciaNumerica: "1234567",
+      concepto: "Valid concept",
+      vigencia: "invalid-timestamp",
+    });
+    expect(result.isEmpty()).toBe(false);
+    const errors = result.array();
+    expect(
+      errors.some((e) => e.msg.includes("must be a valid numeric timestamp"))
+    ).toBe(true);
+  });
 });

@@ -374,4 +374,19 @@ describe("pushValidationRules direct tests", () => {
     });
     expect(result.isEmpty()).toBe(true);
   });
+
+  test("vigencia must be a valid numeric timestamp", async () => {
+    const result = await runValidation({
+      celularCliente: "5512345678",
+      monto: 95.63,
+      referenciaNumerica: "1234567",
+      concepto: "Valid concept",
+      vigencia: "invalid-timestamp",
+    });
+    expect(result.isEmpty()).toBe(false);
+    const errors = result.array();
+    expect(
+      errors.some((e) => e.msg === "Vigencia must be a valid numeric timestamp")
+    ).toBe(true);
+  });
 });
