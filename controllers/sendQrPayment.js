@@ -7,7 +7,7 @@ const axios = require("axios");
 const QRCode = require("qrcode");
 const moment = require("moment-timezone");
 require("dotenv").config({ path: "../config/.env" });
-const { getCodiQrUrls } = require("./utils/getCodiQrUrl");
+const { getCodiQrUrls } = require("./utils/getCodiQrUrls");
 const { verifySignature } = require("./utils/verifySignature");
 const { getKeyCredentials } = require("./utils/getKeyCredentials");
 const { compareCrtBanxico } = require("./utils/compareCrtBanxico");

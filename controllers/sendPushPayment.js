@@ -6,7 +6,7 @@
 const axios = require("axios");
 const moment = require("moment-timezone");
 require("dotenv").config({ path: "../config/.env" });
-const { getCodiPushUrls } = require("./utils/getCodiPushUrl");
+const { getCodiPushUrls } = require("./utils/getCodiPushUrls");
 const { verifySignature } = require("./utils/verifySignature");
 const { getKeyCredentials } = require("./utils/getKeyCredentials");
 const { compareCrtBanxico } = require("./utils/compareCrtBanxico");

@@ -12,7 +12,7 @@ const axios = require("axios");
 const moment = require("moment-timezone");
 require("dotenv").config({ path: "../config/.env" });
 const { verifySignature } = require("./utils/verifySignature");
-const { getCodiStatusUrls } = require("./utils/getCodiStatusUrl");
+const { getCodiConsultaUrls } = require("./utils/getCodiConsultaUrls");
 const { getKeyCredentials } = require("./utils/getKeyCredentials");
 const { compareCrtBanxico } = require("./utils/compareCrtBanxico");
 const { generateSignature } = require("./utils/generateDigitalSignature");
@@ -61,7 +61,7 @@ module.exports = {
 
       // Get url endpoints
       const { primary: primaryUrl, secondary: secondaryUrl } =
-        getCodiStatusUrls();
+        getCodiConsultaUrls();
       // console.log("\n🔵 Consulta Endpoints: ", { primaryUrl, secondaryUrl });
 
       // Get seller api key
