@@ -1,5 +1,11 @@
 const { sanitizeBody } = require("express-validator");
 
+/**
+ * Middleware to sanitize incoming request data (body, params, query).
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @param {Function} next - Express next middleware function.
+ */
 function sanitizeRequest(req, res, next) {
   // Sanitize req.body
   if (req.body) {
@@ -19,6 +25,10 @@ function sanitizeRequest(req, res, next) {
   next();
 }
 
+/**
+ * Recursively sanitizes an object by removing script tags, HTML entities, and other potentially harmful content.
+ * @param {Object} obj - The object to sanitize.
+ */
 function sanitizeRecursively(obj) {
   if (!obj || typeof obj !== "object") {
     return;
@@ -35,6 +45,11 @@ function sanitizeRecursively(obj) {
   });
 }
 
+/**
+ * Sanitizes a string by removing script tags, HTML tags, and encoding special characters.
+ * @param {string} str - The string to sanitize.
+ * @returns {string} - The sanitized string.
+ */
 function sanitizeString(str) {
   // Remove script tags completely
   let sanitized = str.replace(
