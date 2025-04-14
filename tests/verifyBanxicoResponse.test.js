@@ -3,7 +3,7 @@ const {
 } = require("../controllers/utils/verifyBanxicoResponse");
 
 describe("verifyBanxicoResponse", () => {
-  it("should return success true if edoPet is 0", () => {
+  it("should return { success: true } when edoPet is 0", () => {
     const response = {
       data: {
         edoPet: 0,
@@ -15,7 +15,7 @@ describe("verifyBanxicoResponse", () => {
     expect(result).toEqual({ success: true });
   });
 
-  it("should return an error object if edoPet is not 0", () => {
+  it("should return an error object with details when edoPet is not 0 and detalleEdoPet is provided", () => {
     const response = {
       data: {
         edoPet: -3,
@@ -32,7 +32,7 @@ describe("verifyBanxicoResponse", () => {
     });
   });
 
-  it("should return an error object with null errorDetails if detalleEdoPet is not provided", () => {
+  it("should return an error object with null errorDetails when edoPet is not 0 and detalleEdoPet is not provided", () => {
     const response = {
       data: {
         edoPet: -1,
