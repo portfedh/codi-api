@@ -12,6 +12,7 @@
  * - Checks if the cell phone is a string
  * - Verifies it has exactly 10 characters
  * - Ensures all characters are digits
+ * Note: Assumes `celularCliente` exists in `resultado.cadenaInformacion`.
  */
 function verifyCellPhone(resultado) {
   const celularCliente = resultado.cadenaInformacion.celularCliente;

@@ -20,4 +20,14 @@ describe("verifyCellPhone", () => {
     const resultado = { cadenaInformacion: { celularCliente: "12345abcde" } };
     expect(verifyCellPhone(resultado)).toBe(-3);
   });
+
+  it("should return -3 for a missing celularCliente", () => {
+    const resultado = { cadenaInformacion: {} };
+    expect(verifyCellPhone(resultado)).toBe(-3);
+  });
+
+  it("should return -3 for an undefined celularCliente", () => {
+    const resultado = { cadenaInformacion: { celularCliente: undefined } };
+    expect(verifyCellPhone(resultado)).toBe(-3);
+  });
 });
