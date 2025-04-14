@@ -261,7 +261,11 @@ describe("qrValidationRules direct tests", () => {
     expect(result.isEmpty()).toBe(false);
     const errors = result.array();
     expect(
-      errors.some((e) => e.msg.includes("must be a valid numeric timestamp"))
+      errors.some((e) =>
+        e.msg.includes(
+          "numeric value without any letters or special characters"
+        )
+      )
     ).toBe(true);
   });
 });

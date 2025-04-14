@@ -199,7 +199,9 @@ describe("pushValidationRules direct tests", () => {
     let errors = result.array();
     expect(
       errors.some((e) =>
-        e.msg.includes("ReferenciaNumerica must be an alphanumeric")
+        e.msg.includes(
+          "ReferenciaNumerica must be a string or number with a maximum length of 7 characters and no special characters"
+        )
       )
     ).toBe(true);
 
@@ -214,7 +216,11 @@ describe("pushValidationRules direct tests", () => {
     expect(result.isEmpty()).toBe(false);
     errors = result.array();
     expect(
-      errors.some((e) => e.msg.includes("maximum length of 7 characters"))
+      errors.some((e) =>
+        e.msg.includes(
+          "ReferenciaNumerica must be a string or number with a maximum length of 7 characters and no special characters"
+        )
+      )
     ).toBe(true);
   });
 
@@ -386,7 +392,11 @@ describe("pushValidationRules direct tests", () => {
     expect(result.isEmpty()).toBe(false);
     const errors = result.array();
     expect(
-      errors.some((e) => e.msg === "Vigencia must be a valid numeric timestamp")
+      errors.some(
+        (e) =>
+          e.msg ===
+          "Vigencia must be '0' or a numeric value without any letters or special characters"
+      )
     ).toBe(true);
   });
 });

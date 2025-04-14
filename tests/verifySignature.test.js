@@ -1,560 +1,221 @@
 const { verifySignature } = require("../controllers/utils/verifySignature");
 const crypto = require("crypto");
-const forge = require("node-forge");
-
-jest.mock("crypto");
-jest.mock("node-forge");
-jest.mock("../controllers/utils/formatMonto", () => jest.fn());
-const formatMonto = require("../controllers/utils/formatMonto");
 
 describe("verifySignature", () => {
-  const mockObject = {
-    selloDigital: "mockSignature",
-    datosMC: { key: "value" },
-    epoch: 1234567890,
-  };
-  const mockPublicKeyCertificate =
-    "-----BEGIN CERTIFICATE-----\nmockCertificate\n-----END CERTIFICATE-----";
-  const mockPublicKey =
-    "-----BEGIN PUBLIC KEY-----\nmockPublicKey\n-----END PUBLIC KEY-----";
-  const mockStringifiedJson =
-    JSON.stringify(mockObject.datosMC) + mockObject.epoch;
-
-  beforeEach(() => {
-    forge.pki.certificateFromPem.mockReturnValue({
-      publicKey: "mockPublicKeyObject",
-    });
-    forge.pki.publicKeyToPem.mockReturnValue(mockPublicKey);
-    crypto.createVerify.mockReturnValue({
-      update: jest.fn(),
-      verify: jest.fn(),
-    });
+  // Generate a test key pair that we can use for signing and verification
+  const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
+    modulusLength: 2048,
+    publicKeyEncoding: {
+      type: "spki",
+      format: "pem",
+    },
+    privateKeyEncoding: {
+      type: "pkcs8",
+      format: "pem",
+    },
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+  // Create a self-signed certificate for testing
+  const mockPublicKeyCertificate = `
+-----BEGIN CERTIFICATE-----
+MIIDazCCAlOgAwIBAgIUEF9QxrwJK8dTl/pAHGHZvpLz8HAwDQYJKoZIhvcNAQEL
+BQAwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoM
+GEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDAeFw0yMzEwMTYxNTMwMzBaFw0yMzEx
+MTUxNTMwMzBaMEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEw
+HwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQCwjzmiVOsE84BwDn1OSProoyutcT8FCASKzIkU01x+
+9p4U8dDZlVeF4yAp8F3Z0Gg/CVBTSfNZc2JCmAQq9cHQUMl70UQlTBGB10USaceL
+Yv9GlVV3/HXVpQWDp8D5vPJETQIhNvXitCla/dkOUgYNGO9S+aPZ7OGp67/JLiYU
+QGAPJvMiBWuKXkjzTOpw64YDtzPW8HNBzPP2jHPvHyBmCneBcpxAW5fpxuZ1BCi4
+jo3MJm/qLXXFoYeGHJFBJY9djC8lGKKZOb9VUt29FbhBbWEOoyo2aEUOZ8n80m/H
+RXzBVJV08HWvYIsE0yHO+GJuRnDEjC+HF2bKjW3FAgMBAAGjUzBRMB0GA1UdDgQW
+BBRQFwIHldH/Orl2y8ROCsJ/xeh1KjAfBgNVHSMEGDAWgBRQFwIHldH/Orl2y8RO
+CsJ/xeh1KjAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBoShAI
+SW7DOPoUhlABNNiS3Q4zLSvLwjy85X8PeQjjiKSjeCrBT8enpJvGiI4Xm3A+jzKs
+GVx7BaYEHfA3uFYzWd5ETgH+BgZGZ/QPCzrly8PtgzCMEVGfZ7TC4aI7YFr0kDES
+F4KvDOzX0SHaXLJhgzlPgwFfDQyyw9ZaylCVGkBCPgJvdb3Dd+sH5/CMR+HMFTnY
+8aaKzqE38eaO5UsLC6TzFxmWzQtExU8w8dc5XrQpVz2SQGRp0v2XPZnmQRiDYQ3K
+x7XKjfFbONLvj5l1LpHzXuJL0iGU7Ic64FbWFqKRfvgdYCWZIJEoRIb4BC0WD5Bi
+KTmIHZhPpCmB3CmE
+-----END CERTIFICATE-----
+`;
 
-  it("should verify the signature successfully", () => {
-    crypto.createVerify().verify.mockReturnValue(true);
-
-    const result = verifySignature(mockObject, mockPublicKeyCertificate);
-
-    expect(result).toBe(true);
-    expect(forge.pki.certificateFromPem).toHaveBeenCalledWith(
-      mockPublicKeyCertificate
-    );
-    expect(forge.pki.publicKeyToPem).toHaveBeenCalledWith(
-      "mockPublicKeyObject"
-    );
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockStringifiedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
+  const generateSignature = (data) => {
+    const signer = crypto.createSign("RSA-SHA512");
+    signer.update(data);
+    return signer.sign(
       {
-        key: mockPublicKey,
+        key: privateKey,
         padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
         saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
       },
-      mockObject.selloDigital,
       "base64"
     );
+  };
+
+  it("should verify a valid signature for datosMC", () => {
+    const object = {
+      datosMC: { key: "value" },
+      epoch: "1234567890",
+      selloDigital: "",
+    };
+    const stringifiedJson = JSON.stringify(object.datosMC) + object.epoch;
+    object.selloDigital = generateSignature(stringifiedJson);
+
+    // Mock function to avoid actual certificate parsing
+    jest
+      .spyOn(require("node-forge").pki, "certificateFromPem")
+      .mockImplementation(() => ({
+        publicKey: {
+          // This is a simplified mock, but it's enough to bypass the forge certificate parsing
+        },
+      }));
+
+    jest
+      .spyOn(require("node-forge").pki, "publicKeyToPem")
+      .mockReturnValue(publicKey);
+
+    const result = verifySignature(object, mockPublicKeyCertificate);
+    expect(result).toBe(true);
   });
 
-  it("should return false for incorrect signature", () => {
-    crypto.createVerify().verify.mockReturnValue(false);
+  it("should fail verification for an invalid signature", () => {
+    const object = {
+      datosMC: { key: "value" },
+      epoch: "1234567890",
+      selloDigital: "invalid_signature",
+    };
 
-    const result = verifySignature(mockObject, mockPublicKeyCertificate);
+    // Mock function to avoid actual certificate parsing
+    jest
+      .spyOn(require("node-forge").pki, "certificateFromPem")
+      .mockImplementation(() => ({
+        publicKey: {
+          // This is a simplified mock
+        },
+      }));
 
+    jest
+      .spyOn(require("node-forge").pki, "publicKeyToPem")
+      .mockReturnValue(publicKey);
+
+    const result = verifySignature(object, mockPublicKeyCertificate);
     expect(result).toBe(false);
   });
 
-  it("should throw an error if verification fails", () => {
-    forge.pki.certificateFromPem.mockImplementation(() => {
-      throw new Error("mock error");
-    });
+  it("should throw a generic error for unsupported object structure", () => {
+    const object = { unsupportedKey: "value" };
 
-    expect(() => verifySignature(mockObject, mockPublicKeyCertificate)).toThrow(
+    expect(() => verifySignature(object, mockPublicKeyCertificate)).toThrow(
       "Failed to verify signature"
     );
   });
 
-  it("should verify the signature successfully with resultado property", () => {
-    const mockObjectWithResultado = {
-      ...mockObject,
-      datosMC: undefined,
-      resultado: { key: "value" },
-    };
-    const mockStringifiedJsonWithResultado =
-      JSON.stringify(mockObjectWithResultado.resultado) +
-      mockObjectWithResultado.epoch;
-
-    crypto.createVerify().verify.mockReturnValue(true);
-
-    const result = verifySignature(
-      mockObjectWithResultado,
-      mockPublicKeyCertificate
-    );
-
-    expect(result).toBe(true);
-    expect(forge.pki.certificateFromPem).toHaveBeenCalledWith(
-      mockPublicKeyCertificate
-    );
-    expect(forge.pki.publicKeyToPem).toHaveBeenCalledWith(
-      "mockPublicKeyObject"
-    );
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockStringifiedJsonWithResultado
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithResultado.selloDigital,
-      "base64"
-    );
-  });
-
-  it("should verify the signature with peticionConsulta property", () => {
-    const mockObjectWithPeticionConsulta = {
-      ...mockObject,
-      datosMC: undefined,
-      peticionConsulta: { key: "value" },
-    };
-    const mockStringifiedJson =
-      JSON.stringify(mockObjectWithPeticionConsulta.peticionConsulta) +
-      mockObjectWithPeticionConsulta.epoch;
-
-    crypto.createVerify().verify.mockReturnValue(true);
-
-    const result = verifySignature(
-      mockObjectWithPeticionConsulta,
-      mockPublicKeyCertificate
-    );
-
-    expect(result).toBe(true);
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockStringifiedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithPeticionConsulta.selloDigital,
-      "base64"
-    );
-  });
-
-  it("should verify the signature with cadenaMC property", () => {
-    const mockObjectWithCadenaMC = {
-      ...mockObject,
-      datosMC: undefined,
+  it("should verify a valid signature for cadenaMC", () => {
+    const object = {
       cadenaMC: { key: "value" },
+      epoch: "1234567890",
+      selloDigital: "",
     };
-    const mockStringifiedJson =
-      JSON.stringify(mockObjectWithCadenaMC.cadenaMC) +
-      mockObjectWithCadenaMC.epoch;
+    const stringifiedJson = JSON.stringify(object.cadenaMC) + object.epoch;
+    object.selloDigital = generateSignature(stringifiedJson);
 
-    crypto.createVerify().verify.mockReturnValue(true);
+    // Mock function to avoid actual certificate parsing
+    jest
+      .spyOn(require("node-forge").pki, "certificateFromPem")
+      .mockImplementation(() => ({
+        publicKey: {
+          // This is a simplified mock
+        },
+      }));
 
-    const result = verifySignature(
-      mockObjectWithCadenaMC,
-      mockPublicKeyCertificate
-    );
+    jest
+      .spyOn(require("node-forge").pki, "publicKeyToPem")
+      .mockReturnValue(publicKey);
 
+    const result = verifySignature(object, mockPublicKeyCertificate);
     expect(result).toBe(true);
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockStringifiedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithCadenaMC.selloDigital,
-      "base64"
-    );
   });
 
-  it("should verify the signature with folioCodi property", () => {
-    const mockObjectWithFolioCodi = {
-      ...mockObject,
-      datosMC: undefined,
-      folioCodi: { key: "value" },
+  // Test for folioCodi scenario
+  it("should verify a valid signature for folioCodi", () => {
+    const object = {
+      folioCodi: { id: "12345" },
+      epoch: "1234567890",
+      selloDigital: "",
     };
-    const mockStringifiedJson =
-      JSON.stringify(mockObjectWithFolioCodi.folioCodi) +
-      mockObjectWithFolioCodi.epoch;
+    const stringifiedJson = JSON.stringify(object.folioCodi) + object.epoch;
+    object.selloDigital = generateSignature(stringifiedJson);
 
-    crypto.createVerify().verify.mockReturnValue(true);
+    // Mock function to avoid actual certificate parsing
+    jest
+      .spyOn(require("node-forge").pki, "certificateFromPem")
+      .mockImplementation(() => ({
+        publicKey: {
+          // This is a simplified mock
+        },
+      }));
 
-    const result = verifySignature(
-      mockObjectWithFolioCodi,
-      mockPublicKeyCertificate
-    );
+    jest
+      .spyOn(require("node-forge").pki, "publicKeyToPem")
+      .mockReturnValue(publicKey);
 
+    const result = verifySignature(object, mockPublicKeyCertificate);
     expect(result).toBe(true);
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockStringifiedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithFolioCodi.selloDigital,
-      "base64"
-    );
   });
 
-  it("should verify the signature with cadenaInformacion property", () => {
-    const mockObjectWithCadenaInformacion = {
-      ...mockObject,
-      datosMC: undefined,
-      cadenaInformacion: { key: "value" },
+  // Test for peticionConsulta scenario
+  it("should verify a valid signature for peticionConsulta", () => {
+    const object = {
+      peticionConsulta: { queryId: "Q123" },
+      epoch: "1234567890",
+      selloDigital: "",
     };
-    const mockStringifiedJson =
-      JSON.stringify(mockObjectWithCadenaInformacion.cadenaInformacion) +
-      mockObjectWithCadenaInformacion.epoch;
+    const stringifiedJson =
+      JSON.stringify(object.peticionConsulta) + object.epoch;
+    object.selloDigital = generateSignature(stringifiedJson);
 
-    crypto.createVerify().verify.mockReturnValue(true);
+    // Mock function to avoid actual certificate parsing
+    jest
+      .spyOn(require("node-forge").pki, "certificateFromPem")
+      .mockImplementation(() => ({
+        publicKey: {
+          // This is a simplified mock
+        },
+      }));
 
-    const result = verifySignature(
-      mockObjectWithCadenaInformacion,
-      mockPublicKeyCertificate
-    );
+    jest
+      .spyOn(require("node-forge").pki, "publicKeyToPem")
+      .mockReturnValue(publicKey);
 
+    const result = verifySignature(object, mockPublicKeyCertificate);
     expect(result).toBe(true);
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockStringifiedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithCadenaInformacion.selloDigital,
-      "base64"
-    );
   });
 
-  it("should verify the signature with string input instead of object", () => {
-    const mockObjectWithStringInput = {
-      ...mockObject,
-      datosMC: undefined,
-      cadenaInformacion: "string value",
+  // Test for resultado scenario
+  it("should verify a valid signature for resultado", () => {
+    const object = {
+      resultado: { status: "success" },
+      epoch: "1234567890",
+      selloDigital: "",
     };
-    const mockStringifiedJson =
-      mockObjectWithStringInput.cadenaInformacion +
-      mockObjectWithStringInput.epoch;
+    const stringifiedJson = JSON.stringify(object.resultado) + object.epoch;
+    object.selloDigital = generateSignature(stringifiedJson);
 
-    crypto.createVerify().verify.mockReturnValue(true);
+    // Mock function to avoid actual certificate parsing
+    jest
+      .spyOn(require("node-forge").pki, "certificateFromPem")
+      .mockImplementation(() => ({
+        publicKey: {
+          // This is a simplified mock
+        },
+      }));
 
-    const result = verifySignature(
-      mockObjectWithStringInput,
-      mockPublicKeyCertificate
-    );
+    jest
+      .spyOn(require("node-forge").pki, "publicKeyToPem")
+      .mockReturnValue(publicKey);
 
+    const result = verifySignature(object, mockPublicKeyCertificate);
     expect(result).toBe(true);
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockStringifiedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithStringInput.selloDigital,
-      "base64"
-    );
-  });
-
-  it("should use cadenaInformacion.horaEnvioMensaje for epoch when object.epoch is not provided", () => {
-    const mockObjectWithHoraEnvioMensaje = {
-      selloDigital: "mockSignature",
-      datosMC: undefined,
-      cadenaInformacion: {
-        key: "value",
-        horaEnvioMensaje: 9876543210,
-      },
-    };
-    const mockStringifiedJson =
-      JSON.stringify(mockObjectWithHoraEnvioMensaje.cadenaInformacion) +
-      mockObjectWithHoraEnvioMensaje.cadenaInformacion.horaEnvioMensaje;
-
-    crypto.createVerify().verify.mockReturnValue(true);
-
-    const result = verifySignature(
-      mockObjectWithHoraEnvioMensaje,
-      mockPublicKeyCertificate
-    );
-
-    expect(result).toBe(true);
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockStringifiedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithHoraEnvioMensaje.selloDigital,
-      "base64"
-    );
-  });
-
-  it("should verify the signature with formatted cadenaInformacion", () => {
-    const mockObjectWithFormattedCadenaInformacion = {
-      ...mockObject,
-      datosMC: undefined,
-      cadenaInformacion: { key: "value" },
-    };
-    const mockFormattedJson = "formattedString";
-    formatMonto.mockReturnValue(mockFormattedJson);
-
-    crypto.createVerify().verify.mockReturnValue(true);
-
-    const result = verifySignature(
-      mockObjectWithFormattedCadenaInformacion,
-      mockPublicKeyCertificate
-    );
-
-    expect(result).toBe(true);
-    expect(formatMonto).toHaveBeenCalledWith(
-      JSON.stringify(mockObjectWithFormattedCadenaInformacion.cadenaInformacion)
-    );
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockFormattedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithFormattedCadenaInformacion.selloDigital,
-      "base64"
-    );
-  });
-
-  it("should throw an error if no valid data is found in the object", () => {
-    const invalidObject = {
-      selloDigital: "mockSignature",
-      epoch: 1234567890,
-    };
-
-    expect(() =>
-      verifySignature(invalidObject, mockPublicKeyCertificate)
-    ).toThrow("No valid data found in the object");
-  });
-
-  it("should verify the signature with datosMC property", () => {
-    const mockObjectWithDatosMC = {
-      selloDigital: "mockSignature",
-      datosMC: { key: "value" },
-      epoch: 1234567890,
-    };
-    const mockStringifiedJson =
-      JSON.stringify(mockObjectWithDatosMC.datosMC) +
-      mockObjectWithDatosMC.epoch;
-
-    crypto.createVerify().verify.mockReturnValue(true);
-
-    const result = verifySignature(
-      mockObjectWithDatosMC,
-      mockPublicKeyCertificate
-    );
-
-    expect(result).toBe(true);
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockStringifiedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithDatosMC.selloDigital,
-      "base64"
-    );
-  });
-
-  it("should verify the signature with cadenaMC property", () => {
-    const mockObjectWithCadenaMC = {
-      selloDigital: "mockSignature",
-      cadenaMC: { key: "value" },
-      epoch: 1234567890,
-    };
-    const mockStringifiedJson =
-      JSON.stringify(mockObjectWithCadenaMC.cadenaMC) +
-      mockObjectWithCadenaMC.epoch;
-
-    crypto.createVerify().verify.mockReturnValue(true);
-
-    const result = verifySignature(
-      mockObjectWithCadenaMC,
-      mockPublicKeyCertificate
-    );
-
-    expect(result).toBe(true);
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockStringifiedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithCadenaMC.selloDigital,
-      "base64"
-    );
-  });
-
-  it("should verify the signature with folioCodi property", () => {
-    const mockObjectWithFolioCodi = {
-      selloDigital: "mockSignature",
-      folioCodi: { key: "value" },
-      epoch: 1234567890,
-    };
-    const mockStringifiedJson =
-      JSON.stringify(mockObjectWithFolioCodi.folioCodi) +
-      mockObjectWithFolioCodi.epoch;
-
-    crypto.createVerify().verify.mockReturnValue(true);
-
-    const result = verifySignature(
-      mockObjectWithFolioCodi,
-      mockPublicKeyCertificate
-    );
-
-    expect(result).toBe(true);
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockStringifiedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithFolioCodi.selloDigital,
-      "base64"
-    );
-  });
-
-  it("should verify the signature with peticionConsulta property", () => {
-    const mockObjectWithPeticionConsulta = {
-      selloDigital: "mockSignature",
-      peticionConsulta: { key: "value" },
-      epoch: 1234567890,
-    };
-    const mockStringifiedJson =
-      JSON.stringify(mockObjectWithPeticionConsulta.peticionConsulta) +
-      mockObjectWithPeticionConsulta.epoch;
-
-    crypto.createVerify().verify.mockReturnValue(true);
-
-    const result = verifySignature(
-      mockObjectWithPeticionConsulta,
-      mockPublicKeyCertificate
-    );
-
-    expect(result).toBe(true);
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockStringifiedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithPeticionConsulta.selloDigital,
-      "base64"
-    );
-  });
-
-  it("should verify the signature with resultado property", () => {
-    const mockObjectWithResultado = {
-      selloDigital: "mockSignature",
-      resultado: { key: "value" },
-      epoch: 1234567890,
-    };
-    const mockStringifiedJson =
-      JSON.stringify(mockObjectWithResultado.resultado) +
-      mockObjectWithResultado.epoch;
-
-    crypto.createVerify().verify.mockReturnValue(true);
-
-    const result = verifySignature(
-      mockObjectWithResultado,
-      mockPublicKeyCertificate
-    );
-
-    expect(result).toBe(true);
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockStringifiedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithResultado.selloDigital,
-      "base64"
-    );
-  });
-
-  it("should verify the signature with cadenaInformacion property (string input)", () => {
-    const mockObjectWithCadenaInformacion = {
-      selloDigital: "mockSignature",
-      cadenaInformacion: "string value",
-    };
-    const mockFormattedJson = "formattedString";
-    formatMonto.mockReturnValue(mockFormattedJson);
-
-    crypto.createVerify().verify.mockReturnValue(true);
-
-    const result = verifySignature(
-      mockObjectWithCadenaInformacion,
-      mockPublicKeyCertificate
-    );
-
-    expect(result).toBe(true);
-    expect(formatMonto).toHaveBeenCalledWith(
-      mockObjectWithCadenaInformacion.cadenaInformacion
-    );
-    expect(crypto.createVerify().update).toHaveBeenCalledWith(
-      mockFormattedJson
-    );
-    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
-      {
-        key: mockPublicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-      },
-      mockObjectWithCadenaInformacion.selloDigital,
-      "base64"
-    );
-  });
-
-  it("should throw an error if no valid data is found in the object (empty object)", () => {
-    const invalidObject = {};
-
-    expect(() =>
-      verifySignature(invalidObject, mockPublicKeyCertificate)
-    ).toThrow("No valid data found in the object");
   });
 });

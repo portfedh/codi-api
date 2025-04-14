@@ -19,7 +19,7 @@ const { hasPipeCharacter } = require("./hasPipeCharacter");
  * 3. Stringifies the processed JSON and appends the epoch
  * 4. Signs the prepared data string
  */
-async function generateSignature(object, epoch) {
+async function generateSignature(object, epoch = "") {
   try {
     // console.log("\n Iniciando generación de sello digital...");
     // console.log("\n Datos recibidos: ", object);

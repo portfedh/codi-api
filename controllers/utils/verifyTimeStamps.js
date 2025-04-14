@@ -12,6 +12,15 @@ function verifyTimeStamps(resultado) {
   const { horaSolicitudMensajeCobro, horaProcMensajeCobro, horaEnvioMensaje } =
     resultado.cadenaInformacion;
 
+  // Check if any timestamp is missing or undefined
+  if (
+    horaSolicitudMensajeCobro === undefined ||
+    horaProcMensajeCobro === undefined ||
+    horaEnvioMensaje === undefined
+  ) {
+    return -10; // Return -10 if any timestamp is missing
+  }
+
   if (horaSolicitudMensajeCobro >= horaProcMensajeCobro) {
     return -10; // horaSolicitudMensajeCobro should be before horaProcMensajeCobro
   }
