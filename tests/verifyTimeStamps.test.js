@@ -33,4 +33,15 @@ describe("verifyTimeStamps", () => {
     };
     expect(verifyTimeStamps(resultado)).toBe(-10);
   });
+
+  it("should return -10 when any timestamp is missing or undefined", () => {
+    const resultado = {
+      cadenaInformacion: {
+        horaSolicitudMensajeCobro: 1742697722821,
+        horaProcMensajeCobro: undefined,
+        horaEnvioMensaje: 1742697778540,
+      },
+    };
+    expect(verifyTimeStamps(resultado)).toBe(-10);
+  });
 });

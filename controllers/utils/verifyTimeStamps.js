@@ -1,3 +1,13 @@
+/**
+ * Verifies the timestamps in the provided result object to ensure they follow a specific order.
+ *
+ * @param {Object} resultado - The result object containing the timestamps to verify.
+ * @param {Object} resultado.cadenaInformacion - The nested object containing the timestamps.
+ * @param {string} resultado.cadenaInformacion.horaSolicitudMensajeCobro - The timestamp for the message request.
+ * @param {string} resultado.cadenaInformacion.horaProcMensajeCobro - The timestamp for the message processing.
+ * @param {string} resultado.cadenaInformacion.horaEnvioMensaje - The timestamp for the message sending.
+ * @returns {number} Returns 0 if all checks pass, or -10 if any timestamp order is invalid.
+ */
 function verifyTimeStamps(resultado) {
   const { horaSolicitudMensajeCobro, horaProcMensajeCobro, horaEnvioMensaje } =
     resultado.cadenaInformacion;
