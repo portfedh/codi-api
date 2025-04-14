@@ -30,4 +30,14 @@ describe("hasPipeCharacter", () => {
     const data = { key1: 123, key2: "45|6", key3: 789 };
     expect(hasPipeCharacter(data)).toBe(true);
   });
+
+  test("should return false if values include null or undefined without pipe character", () => {
+    const data = { key1: null, key2: undefined, key3: "value3" };
+    expect(hasPipeCharacter(data)).toBe(false);
+  });
+
+  test("should return true if null or undefined values are converted to strings containing a pipe character", () => {
+    const data = { key1: null, key2: "|", key3: undefined };
+    expect(hasPipeCharacter(data)).toBe(true);
+  });
 });

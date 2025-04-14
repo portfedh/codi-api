@@ -1,5 +1,6 @@
 /**
  * Checks if any value in an object contains a pipe character (|).
+ * All values are converted to strings before checking.
  *
  * @param {Object} data - The object to check for pipe characters.
  * @returns {boolean} Returns true if any value contains a pipe character, false otherwise.
