@@ -5,9 +5,9 @@ const { getKeyCredentials } = require("./getKeyCredentials");
 /**
  * Signs data using RSA-SHA512 algorithm with PSS padding
  *
- * @description This function retrieves a private key from environment variables,
- * decrypts it using the provided passphrase, and uses it to create a digital
- * signature for the input data.
+ * @description This function retrieves a private key and passphrase using the
+ * getKeyCredentials utility, decrypts the private key, and uses it to create a
+ * digital signature for the input data.
  *
  * @param {string} string - The data to be signed
  * @returns {string} Base64-encoded digital signature of the input data
