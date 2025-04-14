@@ -35,12 +35,12 @@ function formatMonto(jsonString) {
   // .0: Adds .0 to the integer value.
   // $2: Refers to the second capturing group (either , or }).
 
-  console.log(
-    "Original JSON string: ",
-    jsonString,
-    "\nFormatted JSON string: ",
-    formattedString
-  );
+  // console.log(
+  //   "Original JSON string: ",
+  //   jsonString,
+  //   "\nFormatted JSON string: ",
+  //   formattedString
+  // );
 
   return formattedString;
 }
