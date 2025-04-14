@@ -13,9 +13,10 @@ const swaggerDocs = require("../config/swagger");
 const { validateApiKey } = require("../middleware/validateApiKey");
 
 // Controllers
+const health = require("../controllers/health");
 const qr = require("../controllers/sendQrPayment");
-const push = require("../controllers/sendPushPayment");
 const consulta = require("../controllers/consulta");
+const push = require("../controllers/sendPushPayment");
 const resultado = require("../controllers/resultadoOperaciones");
 
 // Validators
@@ -31,6 +32,84 @@ const { validateRequest } = require("../validators/validateRequest");
 
 // Swagger Documentation
 router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+/**
+ * @swagger
+ * /v2/health:
+ *   get:
+ *     summary: Health Check Endpoint
+ *     description: Checks the health of the API system including server status and database connectivity.
+ *     tags: [System]
+ *     responses:
+ *       '200':
+ *         description: All systems operational
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: Overall health status
+ *                   example: "healthy"
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Time of the health check
+ *                   example: "2023-07-24T15:30:45Z"
+ *                 services:
+ *                   type: object
+ *                   properties:
+ *                     server:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           example: "healthy"
+ *                     database:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           example: "healthy"
+ *                         responseTime:
+ *                           type: number
+ *                           description: Database response time in milliseconds
+ *                           example: 45
+ *       '503':
+ *         description: Service Unavailable - One or more components are not functioning properly.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "unhealthy"
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2023-07-24T15:30:45Z"
+ *                 services:
+ *                   type: object
+ *                   properties:
+ *                     server:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           example: "healthy"
+ *                     database:
+ *                       type: object
+ *                       properties:
+ *                         status:
+ *                           type: string
+ *                           example: "unhealthy"
+ *                         error:
+ *                           type: string
+ *                           example: "Database connection failed"
+ */
+router.get("/v2/health", health.checkHealth);
 
 /**
  * @swagger
@@ -145,7 +224,9 @@ router.post(
  * /v2/codi/push:
  *   post:
  *     summary: Initiate CoDi Push Payment Request
- *     description: Sends a payment request notification directly to a payer's mobile banking app using their phone number or CLABE account number. The payer must approve the request in their app.
+ *     description: >
+ *       Sends a payment request notification directly to a payer's mobile banking app using their phone number or CLABE account number.
+ *       The payer must approve the request in their app.
  *     tags: [CoDi Payments]
  *     security:
  *       - ApiKeyAuth: []
@@ -158,7 +239,7 @@ router.post(
  *             type: object
  *             required:
  *               - amount
- *               - accountNumber # Assuming accountNumber can be phone or CLABE based on implementation
+ *               - accountNumber
  *             properties:
  *               amount:
  *                 type: number
@@ -167,9 +248,9 @@ router.post(
  *                 example: 500.75
  *               accountNumber:
  *                 type: string
- *                 description: The target payer's identifier, which could be a 10-digit cell phone number or an 18-digit CLABE account number associated with CoDi.
- *                 example: "5512345678" # Example using phone number
- *                 # example: "012345678901234567" # Example using CLABE
+ *                 description: >
+ *                   The target payer's identifier, which could be a 10-digit cell phone number or an 18-digit CLABE account number associated with CoDi.
+ *                 example: "5512345678"
  *               concept:
  *                 type: string
  *                 description: A brief description of the payment request. Max length typically enforced by downstream systems.
@@ -196,7 +277,9 @@ router.post(
  *                 reference: "REF-INV-002"
  *     responses:
  *       '200':
- *         description: Push Payment Request initiated successfully. Note: This indicates the request was sent, not that the payment is complete. Payment status needs to be checked separately or via webhook.
+ *         description: >
+ *           Push Payment Request initiated successfully. Note: This indicates the request was sent, not that the payment is complete.
+ *           Payment status needs to be checked separately or via webhook.
  *         content:
  *           application/json:
  *             schema:
