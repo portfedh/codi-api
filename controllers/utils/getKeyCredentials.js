@@ -4,9 +4,9 @@
  * Defaults to development keys if NODE_ENV is not set or is unrecognized.
  *
  * @returns {Object} An object containing credential keys
- * @returns {string|undefined} returns.privateKey - The private key for the current environment
- * @returns {string|undefined} returns.privateKeyPassphrase - The passphrase for the private key
- * @returns {string|undefined} returns.publicKey - The public key for the current environment
+ * @returns {string|undefined} returns.privateKey - The private key for the current environment, or undefined if not set
+ * @returns {string|undefined} returns.privateKeyPassphrase - The passphrase for the private key, or undefined if not set
+ * @returns {string|undefined} returns.publicKey - The public key for the current environment, or undefined if not set
  */
 function getKeyCredentials() {
   const privateKey =
