@@ -1,5 +1,5 @@
 /**
- * Returns the appropriate CODI Push URL endpoints based on the current environment.
+ * Returns the appropriate CoDi Push URL endpoints based on the current environment.
  * Uses environment variables to determine which URLs to return.
  *
  * @returns {Object} An object containing both primary and secondary URLs for the current environment

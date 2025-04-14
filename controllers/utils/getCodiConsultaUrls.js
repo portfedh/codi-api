@@ -1,5 +1,5 @@
 /**
- * Returns the appropriate CODI Consulta URL endpoints based on the current environment.
+ * Returns the appropriate CoDi Consulta URL endpoints based on the current environment.
  * Uses environment variables to determine which URLs to return.
  *
  * @returns {Object} An object containing both primary and secondary URLs for the current environment

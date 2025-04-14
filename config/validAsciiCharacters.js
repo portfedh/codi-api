@@ -1,7 +1,7 @@
 /**
  * @fileoverview This file defines a mapping of valid ASCII character codes
  * to their respective characters, based on the specification provided in
- * "Anexo G - Tabla de Caracteres Validos y Codigos ASCII Respectivos".
+ * "Anexo G - Tabla de Caracteres Validos y Códigos ASCII Respectivos".
  *
  * This mapping is used to validate and process ASCII characters in the application.
  *

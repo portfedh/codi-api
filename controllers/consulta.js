@@ -1,9 +1,9 @@
 /**
- * @fileoverview Controller for querying the status of CODI payment messages from Banxico
+ * @fileoverview Controller for querying the status of CoDi payment messages from Banxico
  * @module controllers/consulta
  */
 
-// CODI Consulta del Estado de un Mensaje de Cobro
+// CoDi Consulta del Estado de un Mensaje de Cobro
 // ***********************************************
 
 // Imports
@@ -28,11 +28,11 @@ module.exports = {
   /**
    * @function getBillingInfo
    * @async
-   * @description Queries the status of a CODI payment message from Banxico's API
+   * @description Queries the status of a CoDi payment message from Banxico's API
    *
    * @param {Object} req - Express request object
    * @param {Object} req.body - Request body containing query parameters
-   * @param {string} req.body.folioCodi - CODI reference number to query
+   * @param {string} req.body.folioCodi - CoDi reference number to query
    * @param {number} req.body.tpg - Number of operations per page
    * @param {number} req.body.npg - Page number to retrieve
    * @param {string} req.body.fechaInicial - Start date for the query period

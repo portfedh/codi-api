@@ -4,7 +4,7 @@
  *
  * This module contains validation rules for payment consultation requests using express-validator.
  * It validates the following fields:
- * - folioCodi: CODI payment reference number
+ * - folioCodi: CoDi payment reference number
  * - tpg: Payment type group
  * - npg: Payment number group
  * - fechaInicial: Initial date for consultation
@@ -30,7 +30,7 @@ const { body } = require("express-validator");
 const consultaValidationRules = [
   /**
    * @name folioCodi
-   * @description Validates the CODI payment reference number
+   * @description Validates the CoDi payment reference number
    * @type {string}
    * @rules
    * - Must be a string

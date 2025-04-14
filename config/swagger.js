@@ -108,11 +108,11 @@ const swaggerOptions = {
        * @property {string} description - A description of the tag.
        */
       {
-        name: "CODI Payments",
+        name: "CoDi Payments",
         description: "Endpoints for payment operations",
       },
       {
-        name: "CODI Information",
+        name: "CoDi Information",
         description: "Endpoints for retrieving information",
       },
       {

@@ -1,5 +1,5 @@
 /**
- * Utility for verifying developer certificates in CODI transactions
+ * Utility for verifying developer certificates in CoDi transactions
  * @module verifyCrtDeveloper
  */
 const { getDeveloperCredentials } = require("./getDeveloperCredentials");

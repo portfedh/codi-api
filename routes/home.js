@@ -38,7 +38,7 @@ router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
  *   post:
  *     summary: Generate CoDi QR Payment Request
  *     description: Creates a QR code representing a CoDi payment request. This QR code can be scanned by a payer's mobile banking app to initiate the payment.
- *     tags: [CODI Payments]
+ *     tags: [CoDi Payments]
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -146,7 +146,7 @@ router.post(
  *   post:
  *     summary: Initiate CoDi Push Payment Request
  *     description: Sends a payment request notification directly to a payer's mobile banking app using their phone number or CLABE account number. The payer must approve the request in their app.
- *     tags: [CODI Payments]
+ *     tags: [CoDi Payments]
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:

@@ -34,7 +34,7 @@ function verifySignature(object, publicKeyCertificate) {
 
     // Request: QR or Push
     if (object.datosMC) {
-      console.log("\nCase: Req. Mensaje de Cobro via QR o Push");
+      // console.log("\nCase: Req. Mensaje de Cobro via QR o Push");
       sourceType = "datosMC";
       inputJson = object.datosMC;
       epoch = object.epoch;
@@ -45,7 +45,7 @@ function verifySignature(object, publicKeyCertificate) {
 
       // Response: QR
     } else if (object.cadenaMC) {
-      console.log("\nCase: Res. Mensaje de Cobro via QR");
+      // console.log("\nCase: Res. Mensaje de Cobro via QR");
       sourceType = "cadenaMC";
       inputJson = object.cadenaMC;
       epoch = object.epoch;
@@ -56,7 +56,7 @@ function verifySignature(object, publicKeyCertificate) {
 
       // Response: Push
     } else if (object.folioCodi) {
-      console.log("\nCase: Res. Mensaje de Cobro via Push");
+      // console.log("\nCase: Res. Mensaje de Cobro via Push");
       sourceType = "folioCodi";
       inputJson = object.folioCodi;
       epoch = object.epoch;
@@ -67,7 +67,7 @@ function verifySignature(object, publicKeyCertificate) {
 
       // Request: Consulta
     } else if (object.peticionConsulta) {
-      console.log("\nCase: Req. Consulta Estado Mensaje de Cobro");
+      // console.log("\nCase: Req. Consulta Estado Mensaje de Cobro");
       sourceType = "peticionConsulta";
       inputJson = object.peticionConsulta;
       epoch = object.epoch;
@@ -78,7 +78,7 @@ function verifySignature(object, publicKeyCertificate) {
 
       // Response: Consulta
     } else if (object.resultado) {
-      console.log("\nProcesando: Res. Resultado Estado Mensaje de Cobro V2");
+      // console.log("\nProcesando: Res. Resultado Estado Mensaje de Cobro V2");
       sourceType = "resultado";
       inputJson = object.resultado;
       epoch = object.epoch;

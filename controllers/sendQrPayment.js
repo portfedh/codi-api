@@ -1,4 +1,4 @@
-// CODI QR Request Controller
+// CoDi QR Request Controller
 // **************************
 
 // Imports
@@ -20,7 +20,7 @@ const { makeRequestWithFallback } = require("./utils/makeRequestWithFallback");
 
 /**
  * @module sendQrPayment
- * @description Controller for generating and sending CODI QR payment codes by communicating with Banxico API
+ * @description Controller for generating and sending CoDi QR payment codes by communicating with Banxico API
  */
 
 /**

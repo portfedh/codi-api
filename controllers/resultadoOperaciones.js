@@ -1,7 +1,7 @@
 /**
  * ResultadoOperaciones Controller
  *
- * This controller processes and validates operation results from Banxico's CODI payment system.
+ * This controller processes and validates operation results from Banxico's CoDi payment system.
  * It verifies signatures, validates request parameters, and ensures data integrity before
  * providing a response with the appropriate status code.
  *
