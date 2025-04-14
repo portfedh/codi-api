@@ -1,11 +1,12 @@
 /**
  * Retrieves the appropriate key credentials based on the current environment.
  * Selects between production and development keys according to NODE_ENV.
+ * Defaults to development keys if NODE_ENV is not set or is unrecognized.
  *
  * @returns {Object} An object containing credential keys
- * @returns {string} returns.privateKey - The private key for the current environment
- * @returns {string} returns.privateKeyPassphrase - The passphrase for the private key
- * @returns {string} returns.publicKey - The public key for the current environment
+ * @returns {string|undefined} returns.privateKey - The private key for the current environment
+ * @returns {string|undefined} returns.privateKeyPassphrase - The passphrase for the private key
+ * @returns {string|undefined} returns.publicKey - The public key for the current environment
  */
 function getKeyCredentials() {
   const privateKey =

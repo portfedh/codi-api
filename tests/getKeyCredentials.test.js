@@ -94,10 +94,34 @@ describe("getKeyCredentials", () => {
     process.env.PUBLIC_KEY_DEV = "somePublicKey";
 
     const credentials = getKeyCredentials();
-    
+
     expect(credentials).toHaveProperty("privateKey");
     expect(credentials).toHaveProperty("privateKeyPassphrase");
     expect(credentials).toHaveProperty("publicKey");
     expect(Object.keys(credentials).length).toBe(3);
+  });
+
+  it("should default to development keys when NODE_ENV is unset or unrecognized", () => {
+    delete process.env.NODE_ENV;
+    process.env.PRIVATE_KEY_DEV = "defaultDevPrivateKey";
+    process.env.PRIVATE_KEY_PASSPHRASE_DEV = "defaultDevPassphrase";
+    process.env.PUBLIC_KEY_DEV = "defaultDevPublicKey";
+
+    const credentials = getKeyCredentials();
+
+    expect(credentials).toEqual({
+      privateKey: "defaultDevPrivateKey",
+      privateKeyPassphrase: "defaultDevPassphrase",
+      publicKey: "defaultDevPublicKey",
+    });
+
+    process.env.NODE_ENV = "unknown";
+    const credentialsForUnknownEnv = getKeyCredentials();
+
+    expect(credentialsForUnknownEnv).toEqual({
+      privateKey: "defaultDevPrivateKey",
+      privateKeyPassphrase: "defaultDevPassphrase",
+      publicKey: "defaultDevPublicKey",
+    });
   });
 });
