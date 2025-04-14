@@ -1,65 +1,77 @@
 const { validateApiKey } = require("../middleware/validateApiKey");
-const { getSellerApiKey } = require("../controllers/utils/getSellerApiKey");
+const supabase = require("../config/supabase");
+const apiKeyCache = require("../config/cache");
 
-// Mock getSellerApiKey function
-jest.mock("../controllers/utils/getSellerApiKey");
+jest.mock("../config/supabase");
+jest.mock("../config/cache");
 
-describe("validateApiKey Middleware", () => {
-  let req;
-  let res;
-  let next;
+describe("validateApiKey middleware", () => {
+  let req, res, next;
 
   beforeEach(() => {
-    // Reset mocks between tests
-    jest.clearAllMocks();
-
-    // Setup request, response, and next function mocks
-    req = {
-      headers: {},
-    };
-
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
-
+    req = { headers: {} };
+    res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
     next = jest.fn();
-
-    // Mock the getSellerApiKey function to return a test value
-    getSellerApiKey.mockReturnValue("test-api-key");
+    apiKeyCache.get.mockClear();
+    apiKeyCache.set.mockClear();
+    supabase.from.mockClear();
   });
 
-  test("should call next() when a valid API key is provided", () => {
-    req.headers["x-api-key"] = "test-api-key";
+  it("should return 401 if API key is missing", async () => {
+    await validateApiKey(req, res, next);
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({ error: "API Key missing" });
+    expect(next).not.toHaveBeenCalled();
+  });
 
-    validateApiKey(req, res, next);
+  it("should use cached API key if available", async () => {
+    req.headers["x-api-key"] = "test-key";
+    apiKeyCache.get.mockReturnValue({ banxico_api_key: "cached-key" });
 
+    await validateApiKey(req, res, next);
+
+    expect(apiKeyCache.get).toHaveBeenCalledWith("test-key");
+    expect(req.apiKey).toBe("cached-key");
     expect(next).toHaveBeenCalled();
-    expect(res.status).not.toHaveBeenCalled();
-    expect(res.json).not.toHaveBeenCalled();
   });
 
-  test("should return 401 when no API key is provided", () => {
-    validateApiKey(req, res, next);
-
-    expect(next).not.toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({
-      success: false,
-      error: "Invalid or missing API key",
+  it("should return 403 if API key is invalid", async () => {
+    req.headers["x-api-key"] = "invalid-key";
+    apiKeyCache.get.mockReturnValue(null);
+    supabase.from.mockReturnValue({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ error: true, data: null }),
     });
+
+    await validateApiKey(req, res, next);
+
+    expect(apiKeyCache.get).toHaveBeenCalledWith("invalid-key");
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({ error: "Invalid API Key" });
+    expect(next).not.toHaveBeenCalled();
   });
 
-  test("should return 401 when an invalid API key is provided", () => {
-    req.headers["x-api-key"] = "wrong-api-key";
-
-    validateApiKey(req, res, next);
-
-    expect(next).not.toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({
-      success: false,
-      error: "Invalid or missing API key",
+  it("should query Supabase and cache the result if API key is valid", async () => {
+    req.headers["x-api-key"] = "valid-key";
+    apiKeyCache.get.mockReturnValue(null);
+    supabase.from.mockReturnValue({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({
+        error: null,
+        data: { banxico_api_key: "supabase-key" },
+      }),
     });
+
+    await validateApiKey(req, res, next);
+
+    expect(apiKeyCache.get).toHaveBeenCalledWith("valid-key");
+    expect(supabase.from).toHaveBeenCalledWith("api_keys");
+    expect(apiKeyCache.set).toHaveBeenCalledWith("valid-key", {
+      banxico_api_key: "supabase-key",
+    });
+    expect(req.apiKey).toBe("supabase-key");
+    expect(next).toHaveBeenCalled();
   });
 });
