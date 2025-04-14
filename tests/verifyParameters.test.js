@@ -27,7 +27,7 @@ describe("verifyParameters", () => {
     expect(verifyParameters(resultado)).toBe(0);
   });
 
-  it("should return -6 when a required field is missing", () => {
+  it("should return -6 when a required top-level field is missing", () => {
     const resultado = {
       cadenaInformacion: {
         certComercioProveedor: "value",
@@ -52,7 +52,7 @@ describe("verifyParameters", () => {
     expect(verifyParameters(resultado)).toBe(-6);
   });
 
-  it("should return -6 when a required sub-field is missing", () => {
+  it("should return -6 when a required sub-field in cadenaInformacion is missing", () => {
     const resultado = {
       cadenaInformacion: {
         certComercioProveedor: "value",

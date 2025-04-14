@@ -1,3 +1,10 @@
+/**
+ * Verifies that the provided `resultado` object contains all required fields and sub-fields.
+ *
+ * @param {Object} resultado - The object to validate.
+ * @returns {number} - Returns 0 if all required fields and sub-fields are present.
+ *                     Returns -6 if any required field or sub-field is missing.
+ */
 function verifyParameters(resultado) {
   const requiredFields = ["cadenaInformacion", "selloDigital"];
 
