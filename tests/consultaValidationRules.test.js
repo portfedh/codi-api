@@ -121,6 +121,19 @@ describe("consultaValidationRules direct tests", () => {
       const errors = result.array();
       expect(errors.some((e) => e.msg.includes("tpg"))).toBe(true);
     });
+
+    test("should fail when tpg is empty", async () => {
+      const result = await runValidation({
+        folioCodi: "1234567890",
+        tpg: "",
+        npg: "100",
+        fechaInicial: "20230101",
+        fechaFinal: "20230201",
+      });
+      expect(result.isEmpty()).toBe(false);
+      const errors = result.array();
+      expect(errors.some((e) => e.msg === "tpg is required")).toBe(true);
+    });
   });
 
   // NPG TESTS
@@ -151,6 +164,19 @@ describe("consultaValidationRules direct tests", () => {
           (e) => e.msg === "npg must be a number between 1 and 2147483647"
         )
       ).toBe(true);
+    });
+
+    test("should fail when npg is empty", async () => {
+      const result = await runValidation({
+        folioCodi: "1234567890",
+        tpg: "50",
+        npg: "",
+        fechaInicial: "20230101",
+        fechaFinal: "20230201",
+      });
+      expect(result.isEmpty()).toBe(false);
+      const errors = result.array();
+      expect(errors.some((e) => e.msg === "npg is required")).toBe(true);
     });
   });
 
@@ -196,6 +222,21 @@ describe("consultaValidationRules direct tests", () => {
             e.msg === "fechaInicial must be a valid date in YYYYMMDD format"
         )
       ).toBe(true);
+    });
+
+    test("should fail when fechaInicial is empty", async () => {
+      const result = await runValidation({
+        folioCodi: "1234567890",
+        tpg: "50",
+        npg: "100",
+        fechaInicial: "",
+        fechaFinal: "20230201",
+      });
+      expect(result.isEmpty()).toBe(false);
+      const errors = result.array();
+      expect(errors.some((e) => e.msg === "fechaInicial is required")).toBe(
+        true
+      );
     });
   });
 
@@ -265,6 +306,38 @@ describe("consultaValidationRules direct tests", () => {
           (e) =>
             e.msg ===
             "fechaFinal must be after fechaInicial and not in the future"
+        )
+      ).toBe(true);
+    });
+
+    test("should fail when fechaFinal is empty", async () => {
+      const result = await runValidation({
+        folioCodi: "1234567890",
+        tpg: "50",
+        npg: "100",
+        fechaInicial: "20230101",
+        fechaFinal: "",
+      });
+      expect(result.isEmpty()).toBe(false);
+      const errors = result.array();
+      expect(errors.some((e) => e.msg === "fechaFinal is required")).toBe(true);
+    });
+
+    test("should fail with invalid format for fechaFinal", async () => {
+      const result = await runValidation({
+        folioCodi: "1234567890",
+        tpg: "50",
+        npg: "100",
+        fechaInicial: "20230101",
+        fechaFinal: "2023-02-01", // Invalid format
+      });
+      expect(result.isEmpty()).toBe(false);
+      const errors = result.array();
+      expect(
+        errors.some(
+          (e) =>
+            e.msg ===
+            "fechaFinal must be '0' or a valid date in YYYYMMDD format"
         )
       ).toBe(true);
     });

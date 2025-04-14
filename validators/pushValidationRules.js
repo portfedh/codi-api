@@ -1,14 +1,14 @@
 /**
  * @module validators/pushValidationRules
  * @description Validation rules for push payment requests
- * 
+ *
  * This module contains validation rules for push payment requests using express-validator.
  * It validates the following fields:
  * - celularCliente: Client's phone number
- * - monto: Payment amount
- * - referenciaNumerica: Numeric reference
- * - concepto: Payment concept
- * - vigencia: Payment validity period
+ * - monto: Payment amount (must be numeric, between 0 and 999,999,999,999.99, with at most 2 decimal places)
+ * - referenciaNumerica: Numeric reference (optional, alphanumeric, max length 7, no special characters)
+ * - concepto: Payment concept (string, 1-40 characters, only allowed ASCII characters)
+ * - vigencia: Payment validity period (must be "0" or a numeric timestamp in the future, not exceeding one year from now)
  */
 
 const { body } = require("express-validator");
@@ -17,7 +17,7 @@ const validAsciiCharacters = require("../config/validAsciiCharacters");
 /**
  * @constant {Array} pushValidationRules
  * @description Array of validation rules for push payment requests
- * 
+ *
  * @example
  * // Valid request body example:
  * {

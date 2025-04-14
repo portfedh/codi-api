@@ -1,14 +1,14 @@
 /**
  * @module validators/consultaValidationRules
  * @description Validation rules for payment consultation requests
- * 
+ *
  * This module contains validation rules for payment consultation requests using express-validator.
  * It validates the following fields:
  * - folioCodi: CODI payment reference number
  * - tpg: Payment type group
  * - npg: Payment number group
  * - fechaInicial: Initial date for consultation
- * - fechaFinal: Final date for consultation
+ * - fechaFinal: Final date for consultation (can be "0" or a valid date not in the future)
  */
 
 const { body } = require("express-validator");
@@ -16,7 +16,7 @@ const { body } = require("express-validator");
 /**
  * @constant {Array} consultaValidationRules
  * @description Array of validation rules for payment consultation requests
- * 
+ *
  * @example
  * // Valid request body example:
  * {
