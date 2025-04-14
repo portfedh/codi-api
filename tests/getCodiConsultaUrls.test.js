@@ -1,6 +1,6 @@
 const {
   getCodiConsultaUrls,
-} = require("../controllers/utils/getCodiConsultaUrl");
+} = require("../controllers/utils/getCodiConsultaUrls");
 
 describe("getCodiConsultaUrls", () => {
   afterEach(() => {

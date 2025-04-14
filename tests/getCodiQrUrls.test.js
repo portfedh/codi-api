@@ -1,4 +1,4 @@
-const { getCodiQrUrls } = require("../controllers/utils/getCodiQrUrl");
+const { getCodiQrUrls } = require("../controllers/utils/getCodiQrUrls");
 
 describe("getCodiQrUrls", () => {
   afterEach(() => {
