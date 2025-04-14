@@ -1,11 +1,12 @@
 /**
- * Removes non-printable characters from a string.
+ * Removes non-printable and invalid UTF-8 characters from a string.
  *
- * This function takes a string as input, removes any non-printable characters,
- * and returns the resulting string.
+ * This function takes a string as input, removes any non-printable characters
+ * (Unicode code points between 0 and 31 or between 127 and 159) and invalid UTF-8
+ * characters, and returns the resulting string.
  *
  * @param {string} str - The input string.
- * @returns {string} The input string with non-printable characters removed.
+ * @returns {string} The input string with non-printable and invalid UTF-8 characters removed.
  */
 function toValidUTF8(str) {
   // We're using a regular expression to match non-printable characters.

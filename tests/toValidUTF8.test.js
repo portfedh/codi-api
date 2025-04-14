@@ -7,7 +7,7 @@ describe("toValidUTF8", () => {
     expect(output).toBe(input);
   });
 
-  test("should handle non-UTF-8 characters gracefully", () => {
+  test("should handle invalid UTF-8 characters gracefully", () => {
     const input = "Hello, world! \x80\x81\x82";
     const output = toValidUTF8(input);
     expect(output).toBe("Hello, world! ");
