@@ -42,4 +42,29 @@ describe("validateRequest middleware", () => {
     expect(res.json).toHaveBeenCalledWith({ errors: errorsArray });
     expect(next).not.toHaveBeenCalled();
   });
+
+  it("should handle an empty errors array gracefully", () => {
+    validationResult.mockReturnValueOnce({
+      isEmpty: () => false,
+      array: () => [],
+    });
+
+    validateRequest(req, res, next);
+
+    expect(validationResult).toHaveBeenCalledWith(req);
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ errors: [] });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it("should handle unexpected exceptions in validationResult", () => {
+    validationResult.mockImplementationOnce(() => {
+      throw new Error("Unexpected error");
+    });
+
+    expect(() => validateRequest(req, res, next)).toThrow("Unexpected error");
+    expect(next).not.toHaveBeenCalled();
+    expect(res.status).not.toHaveBeenCalled();
+    expect(res.json).not.toHaveBeenCalled();
+  });
 });
