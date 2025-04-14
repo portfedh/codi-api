@@ -5,13 +5,13 @@ const environment = process.env.NODE_ENV || "N/A";
  *
  * @param {Object} params
  * @param {string} params.route - The API route (e.g., '/v2/codi/push').
- * @param {Object} params.requestHeaders - Request headers object
- * @param {Object} params.requestPayload - The request payload to log
- * @param {Date} params.requestTimestamp - Timestamp of the request.
- * @param {object} params.responsePayload - The response payload (JSON).
+ * @param {Object} params.requestHeaders - Request headers object.
+ * @param {Object} params.requestPayload - The request payload to log.
+ * @param {Date} params.requestTimestamp - Timestamp of the request (must support `.format()` method).
+ * @param {Object} params.responsePayload - The response payload (JSON).
  * @param {number} params.responseStatus - The HTTP status code of the response.
- * @param {Date} params.responseTimestamp - Timestamp of the response.
- * @returns {Promise<void>}
+ * @param {Date} params.responseTimestamp - Timestamp of the response (must support `.format()` method).
+ * @returns {Promise<void>} Logs the request and response to the database. Errors are logged to the console.
  */
 async function insertRequestResponse({
   route,
