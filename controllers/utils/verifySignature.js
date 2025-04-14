@@ -2,6 +2,14 @@ const crypto = require("crypto");
 const forge = require("node-forge");
 const formatMonto = require("./formatMonto");
 
+/**
+ * Verifies the digital signature of an object using a public key certificate.
+ *
+ * @param {Object} object - The object containing the data and signature to verify.
+ * @param {string} publicKeyCertificate - The public key certificate in PEM format.
+ * @returns {boolean} - Returns true if the signature is valid, otherwise false.
+ * @throws {Error} - Throws an error if verification fails or if no valid data is found in the object.
+ */
 function verifySignature(object, publicKeyCertificate) {
   try {
     // console.log("\nIniciando proceso de verificación de firma:");

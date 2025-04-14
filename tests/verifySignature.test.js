@@ -4,6 +4,8 @@ const forge = require("node-forge");
 
 jest.mock("crypto");
 jest.mock("node-forge");
+jest.mock("../controllers/utils/formatMonto", () => jest.fn());
+const formatMonto = require("../controllers/utils/formatMonto");
 
 describe("verifySignature", () => {
   const mockObject = {
@@ -306,6 +308,40 @@ describe("verifySignature", () => {
         saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
       },
       mockObjectWithHoraEnvioMensaje.selloDigital,
+      "base64"
+    );
+  });
+
+  it("should verify the signature with formatted cadenaInformacion", () => {
+    const mockObjectWithFormattedCadenaInformacion = {
+      ...mockObject,
+      datosMC: undefined,
+      cadenaInformacion: { key: "value" },
+    };
+    const mockFormattedJson = "formattedString";
+    formatMonto.mockReturnValue(mockFormattedJson);
+
+    crypto.createVerify().verify.mockReturnValue(true);
+
+    const result = verifySignature(
+      mockObjectWithFormattedCadenaInformacion,
+      mockPublicKeyCertificate
+    );
+
+    expect(result).toBe(true);
+    expect(formatMonto).toHaveBeenCalledWith(
+      JSON.stringify(mockObjectWithFormattedCadenaInformacion.cadenaInformacion)
+    );
+    expect(crypto.createVerify().update).toHaveBeenCalledWith(
+      mockFormattedJson
+    );
+    expect(crypto.createVerify().verify).toHaveBeenCalledWith(
+      {
+        key: mockPublicKey,
+        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
+        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
+      },
+      mockObjectWithFormattedCadenaInformacion.selloDigital,
       "base64"
     );
   });
