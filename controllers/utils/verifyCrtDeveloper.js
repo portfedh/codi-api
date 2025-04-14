@@ -12,8 +12,8 @@ const { getDeveloperCredentials } = require("./getDeveloperCredentials");
  * @param {string} resultado.cadenaInformacion.certComercioProveedor - Provider's certificate to verify
  *
  * @returns {number} Status code indicating verification result:
- *   0: Verification successful
- *  -4: Certificate mismatch
+ *   0: Verification successful (certificates match)
+ *  -4: Certificate mismatch (certificates do not match)
  */
 function verifyCrtDeveloper(resultado) {
   const { crtOper } = getDeveloperCredentials();

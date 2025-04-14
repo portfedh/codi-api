@@ -31,4 +31,16 @@ describe("verifyCrtDeveloper", () => {
 
     expect(verifyCrtDeveloper(resultado)).toBe(-4);
   });
+
+  it("should return -4 when certComercioProveedor is undefined", () => {
+    getDeveloperCredentials.mockReturnValue({ crtOper: "expectedCrtOper" });
+
+    const resultado = {
+      cadenaInformacion: {
+        certComercioProveedor: undefined,
+      },
+    };
+
+    expect(verifyCrtDeveloper(resultado)).toBe(-4);
+  });
 });
