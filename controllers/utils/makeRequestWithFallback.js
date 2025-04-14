@@ -8,8 +8,8 @@ const axios = require("axios");
  * @param {Object} requestData - The data to send in the request
  * @param {Object} options - Additional options
  * @param {number} [options.timeout=3000] - Timeout in milliseconds before trying secondary URL
- * @returns {Promise<Object>} The response from the successful request
- * @throws {Error} If both requests fail
+ * @returns {Promise<Object>} The response from the successful request, including the URL and response object
+ * @throws {Error} If both requests fail, includes error messages from both attempts
  */
 async function makeRequestWithFallback(
   primaryUrl,

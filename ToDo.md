@@ -1,11 +1,12 @@
 # ToDo
 
-- Hacer una cédula de resultados
 - Seguir documentación para checks de envío: string o int
+- Postman test para resultadoOperaciones
 - Add unit tests to all code
 - Update descriptions
 - Update swagger
 - Update unit tests
+- Hacer una cédula de resultados
 - Health check endpoints
 - Blue green deployment
 
@@ -42,3 +43,5 @@ Option: Store API key en KMS:
 - Google Cloud KMS
 
 ## Notes
+
+Checar que hacen los folders de logs y de coverage
