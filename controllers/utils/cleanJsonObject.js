@@ -1,8 +1,3 @@
-/**
- * @fileoverview Utility functions for cleaning and normalizing JSON data.
- * Contains functions to ensure data integrity when processing JSON objects.
- */
-
 const { toValidUTF8 } = require("./toValidUTF8");
 
 /**
