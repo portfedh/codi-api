@@ -1,28 +1,40 @@
-const { getCodiPushUrl } = require("../controllers/utils/getCodiPushUrl");
+const { getCodiPushUrls } = require("../controllers/utils/getCodiPushUrl");
 
-describe("getCodiPushUrl", () => {
+describe("getCodiPushUrls", () => {
   afterEach(() => {
     jest.resetModules(); // Reset modules to clear any cached environment variables
   });
 
-  it("should return the production endpoint when NODE_ENV is 'production'", () => {
+  it("should return the production endpoints when NODE_ENV is 'production'", () => {
     process.env.NODE_ENV = "production";
-    process.env.SITIO_CODI_PUSH_PROD_2 = "https://prod.example.com";
-    const result = getCodiPushUrl();
-    expect(result).toBe("https://prod.example.com");
+    process.env.SITIO_CODI_PUSH_PROD_1 = "https://prod1.example.com";
+    process.env.SITIO_CODI_PUSH_PROD_2 = "https://prod2.example.com";
+    const result = getCodiPushUrls();
+    expect(result).toEqual({
+      primary: "https://prod1.example.com",
+      secondary: "https://prod2.example.com",
+    });
   });
 
-  it("should return the development endpoint when NODE_ENV is not 'production'", () => {
+  it("should return the development endpoints when NODE_ENV is not 'production'", () => {
     process.env.NODE_ENV = "development";
-    process.env.SITIO_CODI_PUSH_DEV_2 = "https://dev.example.com";
-    const result = getCodiPushUrl();
-    expect(result).toBe("https://dev.example.com");
+    process.env.SITIO_CODI_PUSH_DEV_1 = "https://dev1.example.com";
+    process.env.SITIO_CODI_PUSH_DEV_2 = "https://dev2.example.com";
+    const result = getCodiPushUrls();
+    expect(result).toEqual({
+      primary: "https://dev1.example.com",
+      secondary: "https://dev2.example.com",
+    });
   });
 
-  it("should return development endpoint when NODE_ENV is undefined", () => {
+  it("should return development endpoints when NODE_ENV is undefined", () => {
     process.env.NODE_ENV = undefined;
-    process.env.SITIO_CODI_PUSH_DEV_2 = "https://dev.example.com";
-    const result = getCodiPushUrl();
-    expect(result).toBe("https://dev.example.com");
+    process.env.SITIO_CODI_PUSH_DEV_1 = "https://dev1.example.com";
+    process.env.SITIO_CODI_PUSH_DEV_2 = "https://dev2.example.com";
+    const result = getCodiPushUrls();
+    expect(result).toEqual({
+      primary: "https://dev1.example.com",
+      secondary: "https://dev2.example.com",
+    });
   });
 });
