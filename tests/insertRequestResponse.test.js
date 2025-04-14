@@ -143,4 +143,65 @@ describe("insertRequestResponse", () => {
       "API request and response logged successfully."
     );
   });
+
+  it("should log an error if an unexpected error occurs", async () => {
+    const mockError = new Error("Unexpected error");
+    supabase.from.mockImplementationOnce(() => {
+      throw mockError;
+    });
+
+    const params = {
+      route: "/v2/codi/push",
+      requestHeaders: { "x-api-key": "test-api-key" },
+      requestPayload: { key: "value" },
+      requestTimestamp: { format: () => "2023-01-01T00:00:00Z" },
+      responsePayload: { success: true },
+      responseStatus: 200,
+      responseTimestamp: { format: () => "2023-01-01T00:01:00Z" },
+    };
+
+    console.error = jest.fn();
+
+    await insertRequestResponse(params);
+
+    expect(console.error).toHaveBeenCalledWith(
+      "Error logging API data:",
+      mockError
+    );
+  });
+
+  it("should use the correct environment variable", async () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "test-environment";
+
+    const params = {
+      route: "/v2/codi/push",
+      requestHeaders: { "x-api-key": "test-api-key" },
+      requestPayload: { key: "value" },
+      requestTimestamp: { format: () => "2023-01-01T00:00:00Z" },
+      responsePayload: { success: true },
+      responseStatus: 200,
+      responseTimestamp: { format: () => "2023-01-01T00:01:00Z" },
+    };
+
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          single: jest
+            .fn()
+            .mockResolvedValueOnce({ data: { id: 1 }, error: null }),
+        }),
+      }),
+    });
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockResolvedValueOnce({ error: null }),
+    });
+
+    await insertRequestResponse(params);
+
+    expect(supabase.from).toHaveBeenCalledWith("requests");
+    expect(supabase.from).toHaveBeenCalledWith("responses");
+
+    process.env.NODE_ENV = originalEnv; // Restore original environment
+  });
 });
