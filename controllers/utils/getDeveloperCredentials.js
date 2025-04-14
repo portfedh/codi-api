@@ -3,7 +3,7 @@
  * Uses different credential values for production and development environments.
  *
  * @function getDeveloperCredentials
- * @returns {Object} An object containing credential certificates
+ * @returns {Object} An object containing credential certificates:
  * @returns {string} crtLogIn - The login certificate for authentication
  * @returns {string} crtOper - The operation certificate for transactions
  */
