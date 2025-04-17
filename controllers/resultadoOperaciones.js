@@ -51,39 +51,38 @@ module.exports = {
     try {
       const resultado = req.body;
 
-      // Get Banxico Public Key Certificate
-      const { publicKeyBanxico } = getBanxicoCredentials();
+      const checks = [
+        verifyParameters, // Check All fields and sub-fields present
+        verifyDigit, // Check digitoVerificadorCliente is a number of 1-9 digits
+        verifyCellPhone, // Check celularCliente is a 10-digit number in a string
+        verifyCrtDeveloper, // Compare certComercioProveedor with crtOper (Developer) in env file
+        verifyCrtBanxico, // Compare certBdeM with crtBanxico in env file
+        verifyResultadoMensajeDeCobro, // Check resultadoMensajeCobro is a valid response number
+        verifyIdMensajeCobro, // Check idMensajeCobro is a string of 10 or 20 characters
+        verifyMensajeCobro, // Check concepto is a string of at least 1 character
+        verifyTimeStamps, // Check all timestamps are valid and in order
+      ];
 
-      const isVerified = verifySignature(resultado, publicKeyBanxico);
-
-      if (!isVerified) {
-        console.log("Signature verification failed. Resultado -8");
-        responsePayload = { resultado: -8 };
-      } else {
-        const checks = [
-          verifyParameters, // Check All fields and sub-fields present
-          verifyDigit, // Check digitoVerificadorCliente is a number of 1-9 digits
-          verifyCellPhone, // Check celularCliente is a 10-digit number in a string
-          verifyCrtDeveloper, // Compare certComercioProveedor with crtOper (Developer) in env file
-          verifyCrtBanxico, // Compare certBdeM with crtBanxico in env file
-          verifyResultadoMensajeDeCobro, // Check resultadoMensajeCobro is a valid response number
-          verifyIdMensajeCobro, // Check idMensajeCobro is a string of 10 or 20 characters
-          verifyMensajeCobro, // Check concepto is a string of at least 1 character
-          verifyTimeStamps, // Check all timestamps are valid and in order
-        ];
-
-        for (let i = 0; i < checks.length; i++) {
-          const checkResult = checks[i](resultado);
-          if (checkResult !== 0) {
-            console.log(
-              `Check ${checks[i].name} failed with result ${checkResult}`
-            );
-            responsePayload = { resultado: checkResult };
-            break;
-          }
+      for (let i = 0; i < checks.length; i++) {
+        const checkResult = checks[i](resultado);
+        if (checkResult !== 0) {
+          console.log(
+            `Check ${checks[i].name} failed with result ${checkResult}`
+          );
+          responsePayload = { resultado: checkResult };
+          break;
         }
+      }
 
-        if (responsePayload.resultado === 0) {
+      if (responsePayload.resultado === 0) {
+        // Perform signature verification as the last step
+        const { publicKeyBanxico } = getBanxicoCredentials();
+        const isVerified = verifySignature(resultado, publicKeyBanxico);
+
+        if (!isVerified) {
+          console.log("Signature verification failed. Resultado -8");
+          responsePayload = { resultado: -8 };
+        } else {
           console.log("All checks passed. Processing request.... Resultado 0");
         }
       }
