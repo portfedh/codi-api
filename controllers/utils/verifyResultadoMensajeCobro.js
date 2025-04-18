@@ -7,6 +7,7 @@
  * @returns {number} - Returns 0 if valid, otherwise returns -6.
  */
 function verifyResultadoMensajeDeCobro(resultado) {
+  // Source: Anexo D - Catalogo de estado de mensajes de cobro. Documentación Banxico
   const validResults = [
     0, 1, 2, 3, 4, 6, 21, 22, 23, 24, 31, 32, 33, 34, 61, 62, 63,
   ];
