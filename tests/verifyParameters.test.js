@@ -27,7 +27,7 @@ describe("verifyParameters", () => {
     expect(verifyParameters(resultado)).toBe(0);
   });
 
-  it("should return -6 when a required top-level field is missing", () => {
+  it("should return -1 when a required top-level field is missing", () => {
     const resultado = {
       cadenaInformacion: {
         certComercioProveedor: "value",
@@ -49,10 +49,10 @@ describe("verifyParameters", () => {
       },
     };
 
-    expect(verifyParameters(resultado)).toBe(-6);
+    expect(verifyParameters(resultado)).toBe(-1);
   });
 
-  it("should return -6 when a required sub-field in cadenaInformacion is missing", () => {
+  it("should return -1 when a required sub-field in cadenaInformacion is missing", () => {
     const resultado = {
       cadenaInformacion: {
         certComercioProveedor: "value",
@@ -74,21 +74,21 @@ describe("verifyParameters", () => {
       selloDigital: "value",
     };
 
-    expect(verifyParameters(resultado)).toBe(-6);
+    expect(verifyParameters(resultado)).toBe(-1);
   });
 
-  it("should return -6 when cadenaInformacion is not an object", () => {
+  it("should return -1 when cadenaInformacion is not an object", () => {
     const resultado = {
       cadenaInformacion: "notAnObject",
       selloDigital: "value",
     };
 
-    expect(verifyParameters(resultado)).toBe(-6);
+    expect(verifyParameters(resultado)).toBe(-1);
   });
 
-  it("should return -6 when resultado is not an object", () => {
+  it("should return -1 when resultado is not an object", () => {
     const resultado = "notAnObject";
 
-    expect(verifyParameters(resultado)).toBe(-6);
+    expect(verifyParameters(resultado)).toBe(-1);
   });
 });

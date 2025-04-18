@@ -16,10 +16,12 @@ const { verifyCellPhone } = require("./utils/verifyCellPhone");
 const { verifySignature } = require("./utils/verifySignature");
 const { verifyCrtBanxico } = require("./utils/verifyCrtBanxico");
 const { verifyTimeStamps } = require("./utils/verifyTimeStamps");
+const { verifyClientName } = require("./utils/verifyClientName");
 const { verifyParameters } = require("./utils/verifyParameters");
 const { verifyMensajeCobro } = require("./utils/verifyMensajeCobro");
 const { verifyCrtDeveloper } = require("./utils/verifyCrtDeveloper");
 const { verifyIdMensajeCobro } = require("./utils/verifyIdMensajeCobro");
+const { verifyInstitutionCode } = require("./utils/verifyInstitutionCode");
 const { getBanxicoCredentials } = require("./utils/getBanxicoCredentials");
 const { insertRequestResponse } = require("./utils/insertRequestResponse");
 const {
@@ -53,8 +55,10 @@ module.exports = {
 
       const checks = [
         verifyParameters, // Check All fields and sub-fields present
-        verifyDigit, // Check digitoVerificadorCliente is a number of 1-9 digits
         verifyCellPhone, // Check celularCliente is a 10-digit number in a string
+        verifyDigit, // Check digitoVerificadorCliente is a number of 1-9 digits
+        verifyClientName, //Check client name is an alphanumeric character up to 40 characters long
+        verifyInstitutionCode, // Check its a 3-digit number in a string and in the list of valid institutions
         verifyCrtDeveloper, // Compare certComercioProveedor with crtOper (Developer) in env file
         verifyCrtBanxico, // Compare certBdeM with crtBanxico in env file
         verifyResultadoMensajeDeCobro, // Check resultadoMensajeCobro is a valid response number

@@ -455,7 +455,7 @@ router.post(
   validateApiKey,
   consultaValidationRules, // Ensure this validator checks for 'operationId' now
   validateRequest,
-  consulta.getBillingInfo // Consider renaming this controller for clarity (e.g., getOperationStatus)
+  consulta.getBillingInfo
 );
 
 /**
@@ -544,7 +544,7 @@ router.post(
  *                message: "Error processing operation result"
  *                code: "CALLBACK_PROCESSING_ERROR"
  */
-router.post("/v2/resultadoOperaciones", resultado.resultadoOperaciones); // No API key validation middleware if it's an external webhook
+router.post("/v2/resultadoOperaciones", resultado.resultadoOperaciones);
 
 // Exports
 // *******

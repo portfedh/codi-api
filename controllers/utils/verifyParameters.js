@@ -30,14 +30,14 @@ function verifyParameters(resultado) {
   // Check if all required fields exist
   for (const field of requiredFields) {
     if (!resultado.hasOwnProperty(field)) {
-      return -6;
+      return -1;
     }
   }
 
   // Check if all required sub-fields exist in cadenaInformación
   for (const subField of requiredSubFields) {
     if (!resultado.cadenaInformacion.hasOwnProperty(subField)) {
-      return -6;
+      return -1;
     }
   }
 
