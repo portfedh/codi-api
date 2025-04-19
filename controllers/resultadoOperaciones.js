@@ -18,6 +18,7 @@ const { verifyCrtBanxico } = require("./utils/verifyCrtBanxico");
 const { verifyTimeStamps } = require("./utils/verifyTimeStamps");
 const { verifyClientName } = require("./utils/verifyClientName");
 const { verifyParameters } = require("./utils/verifyParameters");
+const { verifyAccountType } = require("./utils/verifyAccountType");
 const { verifyMensajeCobro } = require("./utils/verifyMensajeCobro");
 const { verifyCrtDeveloper } = require("./utils/verifyCrtDeveloper");
 const { verifyIdMensajeCobro } = require("./utils/verifyIdMensajeCobro");
@@ -59,6 +60,7 @@ module.exports = {
         verifyDigit, // Check digitoVerificadorCliente is a number of 1-9 digits
         verifyClientName, //Check client name is an alphanumeric character up to 40 characters long
         verifyInstitutionCode, // Check its a 3-digit number in a string and in the list of valid institutions
+        verifyAccountType, // Check tipoCuentaCliente is a valid number
         verifyCrtDeveloper, // Compare certComercioProveedor with crtOper (Developer) in env file
         verifyCrtBanxico, // Compare certBdeM with crtBanxico in env file
         verifyResultadoMensajeDeCobro, // Check resultadoMensajeCobro is a valid response number

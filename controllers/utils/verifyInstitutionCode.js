@@ -20,8 +20,8 @@ function verifyInstitutionCode(resultado) {
     (institution) =>
       institution.clave_institucion.toString() === institutionCode
   );
-  console.log("IsValid:", isValid);
-  console.log("Institution Code:", institutionCode);
+  // console.log("IsValid:", isValid);
+  // console.log("Institution Code:", institutionCode);
 
   return isValid ? 0 : -1;
 }
