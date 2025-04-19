@@ -10,6 +10,8 @@
 
 module.exports = {
   productionInstitutions: [
+    { clave_institucion: 40995, nombreCorto: "Banco Wgo Push" }, // Added by user
+    { clave_institucion: 40993, nombreCorto: "Banco Wgo Qr" }, // Added by user
     { clave_institucion: 37019, nombreCorto: "BANJERCITO" },
     { clave_institucion: 37166, nombreCorto: "BaBien" },
     { clave_institucion: 40002, nombreCorto: "BANAMEX" },
