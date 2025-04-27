@@ -347,7 +347,7 @@ router.post(
  *   post:
  *     summary: Query CoDi Operation Status
  *     description: Retrieves the current status and details of a previously initiated CoDi operation (QR or Push) using its unique operation ID.
- *     tags: [CODI Information]
+ *     tags: [CoDi Information]
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:

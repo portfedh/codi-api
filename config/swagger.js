@@ -27,7 +27,7 @@ const swaggerOptions = {
       description: "API documentation for payment operations using CoDi",
       contact: {
         name: "API Support",
-        email: "support@example.com",
+        email: "pablo.cruz@bite-size.mx",
       },
       license: {
         name: "Private",
@@ -45,7 +45,7 @@ const swaggerOptions = {
         description: "Development server",
       },
       {
-        url: "https://api.example.com",
+        url: "https://codi.salsa-candela.com",
         description: "Production server",
       },
     ],
@@ -115,10 +115,7 @@ const swaggerOptions = {
         name: "CoDi Information",
         description: "Endpoints for retrieving information",
       },
-      {
-        name: "Operations",
-        description: "Endpoints for processing operation results",
-      },
+
     ],
   },
   apis: ["./routes/*.js", "./controllers/*.js"],
