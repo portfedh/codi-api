@@ -120,6 +120,14 @@ router.get("/v2/health", health.checkHealth);
  *     tags: [CoDi Payments]
  *     security:
  *       - ApiKeyAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: x-api-key
+ *         required: true
+ *         schema:
+ *           type: string
+ *           pattern: '^[0-9a-f]{128}$'
+ *         description: 128-character hexadecimal API key for authentication
  *     requestBody:
  *       required: true
  *       description: Details of the payment request for generating the QR code.
@@ -128,34 +136,51 @@ router.get("/v2/health", health.checkHealth);
  *           schema:
  *             type: object
  *             required:
- *               - amount
+ *               - monto
+ *               - referenciaNumerica
+ *               - concepto
+ *               - vigencia
  *             properties:
- *               amount:
+ *               monto:
  *                 type: number
  *                 format: float
- *                 description: The exact amount to be paid. Must be a positive number.
- *                 example: 100.50
- *               concept:
+ *                 description: |
+ *                   Payment amount. 
+ *                   - Value can be an integer or float with up to two decimals or a string
+ *                   - Range: 0.01 to 999,999,999,999.99
+ *                   - If value is 0, the user must determine the amount when authorizing payment
+ *                   - Current bank limits: minimum 0.01, maximum 12,000
+ *                 example: 99.03
+ *               referenciaNumerica:
  *                 type: string
- *                 description: A brief description of the payment (e.g., invoice number, service description). Max length typically enforced by downstream systems.
- *                 example: "Payment for Invoice #INV-2023-001"
- *               reference:
+ *                 description: |
+ *                   Transaction identifier assigned by the seller.
+ *                   - Can be an integer or a string
+ *                   - Length must be between 1-7 characters
+ *                   - If string, only digits (0-9) are allowed
+ *                   - Use 0 if no value is assigned
+ *                 pattern: '^[0-9]{1,7}$'
+ *                 example: "1234567"
+ *               concepto:
  *                 type: string
- *                 description: A unique reference identifier for the payment, useful for reconciliation. Max length typically enforced by downstream systems.
- *                 example: "REF123456XYZ"
- *           examples:
- *             minimalRequest:
- *               summary: Minimal QR Request
- *               description: Only the required amount is provided.
- *               value:
- *                 amount: 150.00
- *             fullRequest:
- *               summary: Complete QR Request
- *               description: Includes amount, concept, and reference.
- *               value:
- *                 amount: 245.75
- *                 concept: "Office supplies purchase"
- *                 reference: "PO-98765"
+ *                 description: |
+ *                   Payment description or concept.
+ *                   - Required field, cannot be empty
+ *                   - Length must be between 1-40 characters
+ *                   - Only ASCII characters are allowed
+ *                 minLength: 1
+ *                 maxLength: 40
+ *                 example: "Boleto de evento mensual"
+ *               vigencia:
+ *                 type: string
+ *                 description: |
+ *                   Payment expiration timestamp.
+ *                   - Can be a string or integer
+ *                   - Maximum 15 characters
+ *                   - Unix timestamp (seconds since January 1, 1970 UTC)
+ *                   - Use 0 for no expiration date
+ *                 pattern: '^[0-9]{1,15}$'
+ *                 example: "0"
  *     responses:
  *       '200':
  *         description: QR Payment Request generated successfully.
@@ -164,52 +189,57 @@ router.get("/v2/health", health.checkHealth);
  *             schema:
  *               type: object
  *               properties:
- *                 success:
- *                   type: boolean
- *                   description: Indicates if the request was successful.
- *                   example: true
  *                 qrCode:
  *                   type: string
- *                   description: Base64 encoded string of the QR code image (e.g., PNG or SVG). Can be used directly in an `<img>` tag `src` attribute (e.g., `data:image/png;base64,...`).
- *                 operationId:
- *                   type: string
- *                   description: A unique identifier assigned to this specific QR payment request operation. Used for tracking and potential status lookups.
- *                   example: "QR-OP-a1b2c3d4e5f6"
+ *                   description: Base64 encoded string of the QR code image (PNG format). Can be used directly in an `<img>` tag `src` attribute.
+ *                   example: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     cadenaMC:
+ *                       type: string
+ *                       description: Encrypted payment information string containing transaction details.
+ *                       example: "{\"TYP\":20,\"v\":{\"DEV\":\"29442719514356328128/0\"},\"ic\":{\"IDC\":\"32af20f42e\",\"SER\":43511855,\"ENC\":\"dbRCrzAln/1VhCh7o6MqwJjYtC2ouu7e8oP2Qx6P0LnPx1DDZp8CHuODHYg8YeWPM0OuFXdnaxW+QpvdzzMvsmKQdui7ItgfsLZEU3FbYDVoEKIjEZVZXlzRZc6eiEAKgoz+bQjmSMKcww/i8GP1XEy9rNtuAAPpscp6bomNhHzzGRi/JWmMpbKHwpYnnz+Rju7tDdtL3rhKccejAGwdJAsdyAVE0Xy3fG4xIIVCAoEQ0MbffiFb7fIs877i1+YtHqxSfP8/EgZ2CHesLdx0p51VQxmriQtWXNhts24e4Rp6f4xaOn/ayA4Xs4c24azCp+rnM4t7rY2oo24fDTUo/w==\"},\"CRY\":\"xHmsNgksCo5t4wDtnUwj9eIplwEdjEkTaGdnEvFyEz8=\"}"
+ *                     crtBdeM:
+ *                       type: string
+ *                       description: Banxico public certificate identifier.
+ *                       example: "00000100000100015975"
+ *                     selloDigital:
+ *                       type: string
+ *                       description: Digital signature of the response by Banxico.
+ *                       example: "HWjD3bPwJ+rfDnDYc8UJt2fmJvFAl9LPpyNMUrowSzDCjxewGSeLN+u4M2cZ7jszbQofaIrsTiVu/VHBdewX1GkoChQ5sUUB6lk3dlT2iXmvuwOdM9ex1DIXRJYyGz9nwJMz1e6Fxx6eKfgEbSuMDbpk55cRKvyuyPeQmRxJi9G5sHISZcgHrK+n/DKAl/1ng4n7xCQnbsApT/+FcUAD46X43z0CZSaxrVtWdAM9u06iPOXiaW0yJBbM6PaxGpM+evYBD2IopYXmdjgl24Bcme5RGkNFHl28OPsRbSPBSy4ORjCA7sOh8bab6/iaDI1XHG2nKs37LZDCDK7AcGibunEciFuvio9WEJ2qoQPfZ5B6miCzRM0dI+4UjFy8GdVl9eAu5jnMgc9alIRamDpJkA=="
+ *                     epoch:
+ *                       type: integer
+ *                       description: Timestamp of the operation.
+ *                       example: 1743120460060
+ *                     edoPet:
+ *                       type: integer
+ *                       description: |
+ *                         Status of the request.
+ *                         - 0: Success
+ *                         - -1: Error, missing information
+ *                         - -2: Error, processing
+ *                         - -3: Error, input parameters
+ *                         - -4: Error, invalid signature
+ *                       example: 0
  *       '400':
- *         description: Bad Request - The request body is missing required fields or contains invalid data (e.g., non-positive amount, invalid format).
+ *         description: Bad Request - The request body is missing required fields or contains invalid data.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
- *             examples:
- *               missingAmount:
- *                 summary: Missing Amount
- *                 value:
- *                   message: "Validation Error: 'amount' is required."
- *                   errors: [{ "field": "amount", "message": "'amount' is required" }]
- *               invalidAmount:
- *                 summary: Invalid Amount
- *                 value:
- *                   message: "Validation Error: Amount must be a positive number."
- *                   errors: [{ "field": "amount", "message": "Amount must be a positive number" }]
  *       '401':
  *         description: Unauthorized - The provided API key is missing, invalid, or does not have permission to perform this operation.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
- *             example:
- *               message: "Invalid API Key"
- *               code: "UNAUTHORIZED"
  *       '500':
  *         description: Internal Server Error - An unexpected error occurred on the server while processing the request.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
- *             example:
- *               message: "An internal error occurred"
- *               code: "INTERNAL_SERVER_ERROR"
  */
 router.post(
   "/v2/codi/qr",
