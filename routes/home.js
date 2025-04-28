@@ -253,7 +253,20 @@ router.get("/v2/health", health.checkHealth);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Error'
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Error processing QR request"
+ *             examples:
+ *               serverError:
+ *                 summary: Generic server error
+ *                 value:
+ *                   success: false
+ *                   error: "Error processing QR request"
  */
 router.post(
   "/v2/codi/qr",
