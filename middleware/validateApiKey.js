@@ -40,7 +40,7 @@ async function validateApiKey(req, res, next) {
     .single();
 
   if (error || !data) {
-    return res.status(403).json({ error: "Invalid API Key" });
+    return res.status(401).json({ error: "Invalid API Key" });
   }
 
   // Store the API key data in cache

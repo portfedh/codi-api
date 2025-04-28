@@ -233,7 +233,21 @@ router.get("/v2/health", health.checkHealth);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Error'
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message indicating the API key issue
+ *                   example: "Invalid API Key"
+ *             examples:
+ *               missingApiKey:
+ *                 summary: Missing API Key
+ *                 value:
+ *                   error: "API Key missing"
+ *               invalidApiKey:
+ *                 summary: Invalid API Key
+ *                 value:
+ *                   error: "Invalid API Key"
  *       '500':
  *         description: Internal Server Error - An unexpected error occurred on the server while processing the request.
  *         content:
