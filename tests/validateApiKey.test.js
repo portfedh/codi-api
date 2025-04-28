@@ -35,7 +35,7 @@ describe("validateApiKey middleware", () => {
     expect(next).toHaveBeenCalled();
   });
 
-  it("should return 403 if API key is invalid", async () => {
+  it("should return 401 if API key is invalid", async () => {
     req.headers["x-api-key"] = "invalid-key";
     apiKeyCache.get.mockReturnValue(null);
     supabase.from.mockReturnValue({
@@ -47,7 +47,7 @@ describe("validateApiKey middleware", () => {
     await validateApiKey(req, res, next);
 
     expect(apiKeyCache.get).toHaveBeenCalledWith("invalid-key");
-    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ error: "Invalid API Key" });
     expect(next).not.toHaveBeenCalled();
   });
