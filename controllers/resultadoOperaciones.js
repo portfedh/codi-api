@@ -116,13 +116,13 @@ module.exports = {
         console.error("Error logging request/response:", logError);
       }
 
-      // Forward to customer callback_url if possible
-      const forwardResult = await forwardToCallbackUrl(resultado);
+      // // Forward to customer callback_url if possible
+      // const forwardResult = await forwardToCallbackUrl(resultado);
 
-      if (!forwardResult.success) {
-        console.error("Callback forwarding failed:", forwardResult);
-        responsePayload = { resultado: -1, error: forwardResult.reason };
-      }
+      // if (!forwardResult.success) {
+      //   console.error("Callback forwarding failed:", forwardResult);
+      //   responsePayload = { resultado: -1, error: forwardResult.reason };
+      // }
 
     } catch (error) {
       console.error("Error in resultadoOperaciones:", {
