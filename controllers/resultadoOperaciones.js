@@ -117,7 +117,12 @@ module.exports = {
       }
 
       // Forward to customer callback_url if possible
-      await forwardToCallbackUrl(resultado);
+      const forwardResult = await forwardToCallbackUrl(resultado);
+
+      if (!forwardResult.success) {
+        console.error("Callback forwarding failed:", forwardResult);
+        responsePayload = { resultado: -1, error: forwardResult.reason };
+      }
 
     } catch (error) {
       console.error("Error in resultadoOperaciones:", {
@@ -160,25 +165,46 @@ module.exports = {
  * Forwards the operation result to the customer's callback URL if available
  * 
  * @param {Object} resultado - The operation result payload
- * @returns {Promise<void>}
+ * @returns {Promise<Object>} Object containing success status and details
  */
 async function forwardToCallbackUrl(resultado) {
   try {
     const idMensajeCobro = resultado?.cadenaInformacion?.idMensajeCobro;
-    if (!idMensajeCobro) return;
+    if (!idMensajeCobro) {
+      console.log("No idMensajeCobro found in resultado, skipping callback forwarding");
+      return { success: false, reason: "No idMensajeCobro found" };
+    }
 
     const apiKey = await getApiKeyFromRequest(idMensajeCobro);
-    if (!apiKey) return;
+    if (!apiKey) {
+      console.log(`No API key found for idMensajeCobro: ${idMensajeCobro}`);
+      return { success: false, reason: "No API key found" };
+    }
 
     const customerId = await getCustomerIdFromApiKey(apiKey);
-    if (!customerId) return;
+    if (!customerId) {
+      console.log(`No customer ID found for API key: ${apiKey}`);
+      return { success: false, reason: "No customer ID found" };
+    }
 
     const callbackUrl = await getCallbackUrlFromCustomer(customerId);
-    if (!callbackUrl) return;
+    if (!callbackUrl) {
+      console.log(`No callback URL found for customer ID: ${customerId}`);
+      return { success: false, reason: "No callback URL found" };
+    }
 
-    await forwardPayloadToCallbackUrl(callbackUrl, resultado);
+    const forwardResult = await forwardPayloadToCallbackUrl(callbackUrl, resultado);
+    return forwardResult;
   } catch (forwardError) {
-    console.error("Error in callback_url forwarding logic:", forwardError);
+    console.error("Error in callback_url forwarding logic:", {
+      error: forwardError,
+      idMensajeCobro: resultado?.cadenaInformacion?.idMensajeCobro
+    });
+    return { 
+      success: false, 
+      reason: "Forwarding error", 
+      error: forwardError.message 
+    };
   }
 }
 
@@ -190,12 +216,11 @@ async function forwardToCallbackUrl(resultado) {
  */
 async function getApiKeyFromRequest(idMensajeCobro) {
   // Query the 'requests' table to find the original request
-  // We're looking for a request where the idMensajeCobro matches in the request_payload JSON
   const { data: requestRows, error: reqErr } = await supabase
     .from("requests")
-    .select("api_key")  // We only need the api_key field
-    .eq("request_payload->idMensajeCobro", idMensajeCobro)  // Match the idMensajeCobro in the JSON payload
-    .limit(1);  // We only need one result
+    .select("api_key")
+    .eq("request_payload->>'idMensajeCobro'", idMensajeCobro)
+    .limit(1);
 
   if (reqErr) throw reqErr;
   return requestRows?.[0]?.api_key || null;
@@ -245,17 +270,44 @@ async function getCallbackUrlFromCustomer(customerId) {
  * 
  * @param {string} callbackUrl - The URL to forward the payload to
  * @param {Object} payload - The payload to forward
- * @returns {Promise<void>}
+ * @returns {Promise<Object>} Object containing success status and details
  */
 async function forwardPayloadToCallbackUrl(callbackUrl, payload) {
   try {
-    await axios.post(callbackUrl, payload, {
-      headers: { "Content-Type": "application/json" },
+    const response = await axios.post(callbackUrl, payload, {
+      headers: { 
+        "Content-Type": "application/json",
+        "User-Agent": "CODI-API/1.0"
+      },
       timeout: 5000,
     });
-    console.log(`Forwarded resultadoOperaciones to callback_url: ${callbackUrl}`);
+
+    console.log(`Successfully forwarded resultadoOperaciones to callback_url: ${callbackUrl}`, {
+      status: response.status,
+      statusText: response.statusText
+    });
+
+    return { 
+      success: true,
+      status: response.status,
+      statusText: response.statusText,
+      callbackUrl: callbackUrl
+    };
   } catch (cbErr) {
-    console.error("Error forwarding to callback_url:", cbErr);
-    throw cbErr;
+    console.error("Error forwarding to callback_url:", {
+      error: cbErr.message,
+      callbackUrl: callbackUrl,
+      status: cbErr.response?.status,
+      statusText: cbErr.response?.statusText
+    });
+
+    return { 
+      success: false,
+      reason: "Forwarding request failed",
+      error: cbErr.message,
+      status: cbErr.response?.status,
+      statusText: cbErr.response?.statusText,
+      callbackUrl: callbackUrl
+    };
   }
 }
