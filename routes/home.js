@@ -76,6 +76,18 @@ router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
  *                           type: number
  *                           description: Database response time in milliseconds
  *                           example: 45
+ *             examples:
+ *               healthy:
+ *                 summary: All systems healthy
+ *                 value:
+ *                   status: "healthy"
+ *                   timestamp: "2023-07-24T15:30:45Z"
+ *                   services:
+ *                     server:
+ *                       status: "healthy"
+ *                     database:
+ *                       status: "healthy"
+ *                       responseTime: 45
  *       '503':
  *         description: Service Unavailable - One or more components are not functioning properly.
  *         content:
@@ -108,6 +120,18 @@ router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
  *                         error:
  *                           type: string
  *                           example: "Database connection failed"
+ *             examples:
+ *               databaseUnhealthy:
+ *                 summary: Database connectivity issue
+ *                 value:
+ *                   status: "unhealthy"
+ *                   timestamp: "2023-07-24T15:30:45Z"
+ *                   services:
+ *                     server:
+ *                       status: "healthy"
+ *                     database:
+ *                       status: "unhealthy"
+ *                       error: "Database connection failed"
  */
 router.get("/v2/health", health.checkHealth);
 
