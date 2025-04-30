@@ -509,23 +509,44 @@ router.post(
  *                     - field: "vigencia"
  *                       message: "Vigencia timestamp must be in the future and cannot exceed one year from now."
  *       '401':
- *         description: Unauthorized - The provided API key is missing, invalid, or lacks permission.
+ *         description: Unauthorized - The provided API key is missing, invalid, or does not have permission to perform this operation.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Error'
- *             example:
- *               message: "Invalid API Key"
- *               code: "UNAUTHORIZED"
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message indicating the API key issue
+ *                   example: "Invalid API Key"
+ *             examples:
+ *               missingApiKey:
+ *                 summary: Missing API Key
+ *                 value:
+ *                   error: "API Key missing"
+ *               invalidApiKey:
+ *                 summary: Invalid API Key
+ *                 value:
+ *                   error: "Invalid API Key"
  *       '500':
  *         description: Internal Server Error - An unexpected error occurred while trying to initiate the push request.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Error'
- *             example:
- *               message: "Failed to initiate push payment due to an internal error"
- *               code: "INTERNAL_SERVER_ERROR"
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "Error processing Push request"
+ *             examples:
+ *               serverError:
+ *                 summary: Generic server error
+ *                 value:
+ *                   success: false
+ *                   error: "Error processing Push request"
  */
 router.post(
   "/v2/codi/push",
