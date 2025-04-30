@@ -227,7 +227,54 @@ router.get("/v2/health", health.checkHealth);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Error'
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message summarizing the validation issue.
+ *                   example: "Validation Error: Invalid input data."
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       field:
+ *                         type: string
+ *                         description: The field that caused the validation error.
+ *                         example: "monto"
+ *                       message:
+ *                         type: string
+ *                         description: Specific error message for the field.
+ *                         example: "Monto must be a number between 0 and 999,999,999,999.99 with at most two decimal places."
+ *             examples:
+ *               missingMonto:
+ *                 summary: Missing Monto Field
+ *                 value:
+ *                   message: "Validation Error: Invalid input data."
+ *                   errors:
+ *                     - field: "monto"
+ *                       message: "Monto cannot be empty."
+ *               invalidReferenciaNumerica:
+ *                 summary: Invalid ReferenciaNumerica Format
+ *                 value:
+ *                   message: "Validation Error: Invalid input data."
+ *                   errors:
+ *                     - field: "referenciaNumerica"
+ *                       message: "ReferenciaNumerica must be a string or number with a maximum length of 7 characters and no special characters."
+ *               invalidConcepto:
+ *                 summary: Invalid Concepto Characters
+ *                 value:
+ *                   message: "Validation Error: Invalid input data."
+ *                   errors:
+ *                     - field: "concepto"
+ *                       message: "Concepto contains invalid characters."
+ *               invalidVigencia:
+ *                 summary: Invalid Vigencia Timestamp
+ *                 value:
+ *                   message: "Validation Error: Invalid input data."
+ *                   errors:
+ *                     - field: "vigencia"
+ *                       message: "Vigencia timestamp must be in the future."
  *       '401':
  *         description: Unauthorized - The provided API key is missing, invalid, or does not have permission to perform this operation.
  *         content:
