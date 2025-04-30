@@ -282,11 +282,19 @@ router.post(
  *   post:
  *     summary: Initiate CoDi Push Payment Request
  *     description: >
- *       Sends a payment request notification directly to a payer's mobile banking app using their phone number or CLABE account number.
- *       The payer must approve the request in their app.
+ *       Sends a payment request notification directly to a payer's mobile phone number.
+ *       The payer must approve the request in their banking application.
  *     tags: [CoDi Payments]
  *     security:
  *       - ApiKeyAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: x-api-key
+ *         required: true
+ *         schema:
+ *           type: string
+ *           pattern: '^[0-9a-f]{128}$'
+ *         description: 128-character hexadecimal API key for authentication
  *     requestBody:
  *       required: true
  *       description: Details of the push payment request.
@@ -295,43 +303,59 @@ router.post(
  *           schema:
  *             type: object
  *             required:
- *               - amount
- *               - accountNumber
+ *               - monto
+ *               - referenciaNumerica
+ *               - concepto
+ *               - vigencia
+ *               - celularCliente
  *             properties:
- *               amount:
+ *               monto:
  *                 type: number
  *                 format: float
- *                 description: The exact amount to be requested. Must be a positive number.
- *                 example: 500.75
- *               accountNumber:
+ *                 description: |
+ *                   Payment amount. 
+ *                   - Value can be an integer or float with up to two decimals or a string
+ *                   - Range: 0.01 to 999,999,999,999.99
+ *                   - Current bank limits: minimum 0.01, maximum 12,000
+ *                 example: 99.03
+ *               referenciaNumerica:
  *                 type: string
- *                 description: >
- *                   The target payer's identifier, which could be a 10-digit cell phone number or an 18-digit CLABE account number associated with CoDi.
- *                 example: "5512345678"
- *               concept:
+ *                 description: |
+ *                   Transaction identifier assigned by the seller.
+ *                   - Can be an integer or a string
+ *                   - Length must be between 1-7 characters
+ *                   - If string, only digits (0-9) are allowed
+ *                   - Use 0 if no value is assigned
+ *                 pattern: '^[0-9]{1,7}$'
+ *                 example: "1234567"
+ *               concepto:
  *                 type: string
- *                 description: A brief description of the payment request. Max length typically enforced by downstream systems.
- *                 example: "Monthly subscription fee"
- *               reference:
+ *                 description: |
+ *                   Payment description or concept.
+ *                   - Required field, cannot be empty
+ *                   - Length must be between 1-40 characters
+ *                   - Only ASCII characters are allowed
+ *                 minLength: 1
+ *                 maxLength: 40
+ *                 example: "Boleto de evento mensual"
+ *               vigencia:
  *                 type: string
- *                 description: A unique reference identifier for the payment request, useful for reconciliation. Max length typically enforced by downstream systems.
- *                 example: "SUB-JULY-2024"
- *           examples:
- *             pushToPhone:
- *               summary: Push Request via Phone Number
- *               description: Sending a request using the payer's phone number.
- *               value:
- *                 amount: 350.00
- *                 accountNumber: "5598765432"
- *                 concept: "Service Payment"
- *             pushToClabe:
- *               summary: Push Request via CLABE
- *               description: Sending a request using the payer's CLABE account.
- *               value:
- *                 amount: 750.25
- *                 accountNumber: "018123456789012345"
- *                 concept: "Invoice #INV-002 Payment"
- *                 reference: "REF-INV-002"
+ *                 description: |
+ *                   Payment expiration timestamp.
+ *                   - Can be a string or integer
+ *                   - Maximum 15 characters
+ *                   - Unix timestamp (seconds since January 1, 1970 UTC)
+ *                   - Use 0 for no expiration date
+ *                 pattern: '^[0-9]{1,15}$'
+ *                 example: "0"
+ *               celularCliente:
+ *                 type: string
+ *                 description: |
+ *                   Payer's 10-digit mobile phone number.
+ *                   - Required field
+ *                   - Must be exactly 10 digits (0-9)
+ *                 pattern: '^[0-9]{10}$'
+ *                 example: "5510799160"
  *     responses:
  *       '200':
  *         description: >
@@ -346,14 +370,46 @@ router.post(
  *                   type: boolean
  *                   description: Indicates if the push request was successfully initiated.
  *                   example: true
- *                 operationId:
- *                   type: string
- *                   description: A unique identifier assigned to this specific push payment request operation. Used for tracking and status updates.
- *                   example: "PUSH-OP-f6e5d4c3b2a1"
- *                 message:
- *                   type: string
- *                   description: Confirmation message indicating the request was sent.
- *                   example: "Push payment request sent successfully to the payer."
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     folioCodi:
+ *                       type: string
+ *                       description: Unique folio identifier for the CoDi operation.
+ *                       example: "321e210838321e210838"
+ *                     crtBdeM:
+ *                       type: string
+ *                       description: Banxico public certificate identifier.
+ *                       example: "00000100000100015974"
+ *                     selloDigital:
+ *                       type: string
+ *                       description: Digital signature of the response by Banxico.
+ *                       example: "l+GUL9tAK3U9NSRuyiqPEHmEM9PMfz8XEZqnCGZzaxtZQd8xMBatzODxcmZxKUKhs5lzOGeNzzJ/zTeqnfPvPh7GhSXVfBo4mo3W3aOMVmz8cuYR9qHBWTCWk9GRt6rTcFPQhEACuaSYNvj/Q9kobznlDfV2a8iZ6NSQ1yVUonKDPe0anIeKM3457QX7X2gPA51FpIZ0d+3nzN+O7YiPwB8Ad14zHYbEbotRvL3/apVuCCfcB+zKWoKYhdGgzjw38z78E/mHXf59k+JyB7r8ZHzDPGCheUypFnrga6WJtTX/qhy6RXcl4nFOfpla549W6C7lng2Ypp1YZ8zKXmL6iY8+DMIvfCCoRtMu4tzrOZtC9dzM2K+XFRWBygksR/iqUMBVd7DM7gXWPbEvLRKXDQ=="
+ *                     epoch:
+ *                       type: integer
+ *                       description: Timestamp of the operation.
+ *                       example: 1743120496612
+ *                     edoPet:
+ *                       type: integer
+ *                       description: |
+ *                         Status of the request.
+ *                         - 0: Success
+ *                         - -1: Error, missing information
+ *                         - -2: Error, processing
+ *                         - -3: Error, input parameters
+ *                         - -4: Error, invalid signature
+ *                       example: 0
+ *             examples:
+ *               pushSuccess:
+ *                 summary: Successful Push Payment Response
+ *                 value:
+ *                   success: true
+ *                   data:
+ *                     folioCodi: "321e210838321e210838"
+ *                     crtBdeM: "00000100000100015974"
+ *                     selloDigital: "l+GUL9tAK3U9NSRuyiqPEHmEM9PMfz8XEZqnCGZzaxtZQd8xMBatzODxcmZxKUKhs5lzOGeNzzJ/zTeqnfPvPh7GhSXVfBo4mo3W3aOMVmz8cuYR9qHBWTCWk9GRt6rTcFPQhEACuaSYNvj/Q9kobznlDfV2a8iZ6NSQ1yVUonKDPe0anIeKM3457QX7X2gPA51FpIZ0d+3nzN+O7YiPwB8Ad14zHYbEbotRvL3/apVuCCfcB+zKWoKYhdGgzjw38z78E/mHXf59k+JyB7r8ZHzDPGCheUypFnrga6WJtTX/qhy6RXcl4nFOfpla549W6C7lng2Ypp1YZ8zKXmL6iY8+DMIvfCCoRtMu4tzrOZtC9dzM2K+XFRWBygksR/iqUMBVd7DM7gXWPbEvLRKXDQ=="
+ *                     epoch: 1743120496612
+ *                     edoPet: 0
  *       '400':
  *         description: Bad Request - The request body is missing required fields or contains invalid data (e.g., invalid amount, invalid account number format).
  *         content:
@@ -390,13 +446,6 @@ router.post(
  *               message: "Failed to initiate push payment due to an internal error"
  *               code: "INTERNAL_SERVER_ERROR"
  */
-router.post(
-  "/v2/codi/push",
-  validateApiKey,
-  pushValidationRules,
-  validateRequest,
-  push.sendPushPayment
-);
 
 /**
  * @swagger
