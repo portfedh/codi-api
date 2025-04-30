@@ -446,6 +446,13 @@ router.post(
  *               message: "Failed to initiate push payment due to an internal error"
  *               code: "INTERNAL_SERVER_ERROR"
  */
+router.post(
+  "/v2/codi/push",
+  validateApiKey,
+  pushValidationRules,
+  validateRequest,
+  push.sendPushPayment
+);
 
 /**
  * @swagger
