@@ -448,34 +448,66 @@ router.post(
  *                         - -3: Error, input parameters
  *                         - -4: Error, invalid signature
  *                       example: 0
- *             examples:
- *               pushSuccess:
- *                 summary: Successful Push Payment Response
- *                 value:
- *                   success: true
- *                   data:
- *                     folioCodi: "321e210838321e210838"
- *                     crtBdeM: "00000100000100015974"
- *                     selloDigital: "l+GUL9tAK3U9NSRuyiqPEHmEM9PMfz8XEZqnCGZzaxtZQd8xMBatzODxcmZxKUKhs5lzOGeNzzJ/zTeqnfPvPh7GhSXVfBo4mo3W3aOMVmz8cuYR9qHBWTCWk9GRt6rTcFPQhEACuaSYNvj/Q9kobznlDfV2a8iZ6NSQ1yVUonKDPe0anIeKM3457QX7X2gPA51FpIZ0d+3nzN+O7YiPwB8Ad14zHYbEbotRvL3/apVuCCfcB+zKWoKYhdGgzjw38z78E/mHXf59k+JyB7r8ZHzDPGCheUypFnrga6WJtTX/qhy6RXcl4nFOfpla549W6C7lng2Ypp1YZ8zKXmL6iY8+DMIvfCCoRtMu4tzrOZtC9dzM2K+XFRWBygksR/iqUMBVd7DM7gXWPbEvLRKXDQ=="
- *                     epoch: 1743120496612
- *                     edoPet: 0
  *       '400':
- *         description: Bad Request - The request body is missing required fields or contains invalid data (e.g., invalid amount, invalid account number format).
+ *         description: Bad Request - The request body is missing required fields or contains invalid data (e.g., invalid amount, invalid phone number format).
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Error'
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message summarizing the validation issue.
+ *                   example: "Validation Error: Invalid input data."
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       field:
+ *                         type: string
+ *                         description: The field that caused the validation error.
+ *                         example: "celularCliente"
+ *                       message:
+ *                         type: string
+ *                         description: Specific error message for the field.
+ *                         example: "CelularCliente must contain exactly 10 numeric digits."
  *             examples:
- *               invalidAccountNumber:
- *                 summary: Invalid Account Number
+ *               invalidCelularCliente:
+ *                 summary: Invalid CelularCliente
  *                 value:
- *                   message: "Validation Error: Invalid account number format. Must be 10-digit phone or 18-digit CLABE."
- *                   errors: [{ "field": "accountNumber", "message": "Invalid account number format. Must be 10-digit phone or 18-digit CLABE." }]
- *               missingAmount:
- *                 summary: Missing Amount
+ *                   message: "Validation Error: Invalid input data."
+ *                   errors:
+ *                     - field: "celularCliente"
+ *                       message: "CelularCliente must contain exactly 10 numeric digits."
+ *               invalidMonto:
+ *                 summary: Invalid Monto
  *                 value:
- *                   message: "Validation Error: 'amount' is required."
- *                   errors: [{ "field": "amount", "message": "'amount' is required" }]
+ *                   message: "Validation Error: Invalid input data."
+ *                   errors:
+ *                     - field: "monto"
+ *                       message: "Monto must be a number between 0 and 999,999,999,999.99 with at most two decimal places."
+ *               invalidReferenciaNumerica:
+ *                 summary: Invalid ReferenciaNumerica
+ *                 value:
+ *                   message: "Validation Error: Invalid input data."
+ *                   errors:
+ *                     - field: "referenciaNumerica"
+ *                       message: "ReferenciaNumerica must be a string or number with a maximum length of 7 characters and no special characters."
+ *               invalidConcepto:
+ *                 summary: Invalid Concepto
+ *                 value:
+ *                   message: "Validation Error: Invalid input data."
+ *                   errors:
+ *                     - field: "concepto"
+ *                       message: "Concepto contains invalid characters."
+ *               invalidVigencia:
+ *                 summary: Invalid Vigencia
+ *                 value:
+ *                   message: "Validation Error: Invalid input data."
+ *                   errors:
+ *                     - field: "vigencia"
+ *                       message: "Vigencia timestamp must be in the future and cannot exceed one year from now."
  *       '401':
  *         description: Unauthorized - The provided API key is missing, invalid, or lacks permission.
  *         content:
