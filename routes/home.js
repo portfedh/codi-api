@@ -145,7 +145,7 @@ router.get("/v2/health", health.checkHealth);
  *                 type: number
  *                 format: float
  *                 description: |
- *                   Payment amount. 
+ *                   Payment amount.
  *                   - Value can be an integer or float with up to two decimals or a string
  *                   - Range: 0.01 to 999,999,999,999.99
  *                   - If value is 0, the user must determine the amount when authorizing payment
@@ -177,7 +177,7 @@ router.get("/v2/health", health.checkHealth);
  *                   Payment expiration timestamp.
  *                   - Can be a string or integer
  *                   - Maximum 15 characters
- *                   - Unix timestamp (seconds since January 1, 1970 UTC)
+ *                   - Unix timestamp in milliseconds (since January 1, 1970 UTC)
  *                   - Use 0 for no expiration date
  *                 pattern: '^[0-9]{1,15}$'
  *                 example: "0"
@@ -210,7 +210,7 @@ router.get("/v2/health", health.checkHealth);
  *                       example: "HWjD3bPwJ+rfDnDYc8UJt2fmJvFAl9LPpyNMUrowSzDCjxewGSeLN+u4M2cZ7jszbQofaIrsTiVu/VHBdewX1GkoChQ5sUUB6lk3dlT2iXmvuwOdM9ex1DIXRJYyGz9nwJMz1e6Fxx6eKfgEbSuMDbpk55cRKvyuyPeQmRxJi9G5sHISZcgHrK+n/DKAl/1ng4n7xCQnbsApT/+FcUAD46X43z0CZSaxrVtWdAM9u06iPOXiaW0yJBbM6PaxGpM+evYBD2IopYXmdjgl24Bcme5RGkNFHl28OPsRbSPBSy4ORjCA7sOh8bab6/iaDI1XHG2nKs37LZDCDK7AcGibunEciFuvio9WEJ2qoQPfZ5B6miCzRM0dI+4UjFy8GdVl9eAu5jnMgc9alIRamDpJkA=="
  *                     epoch:
  *                       type: integer
- *                       description: Timestamp of the operation.
+ *                       description: Timestamp of the operation in milliseconds since January 1, 1970 UTC.
  *                       example: 1743120460060
  *                     edoPet:
  *                       type: integer
@@ -313,7 +313,7 @@ router.post(
  *                 type: number
  *                 format: float
  *                 description: |
- *                   Payment amount. 
+ *                   Payment amount.
  *                   - Value can be an integer or float with up to two decimals or a string
  *                   - Range: 0.01 to 999,999,999,999.99
  *                   - Current bank limits: minimum 0.01, maximum 12,000
@@ -344,7 +344,7 @@ router.post(
  *                   Payment expiration timestamp.
  *                   - Can be a string or integer
  *                   - Maximum 15 characters
- *                   - Unix timestamp (seconds since January 1, 1970 UTC)
+ *                   - Unix timestamp in milliseconds (since January 1, 1970 UTC)
  *                   - Use 0 for no expiration date
  *                 pattern: '^[0-9]{1,15}$'
  *                 example: "0"
@@ -375,19 +375,21 @@ router.post(
  *                   properties:
  *                     folioCodi:
  *                       type: string
- *                       description: Unique folio identifier for the CoDi operation.
+ *                       description: Unique folio identifier for the CoDi operation. Must be exactly 20 characters long.
+ *                       minLength: 20
+ *                       maxLength: 20
  *                       example: "321e210838321e210838"
  *                     crtBdeM:
  *                       type: string
  *                       description: Banxico public certificate identifier.
- *                       example: "00000100000100015974"
+ *                       example: "00000100000999915974"
  *                     selloDigital:
  *                       type: string
  *                       description: Digital signature of the response by Banxico.
  *                       example: "l+GUL9tAK3U9NSRuyiqPEHmEM9PMfz8XEZqnCGZzaxtZQd8xMBatzODxcmZxKUKhs5lzOGeNzzJ/zTeqnfPvPh7GhSXVfBo4mo3W3aOMVmz8cuYR9qHBWTCWk9GRt6rTcFPQhEACuaSYNvj/Q9kobznlDfV2a8iZ6NSQ1yVUonKDPe0anIeKM3457QX7X2gPA51FpIZ0d+3nzN+O7YiPwB8Ad14zHYbEbotRvL3/apVuCCfcB+zKWoKYhdGgzjw38z78E/mHXf59k+JyB7r8ZHzDPGCheUypFnrga6WJtTX/qhy6RXcl4nFOfpla549W6C7lng2Ypp1YZ8zKXmL6iY8+DMIvfCCoRtMu4tzrOZtC9dzM2K+XFRWBygksR/iqUMBVd7DM7gXWPbEvLRKXDQ=="
  *                     epoch:
  *                       type: integer
- *                       description: Timestamp of the operation.
+ *                       description: Timestamp of the operation in milliseconds since January 1, 1970 UTC.
  *                       example: 1743120496612
  *                     edoPet:
  *                       type: integer
@@ -602,7 +604,7 @@ router.post(
  *               timestamp:
  *                  type: string
  *                  format: date-time
- *                  description: Timestamp when the status update occurred.
+ *                  description: Timestamp when the status update occurred in milliseconds since January 1, 1970 UTC.
  *                  example: "2023-10-26T10:05:30Z"
  *               details:
  *                 type: object
