@@ -589,25 +589,79 @@ router.post(
  *     tags: [CoDi Information]
  *     security:
  *       - ApiKeyAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: x-api-key
+ *         required: true
+ *         schema:
+ *           type: string
+ *           pattern: '^[0-9a-f]{128}$'
+ *         description: 128-character hexadecimal API key for authentication
  *     requestBody:
  *       required: true
- *       description: The unique identifier of the operation to query.
+ *       description: Parameters required to query the status of a CoDi operation.
  *       content:
  *         application/json:
  *           schema:
  *             type: object
  *             required:
- *               - operationId # Changed from transactionId to operationId for consistency
+ *               - folioCodi
+ *               - tpg
+ *               - npg
+ *               - fechaInicial
+ *               - fechaFinal
  *             properties:
- *               operationId:
+ *               folioCodi:
  *                 type: string
- *                 description: The unique ID returned when the QR or Push payment request was created.
- *                 example: "QR-OP-a1b2c3d4e5f6"
+ *                 description: >
+ *                   Unique CoDi reference number to query. Must be either 10 or 20 characters long.
+ *                 minLength: 10
+ *                 maxLength: 20
+ *                 example: "321e210838321e210838"
+ *               tpg:
+ *                 oneOf:
+ *                   - type: number
+ *                   - type: string
+ *                 description: >
+ *                   Number of operations per page. Must be a value between 1 and 100.
+ *                 minimum: 1
+ *                 maximum: 100
+ *                 example: 10
+ *               npg:
+ *                 oneOf:
+ *                   - type: number
+ *                   - type: string
+ *                 description: >
+ *                   Page number to retrieve. Must be a value between 1 and 2147483647 (10 digits max).
+ *                 pattern: '^[0-9]{1,10}$'
+ *                 example: 1
+ *               fechaInicial:
+ *                 oneOf:
+ *                   - type: number
+ *                   - type: string
+ *                 description: >
+ *                   Start date for the query period in YYYYMMDD format. The date is taken from 00:00:00.000.
+ *                   Use 0 to query all dates.
+ *                 pattern: '^[0-9]{1,8}$'
+ *                 example: "20250319"
+ *               fechaFinal:
+ *                 oneOf:
+ *                   - type: number
+ *                   - type: string
+ *                 description: >
+ *                   End date for the query period in YYYYMMDD format. The date is taken until 23:59:59.999.
+ *                   Use 0 to query the entire history. Must be after `fechaInicial` and cannot exceed the current date and time.
+ *                 pattern: '^[0-9]{1,8}$'
+ *                 example: "20250320"
  *           examples:
- *             queryOperation:
- *               summary: Query Operation Status
+ *             validRequest:
+ *               summary: Example of a valid request body
  *               value:
- *                 operationId: "PUSH-OP-f6e5d4c3b2a1"
+ *                 folioCodi: "321e210838321e210838"
+ *                 tpg: 10
+ *                 npg: 1
+ *                 fechaInicial: "20250319"
+ *                 fechaFinal: "0"
  *     responses:
  *       '200':
  *         description: Operation status retrieved successfully.
@@ -618,40 +672,127 @@ router.post(
  *               properties:
  *                 success:
  *                   type: boolean
+ *                   description: Indicates if the operation was successful.
  *                   example: true
- *                 operation:
+ *                 data:
  *                   type: object
  *                   properties:
- *                     id:
+ *                     resultado:
+ *                       type: object
+ *                       properties:
+ *                         v:
+ *                           type: object
+ *                           properties:
+ *                             tipoCta:
+ *                               type: integer
+ *                               description: Account type.
+ *                               example: 40
+ *                             ctaBancaria:
+ *                               type: string
+ *                               description: Masked bank account number.
+ *                               example: "997***********4710"
+ *                             cveInstit:
+ *                               type: integer
+ *                               description: Institution code.
+ *                               example: 40997
+ *                             nombre:
+ *                               type: string
+ *                               description: Masked account holder name.
+ *                               example: "S*************** S* D* C*"
+ *                         lstDetalleMC:
+ *                           type: array
+ *                           description: List of transaction details.
+ *                           items:
+ *                             type: object
+ *                             properties:
+ *                               folioCodi:
+ *                                 type: string
+ *                                 description: Unique CoDi operation folio.
+ *                                 example: "321e210838321e210838"
+ *                               concepto:
+ *                                 type: string
+ *                                 description: Payment concept or description.
+ *                                 example: "Boleto: de  evento mensual"
+ *                               monto:
+ *                                 type: string
+ *                                 description: Transaction amount.
+ *                                 example: "499.0"
+ *                               refNum:
+ *                                 type: integer
+ *                                 description: Numeric reference for the transaction.
+ *                                 example: 1000009
+ *                               tProc:
+ *                                 type: integer
+ *                                 description: Processing type.
+ *                                 example: 0
+ *                               tSolicitud:
+ *                                 type: integer
+ *                                 description: Timestamp of the request in milliseconds since January 1, 1970 UTC.
+ *                                 example: 1743120493234
+ *                               edoMC:
+ *                                 type: integer
+ *                                 description: Status of the transaction.
+ *                                 example: -1
+ *                               c:
+ *                                 type: object
+ *                                 description: Additional account details.
+ *                                 properties:
+ *                                   tipoCta:
+ *                                     type: integer
+ *                                     description: Account type.
+ *                                     example: 0
+ *                                   cveInstit:
+ *                                     type: integer
+ *                                     description: Institution code.
+ *                                     example: 0
+ *                     ultPag:
+ *                       type: boolean
+ *                       description: Indicates if this is the last page of results.
+ *                       example: true
+ *                     crtBdeM:
  *                       type: string
- *                       description: The operation ID queried.
- *                       example: "QR-OP-a1b2c3d4e5f6"
- *                     type:
+ *                       description: Banxico public certificate identifier.
+ *                       example: "00000100000100015974"
+ *                     selloDigital:
  *                       type: string
- *                       description: Type of the operation (e.g., QR, PUSH).
- *                       enum: [QR, PUSH]
- *                       example: "QR"
- *                     amount:
- *                       type: number
- *                       format: float
- *                       description: The amount associated with the operation.
- *                       example: 100.50
- *                     status:
- *                       type: string
- *                       description: The current status of the payment operation.
- *                       enum: [PENDING, COMPLETED, REJECTED, CANCELLED, EXPIRED]
- *                       example: "COMPLETED"
- *                     creationTimestamp:
- *                       type: string
- *                       format: date-time
- *                       description: Timestamp when the operation was created.
- *                       example: "2023-10-26T10:00:00Z"
- *                     lastUpdateTimestamp:
- *                       type: string
- *                       format: date-time
- *                       description: Timestamp when the operation status was last updated.
- *                       example: "2023-10-26T10:05:30Z"
- *                     # Add other relevant fields like concept, reference, payerInfo if available
+ *                       description: Digital signature of the response by Banxico.
+ *                       example: "qtSVpfEUgp2TuLUJvppubqkStMSOX7qCukId72xUcagH5ozaX1z+T1coNdOQv6M1TGU8n4jF6imWAwxpdGmMF2XU1sowu8ox8MiLTcT03yHoDGGFTwOqF4Ic1NiPqzw/gFaqIcbTheIf47oECmvz6e1cXPDt1HVZem6y8W3nmwVHUMJKWD/xgBLbDFjDe+ETbKjJtqUnQM9Uy4HOlExzW0YlT/0S+CQ1uylnPyhkDzv5isSNaeN6/XjicjmlvpsHjXj5fvbaFmCfZaFLEukFyWGL9COgPwdKEfUmnkbfmTgUKifFqxbWvRhZ5J8OxzaH/I046ofqNHde+3BovOWiKVVBRe94At3GrBMYUnHz/hhJ5aO0e7qWQ5MzfrgeXFEFnvrF2V+rTZ8lXB08FButuQ=="
+ *                     epoch:
+ *                       type: integer
+ *                       description: Timestamp of the response in milliseconds since January 1, 1970 UTC.
+ *                       example: 1743222437146
+ *                     edoPet:
+ *                       type: integer
+ *                       description: Status of the request.
+ *                       example: 0
+ *             examples:
+ *               successResponse:
+ *                 summary: Example of a successful response
+ *                 value:
+ *                   success: true
+ *                   data:
+ *                     resultado:
+ *                       v:
+ *                         tipoCta: 40
+ *                         ctaBancaria: "997***********4710"
+ *                         cveInstit: 40997
+ *                         nombre: "S*************** S* D* C*"
+ *                       lstDetalleMC:
+ *                         - folioCodi: "321e210838321e210838"
+ *                           concepto: "Boleto: de  evento mensual"
+ *                           monto: "499.0"
+ *                           refNum: 1000009
+ *                           tProc: 0
+ *                           tSolicitud: 1743120493234
+ *                           edoMC: -1
+ *                           c:
+ *                             tipoCta: 0
+ *                             cveInstit: 0
+ *                     ultPag: true
+ *                     crtBdeM: "00000100000100015974"
+ *                     selloDigital: "qtSVpfEUgp2TuLUJvppubqkStMSOX7qCukId72xUcagH5ozaX1z+T1coNdOQv6M1TGU8n4jF6imWAwxpdGmMF2XU1sowu8ox8MiLTcT03yHoDGGFTwOqF4Ic1NiPqzw/gFaqIcbTheIf47oECmvz6e1cXPDt1HVZem6y8W3nmwVHUMJKWD/xgBLbDFjDe+ETbKjJtqUnQM9Uy4HOlExzW0YlT/0S+CQ1uylnPyhkDzv5isSNaeN6/XjicjmlvpsHjXj5fvbaFmCfZaFLEukFyWGL9COgPwdKEfUmnkbfmTgUKifFqxbWvRhZ5J8OxzaH/I046ofqNHde+3BovOWiKVVBRe94At3GrBMYUnHz/hhJ5aO0e7qWQ5MzfrgeXFEFnvrF2V+rTZ8lXB08FButuQ=="
+ *                     epoch: 1743222437146
+ *                     edoPet: 0
  *       '400':
  *         description: Bad Request - The request body is missing the operation ID or it's in an invalid format.
  *         content:
@@ -692,7 +833,7 @@ router.post(
 router.post(
   "/v2/codi/consulta",
   validateApiKey,
-  consultaValidationRules, // Ensure this validator checks for 'operationId' now
+  consultaValidationRules,
   validateRequest,
   consulta.getBillingInfo
 );
