@@ -14,6 +14,7 @@ const axios = require("axios");
 const supabase = require("../../config/supabase");
 
 async function fwdToCustomerUrl(requestBody, validationResult) {
+  /*
   // Extract nombreCliente value
   const nombreCliente = requestBody.cadenaInformacion.nombreCliente;
 
@@ -54,6 +55,29 @@ async function fwdToCustomerUrl(requestBody, validationResult) {
     }
   } else {
     console.log(`No callback URL found for customer: ${nombreCliente}`);
+  }
+  */
+
+  // Hardcoded URL for forwarding
+  const targetUrl =
+    "https://admin.salsa-candela.com/fiesta/boletos/codi/webhook";
+
+  try {
+    const forwardResponse = await axios.post(targetUrl, requestBody, {
+      headers: {
+        "Content-Type": "application/json",
+        "X-Validation-Result": validationResult,
+      },
+    });
+    console.log(
+      `Request forwarded to ${targetUrl}, status: ${forwardResponse.status}`
+    );
+  } catch (forwardError) {
+    console.error(`Error forwarding request to ${targetUrl}:`, {
+      message: forwardError.message,
+      status: forwardError.response?.status,
+      data: forwardError.response?.data,
+    });
   }
 }
 
