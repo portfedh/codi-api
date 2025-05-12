@@ -29,6 +29,7 @@ describe("insertRequestResponse", () => {
       route: "/v2/codi/push",
       requestHeaders: { "x-api-key": "test-api-key" },
       requestPayload: { key: "value" },
+      requestObject: { method: "POST" },
       requestTimestamp: { format: () => "2023-01-01T00:00:00Z" },
       responsePayload: { success: true },
       responseStatus: 200,
