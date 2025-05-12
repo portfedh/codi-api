@@ -55,7 +55,7 @@ async function insertRequestResponse({
     // 2. Insert the response, linking it to the request
     const { error: responseError } = await supabase.from("responses").insert([
       {
-        api_request_id: apiRequestId,
+        request_id: apiRequestId,
         response_payload: responsePayload,
         response_timestamp: formattedResponseTimestamp,
         response_status: responseStatus,
