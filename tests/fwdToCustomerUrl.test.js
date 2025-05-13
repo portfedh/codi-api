@@ -1,17 +1,17 @@
-const {
-  fwdToCustomerUrl,
-} = require("../controllers/utils/fwdToCustomerUrl");
-const axios = require("axios");
+// filepath: /Users/portfedh/FamilyOffice Dropbox/Pablo Cruz/1. Family Office/Fam CL/Proyectos/Coding/2_Projects/CODI/100_codi_api/codi-api/tests/fwdToCustomerUrl.test.js
+const { fwdToCustomerUrl } = require("../controllers/utils/fwdToCustomerUrl");
+const { extractIdMensajeCobro } = require("../controllers/utils/extractIdMensajeCobro");
+const { getApiKeyFromFolio } = require("../controllers/utils/getApiKeyFromFolio");
+const { getCallbackUrl } = require("../controllers/utils/getCallbackUrl");
+const { forwardRequest } = require("../controllers/utils/forwardRequest");
 const supabase = require("../config/supabase");
 
-// Mock dependencies
-jest.mock("axios");
-jest.mock("../../config/supabase", () => ({
-  from: jest.fn().mockReturnThis(),
-  select: jest.fn().mockReturnThis(),
-  eq: jest.fn().mockReturnThis(),
-  single: jest.fn(),
-}));
+// Mock helper functions
+jest.mock("../controllers/utils/extractIdMensajeCobro");
+jest.mock("../controllers/utils/getApiKeyFromFolio");
+jest.mock("../controllers/utils/getCallbackUrl");
+jest.mock("../controllers/utils/forwardRequest");
+jest.mock("../config/supabase");
 
 // Mock console methods
 const consoleLogSpy = jest.spyOn(console, "log").mockImplementation();
@@ -20,105 +20,93 @@ const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
 describe("fwdToCustomerUrl", () => {
   const requestBody = {
     cadenaInformacion: {
-      nombreCliente: "TestCustomer",
-    },
-    // ... other request body data
+      idMensajeCobro: "TEST123456789"
+    }
   };
   const validationResult = 200;
+  const idMensajeCobro = "TEST123456789";
+  const apiKey = "api-key-12345";
   const callbackUrl = "http://test-callback.com/hook";
+  const forwardResponse = { status: 200, data: { success: true } };
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should forward request successfully when customer and callback URL are found", async () => {
-    const mockCustomerData = {
-      data: { callback_url: callbackUrl },
-      error: null,
-    };
-    supabase.from().select().eq().single.mockResolvedValue(mockCustomerData);
-    axios.post.mockResolvedValue({ status: 200 });
+  it("should forward request successfully when all helper functions succeed", async () => {
+    // Mock the helper functions
+    extractIdMensajeCobro.mockReturnValue(idMensajeCobro);
+    getApiKeyFromFolio.mockResolvedValue(apiKey);
+    getCallbackUrl.mockResolvedValue(callbackUrl);
+    forwardRequest.mockResolvedValue(forwardResponse);
 
     await fwdToCustomerUrl(requestBody, validationResult);
 
-    expect(supabase.from).toHaveBeenCalledWith("customers");
-    expect(supabase.select).toHaveBeenCalledWith("callback_url");
-    expect(supabase.eq).toHaveBeenCalledWith("name_redacted", "TestCustomer");
-    expect(supabase.single).toHaveBeenCalled();
-    expect(axios.post).toHaveBeenCalledWith(callbackUrl, requestBody, {
-      headers: {
-        "Content-Type": "application/json",
-        "X-Validation-Result": validationResult,
-      },
-    });
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      `Request forwarded to ${callbackUrl}, status: 200`
-    );
+    // Check that helper functions were called with correct parameters
+    expect(extractIdMensajeCobro).toHaveBeenCalledWith(requestBody);
+    expect(getApiKeyFromFolio).toHaveBeenCalledWith(idMensajeCobro, supabase);
+    expect(getCallbackUrl).toHaveBeenCalledWith(apiKey, supabase);
+    expect(forwardRequest).toHaveBeenCalledWith(callbackUrl, requestBody, validationResult);
+    
     expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
 
-  it("should handle error when forwarding request fails", async () => {
-    const mockCustomerData = {
-      data: { callback_url: callbackUrl },
-      error: null,
-    };
-    const forwardError = new Error("Network Error");
-    forwardError.response = { status: 500, data: "Server Error" };
-    supabase.from().select().eq().single.mockResolvedValue(mockCustomerData);
-    axios.post.mockRejectedValue(forwardError);
+  it("should stop execution if idMensajeCobro extraction fails", async () => {
+    // Mock the helper functions
+    extractIdMensajeCobro.mockReturnValue(null);
 
     await fwdToCustomerUrl(requestBody, validationResult);
 
-    expect(axios.post).toHaveBeenCalledWith(callbackUrl, requestBody, {
-      headers: {
-        "Content-Type": "application/json",
-        "X-Validation-Result": validationResult,
-      },
+    // Check that only extractIdMensajeCobro was called
+    expect(extractIdMensajeCobro).toHaveBeenCalledWith(requestBody);
+    expect(getApiKeyFromFolio).not.toHaveBeenCalled();
+    expect(getCallbackUrl).not.toHaveBeenCalled();
+    expect(forwardRequest).not.toHaveBeenCalled();
+  });
+
+  it("should stop execution if getting API key fails", async () => {
+    // Mock the helper functions
+    extractIdMensajeCobro.mockReturnValue(idMensajeCobro);
+    getApiKeyFromFolio.mockResolvedValue(null);
+
+    await fwdToCustomerUrl(requestBody, validationResult);
+
+    // Check that only the first two helper functions were called
+    expect(extractIdMensajeCobro).toHaveBeenCalledWith(requestBody);
+    expect(getApiKeyFromFolio).toHaveBeenCalledWith(idMensajeCobro, supabase);
+    expect(getCallbackUrl).not.toHaveBeenCalled();
+    expect(forwardRequest).not.toHaveBeenCalled();
+  });
+
+  it("should stop execution if getting callback URL fails", async () => {
+    // Mock the helper functions
+    extractIdMensajeCobro.mockReturnValue(idMensajeCobro);
+    getApiKeyFromFolio.mockResolvedValue(apiKey);
+    getCallbackUrl.mockResolvedValue(null);
+
+    await fwdToCustomerUrl(requestBody, validationResult);
+
+    // Check that only the first three helper functions were called
+    expect(extractIdMensajeCobro).toHaveBeenCalledWith(requestBody);
+    expect(getApiKeyFromFolio).toHaveBeenCalledWith(idMensajeCobro, supabase);
+    expect(getCallbackUrl).toHaveBeenCalledWith(apiKey, supabase);
+    expect(forwardRequest).not.toHaveBeenCalled();
+  });
+
+  it("should handle errors thrown during execution", async () => {
+    // Mock the helper functions to throw an error
+    extractIdMensajeCobro.mockReturnValue(idMensajeCobro);
+    getApiKeyFromFolio.mockImplementation(() => {
+      throw new Error("Test error");
     });
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      `Error forwarding request to ${callbackUrl}:`,
-      {
-        message: "Network Error",
-        status: 500,
-        data: "Server Error",
-      }
-    );
-    expect(consoleLogSpy).not.toHaveBeenCalled();
-  });
-
-  it("should log message when no callback URL is found for the customer", async () => {
-    const mockCustomerData = { data: null, error: null }; // No customer found or no callback_url
-    supabase.from().select().eq().single.mockResolvedValue(mockCustomerData);
 
     await fwdToCustomerUrl(requestBody, validationResult);
 
-    expect(supabase.from).toHaveBeenCalledWith("customers");
-    expect(supabase.select).toHaveBeenCalledWith("callback_url");
-    expect(supabase.eq).toHaveBeenCalledWith("name_redacted", "TestCustomer");
-    expect(supabase.single).toHaveBeenCalled();
-    expect(axios.post).not.toHaveBeenCalled();
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      `No callback URL found for customer: TestCustomer`
-    );
-    expect(consoleErrorSpy).not.toHaveBeenCalled();
-  });
-
-  it("should handle error when querying Supabase fails", async () => {
-    const dbError = new Error("Database connection failed");
-    const mockCustomerData = { data: null, error: dbError };
-    supabase.from().select().eq().single.mockResolvedValue(mockCustomerData); // Simulate Supabase error
-
-    await fwdToCustomerUrl(requestBody, validationResult);
-
-    expect(supabase.from).toHaveBeenCalledWith("customers");
-    expect(supabase.select).toHaveBeenCalledWith("callback_url");
-    expect(supabase.eq).toHaveBeenCalledWith("name_redacted", "TestCustomer");
-    expect(supabase.single).toHaveBeenCalled();
-    expect(axios.post).not.toHaveBeenCalled();
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "Error querying customer:",
-      dbError
-    );
-    expect(consoleLogSpy).not.toHaveBeenCalled();
+    // Check that the error was logged
+    expect(consoleErrorSpy).toHaveBeenCalledWith("Error in fwdToCustomerUrl:", {
+      message: "Test error",
+      status: undefined,
+      data: undefined,
+    });
   });
 });
