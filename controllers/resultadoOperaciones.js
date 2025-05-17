@@ -117,11 +117,12 @@ module.exports = {
       }
 
       // Forward to customer callback_url
-      try {
-        await fwdToCustomerUrl(resultado, responsePayload.resultado);
-      } catch (callbackError) {
-        console.error("Error forwarding callback:", callbackError);
-      }
+      // try {
+      //   await fwdToCustomerUrl(resultado, responsePayload.resultado);
+      // } catch (callbackError) {
+      //   console.error("Error forwarding callback:", callbackError);
+      // }
+
     } catch (error) {
       console.error("Error in resultadoOperaciones:", {
         message: error.message,
