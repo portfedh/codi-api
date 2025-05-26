@@ -205,4 +205,226 @@ describe("insertRequestResponse", () => {
 
     process.env.NODE_ENV = originalEnv; // Restore original environment
   });
+
+  it("should insert folioCodi into folios_codi when present in responsePayload", async () => {
+    const mockRequestData = { id: 1 };
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          single: jest
+            .fn()
+            .mockResolvedValueOnce({ data: mockRequestData, error: null }),
+        }),
+      }),
+    });
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockResolvedValueOnce({ error: null }),
+    });
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockResolvedValueOnce({ error: null }),
+    });
+
+    const params = {
+      route: "/v2/codi/push",
+      requestHeaders: { "x-api-key": "test-api-key" },
+      requestPayload: { key: "value" },
+      requestObject: { method: "POST" },
+      requestTimestamp: { format: () => "2023-01-01T00:00:00Z" },
+      responsePayload: { success: true, folioCodi: "FOLIO123" },
+      responseStatus: 200,
+      responseTimestamp: { format: () => "2023-01-01T00:01:00Z" },
+    };
+
+    await insertRequestResponse(params);
+
+    expect(supabase.from).toHaveBeenCalledWith("folios_codi");
+  });
+
+  it("should log error if inserting folioCodi fails", async () => {
+    const mockRequestData = { id: 1 };
+    const folioCodiError = { message: "folioCodi insert failed" };
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          single: jest
+            .fn()
+            .mockResolvedValueOnce({ data: mockRequestData, error: null }),
+        }),
+      }),
+    });
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockResolvedValueOnce({ error: null }),
+    });
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockResolvedValueOnce({ error: folioCodiError }),
+    });
+
+    const params = {
+      route: "/v2/codi/push",
+      requestHeaders: { "x-api-key": "test-api-key" },
+      requestPayload: { key: "value" },
+      requestObject: { method: "POST" },
+      requestTimestamp: { format: () => "2023-01-01T00:00:00Z" },
+      responsePayload: { success: true, folioCodi: "FOLIO123" },
+      responseStatus: 200,
+      responseTimestamp: { format: () => "2023-01-01T00:01:00Z" },
+    };
+
+    console.error = jest.fn();
+
+    await insertRequestResponse(params);
+
+    expect(console.error).toHaveBeenCalledWith(
+      "Error inserting folioCodi:",
+      folioCodiError
+    );
+  });
+
+  it("should log error if cadenaMC is invalid JSON", async () => {
+    const mockRequestData = { id: 1 };
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          single: jest
+            .fn()
+            .mockResolvedValueOnce({ data: mockRequestData, error: null }),
+        }),
+      }),
+    });
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockResolvedValueOnce({ error: null }),
+    });
+
+    const params = {
+      route: "/v2/codi/push",
+      requestHeaders: { "x-api-key": "test-api-key" },
+      requestPayload: { key: "value" },
+      requestObject: { method: "POST" },
+      requestTimestamp: { format: () => "2023-01-01T00:00:00Z" },
+      responsePayload: { success: true, cadenaMC: "{invalidJson" },
+      responseStatus: 200,
+      responseTimestamp: { format: () => "2023-01-01T00:01:00Z" },
+    };
+
+    console.error = jest.fn();
+
+    await insertRequestResponse(params);
+
+    expect(console.error).toHaveBeenCalledWith(
+      expect.stringContaining("Error parsing cadenaMC or inserting IDC:"),
+      expect.any(SyntaxError)
+    );
+  });
+
+  it("should not insert IDC if cadenaMC does not contain ic.IDC", async () => {
+    const mockRequestData = { id: 1 };
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          single: jest
+            .fn()
+            .mockResolvedValueOnce({ data: mockRequestData, error: null }),
+        }),
+      }),
+    });
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockResolvedValueOnce({ error: null }),
+    });
+
+    const params = {
+      route: "/v2/codi/push",
+      requestHeaders: { "x-api-key": "test-api-key" },
+      requestPayload: { key: "value" },
+      requestObject: { method: "POST" },
+      requestTimestamp: { format: () => "2023-01-01T00:00:00Z" },
+      responsePayload: { success: true, cadenaMC: JSON.stringify({ ic: {} }) },
+      responseStatus: 200,
+      responseTimestamp: { format: () => "2023-01-01T00:01:00Z" },
+    };
+
+    await insertRequestResponse(params);
+
+    // Only two inserts: requests and responses, no folios_codi for IDC
+    expect(supabase.from).toHaveBeenCalledTimes(2);
+  });
+
+  it("should insert IDC as folio_codi if present in cadenaMC", async () => {
+    const mockRequestData = { id: 1 };
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          single: jest
+            .fn()
+            .mockResolvedValueOnce({ data: mockRequestData, error: null }),
+        }),
+      }),
+    });
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockResolvedValueOnce({ error: null }),
+    });
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockResolvedValueOnce({ error: null }),
+    });
+
+    const params = {
+      route: "/v2/codi/push",
+      requestHeaders: { "x-api-key": "test-api-key" },
+      requestPayload: { key: "value" },
+      requestObject: { method: "POST" },
+      requestTimestamp: { format: () => "2023-01-01T00:00:00Z" },
+      responsePayload: {
+        success: true,
+        cadenaMC: JSON.stringify({ ic: { IDC: "IDC123" } }),
+      },
+      responseStatus: 200,
+      responseTimestamp: { format: () => "2023-01-01T00:01:00Z" },
+    };
+
+    await insertRequestResponse(params);
+
+    expect(supabase.from).toHaveBeenCalledWith("folios_codi");
+  });
+
+  it("should log error if inserting IDC as folio_codi fails", async () => {
+    const mockRequestData = { id: 1 };
+    const idcInsertError = { message: "IDC insert failed" };
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          single: jest
+            .fn()
+            .mockResolvedValueOnce({ data: mockRequestData, error: null }),
+        }),
+      }),
+    });
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockResolvedValueOnce({ error: null }),
+    });
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockResolvedValueOnce({ error: idcInsertError }),
+    });
+
+    const params = {
+      route: "/v2/codi/push",
+      requestHeaders: { "x-api-key": "test-api-key" },
+      requestPayload: { key: "value" },
+      requestObject: { method: "POST" },
+      requestTimestamp: { format: () => "2023-01-01T00:00:00Z" },
+      responsePayload: {
+        success: true,
+        cadenaMC: JSON.stringify({ ic: { IDC: "IDC123" } }),
+      },
+      responseStatus: 200,
+      responseTimestamp: { format: () => "2023-01-01T00:01:00Z" },
+    };
+
+    console.error = jest.fn();
+
+    await insertRequestResponse(params);
+
+    expect(console.error).toHaveBeenCalledWith(
+      "Error inserting IDC as folio_codi:",
+      idcInsertError
+    );
+  });
 });
