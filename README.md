@@ -11,3 +11,10 @@
 - Query the status of payment requests
 - Log incoming request data
 - View logs: pm2 logs codi-api
+
+## Instructions for credentials
+
+```bash
+awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' fileName.cve
+awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' fileName.crt
+```
