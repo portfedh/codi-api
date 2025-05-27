@@ -14,6 +14,8 @@
 
 ## Instructions for credentials
 
+In the private key, there is a missing  \n character in a section where it should be \n\n 
+
 ```bash
 awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' fileName.cve
 awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' fileName.crt
