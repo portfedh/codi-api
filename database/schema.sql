@@ -4,7 +4,7 @@
 CREATE TABLE public.api_keys (
   edited_at timestamp without time zone NOT NULL DEFAULT now(),
   id uuid NOT NULL DEFAULT gen_random_uuid(),
-  enviroment text NOT NULL,
+  environment text NOT NULL,
   callback_url text,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   customer_id uuid NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE public.customers (
   phone character varying,
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   created_at timestamp with time zone NOT NULL DEFAULT now(),
-  enviroment text NOT NULL,
+  environment text NOT NULL,
   name text,
   bank_name text,
   bank_account character varying,
