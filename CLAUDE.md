@@ -58,6 +58,14 @@ This is a CoDi API for generating Mexican payment codes via QR and Push notifica
 - Data validation and formatting utilities
 - Fallback request mechanisms for reliability
 
+**Database Schema (`/database`):**
+- **schema.sql**: Complete Supabase database schema defining core tables:
+  - `customers`: Client information and bank details
+  - `api_keys`: API key management with Banxico integration
+  - `folios_codi`: CoDi payment folio tracking
+  - `requests/responses`: Request/response logging for auditing
+- **database_schema.png**: Visual diagram of table relationships
+
 **Environment Configuration:**
 The `.env` file contains critical credentials including Supabase connection details, Banxico certificates, and API endpoints. The `config/institutions.js` file maps financial institution codes for payment routing.
 
