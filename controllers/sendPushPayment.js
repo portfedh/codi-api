@@ -52,6 +52,8 @@ module.exports = {
     const requestTimestamp = moment().tz("America/Mexico_City");
     console.log("Req Timestamp", requestTimestamp);
 
+    let requestObject = null;
+
     try {
       // Get payment data
       const { celularCliente, monto, referenciaNumerica, concepto, vigencia } =
@@ -100,7 +102,7 @@ module.exports = {
       console.log("\n🔵 Sello digital: ", selloDigital);
 
       // Create request object
-      const requestObject = {
+      requestObject = {
         datosMC,
         selloDigital,
         epoch,
@@ -197,10 +199,16 @@ module.exports = {
         response: error.response?.data,
       });
 
+      // Determine error type and provide specific response
+      let errorMessage = "Error processing Push request";
+      if (error.message && error.message.includes("timeout")) {
+        errorMessage = "Service temporarily unavailable due to timeout - please try again later";
+      }
+
       // Send error response immediately
       res.status(500).json({
         success: false,
-        error: "Error processing Push request",
+        error: errorMessage,
       });
 
       // Log the error asynchronously

@@ -80,4 +80,28 @@ describe("makeRequestWithFallback", () => {
     );
     expect(axios.post).toHaveBeenCalledTimes(2);
   });
+
+  it("should throw a timeout error if both URLs timeout", async () => {
+    const timeoutError = new Error("timeout of 3000ms exceeded");
+    axios.post.mockRejectedValueOnce(timeoutError);
+    axios.post.mockRejectedValueOnce(timeoutError);
+
+    await expect(
+      makeRequestWithFallback(primaryUrl, secondaryUrl, requestData, { timeout: 3000 })
+    ).rejects.toThrow(
+      "Both requests failed. Primary error: timeout of 3000ms exceeded, Secondary error: timeout of 3000ms exceeded"
+    );
+
+    expect(axios.post).toHaveBeenCalledWith(
+      primaryUrl,
+      requestData,
+      expect.objectContaining({ timeout: 3000 })
+    );
+    expect(axios.post).toHaveBeenCalledWith(
+      secondaryUrl,
+      requestData,
+      expect.objectContaining({ timeout: 3000 })
+    );
+    expect(axios.post).toHaveBeenCalledTimes(2);
+  });
 });
