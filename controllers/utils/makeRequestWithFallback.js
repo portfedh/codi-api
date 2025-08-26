@@ -17,7 +17,7 @@ async function makeRequestWithFallback(
   requestData,
   options = {}
 ) {
-  const { timeout = 10000 } = options;
+  const { timeout = 3000 } = options;
 
   // console.log("Request Data:", requestData);
 

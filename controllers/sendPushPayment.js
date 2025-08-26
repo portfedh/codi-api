@@ -127,7 +127,7 @@ module.exports = {
         primaryUrl,
         secondaryUrl,
         requestBody,
-        { timeout: 3000 }
+        { timeout: 10000 }
       );
       console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
