@@ -11,7 +11,7 @@ jobs:
       - name: Deploy code to DigitalOcean Droplet
         uses: appleboy/ssh-action@master
         with:
-          host: 164.90.245.198
+          host: ${{ secrets.DEPLOY_HOST }}
           username: root
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
