@@ -46,33 +46,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
-const allowedOrigins = [
-  // Development domains
-  "http://localhost:5173",
-  "http://localhost:2121",
-  "http://localhost:3131",
-  // Salsa Candela domains
-  "https://codi.salsa-candela.com",
-  "https://salsa-candela.com",
-  "https://www.salsa-candela.com",
-  "https://admin.salsa-candela.com",
-  "https://www.admin.salsa-candela.com",
-  "https://bar.salsa-candela.com",
-  "https://www.bar.salsa-candela.com",
-  // IP Banco de Mexico Beta
-  "http://170.70.226.117",
-  "http://170.70.226.118",
-  "http://170.70.226.119",
-  "http://170.70.226.120",
-  // IP Banco de Mexico Prod
-  "http://170.70.227.117",
-  "http://170.70.227.118",
-  "http://170.70.227.119",
-  "http://170.70.227.120",
-  // Assigned Digital Ocean IP address
-  "http://164.90.245.198",
-  "http://164.90.245.198:80",
-];
+const { allowedOrigins } = require("./config/cors");
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
