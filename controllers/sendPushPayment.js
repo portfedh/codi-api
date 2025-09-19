@@ -50,7 +50,7 @@ module.exports = {
 
     //  Capture request timestamp in Mexico City time
     const requestTimestamp = moment().tz("America/Mexico_City");
-    console.log("Req Timestamp", requestTimestamp);
+    // console.log("Req Timestamp", requestTimestamp);
 
     let requestObject = null;
 
@@ -58,33 +58,33 @@ module.exports = {
       // Get payment data
       const { celularCliente, monto, referenciaNumerica, concepto, vigencia } =
         req.body;
-      console.log("\n🔵 Datos de pago: ", req.body);
+      // console.log("\n🔵 Datos de pago: ", req.body);
 
       // Get url endpoints
       const { primary: primaryUrl, secondary: secondaryUrl } =
         getCodiPushUrls();
-      console.log("\n🔵 Push Endpoints: ", { primaryUrl, secondaryUrl });
+      // console.log("\n🔵 Push Endpoints: ", { primaryUrl, secondaryUrl });
 
       // Get seller api key
       const apiKey = req.apiKey;
-      console.log("\n🔵 Seller API Key: ", apiKey);
+      // console.log("\n🔵 Seller API Key: ", apiKey);
 
       // Get developer credentials
       const { crtLogIn, crtOper } = getDeveloperCredentials();
-      console.log("\n🔵 Developer crtLogIn: ", crtLogIn);
-      console.log("\n🔵 Developer crtOper: ", crtLogIn);
+      // console.log("\n🔵 Developer crtLogIn: ", crtLogIn);
+      // console.log("\n🔵 Developer crtOper: ", crtLogIn);
 
       // Get Developer Public Key Certificate
       const { publicKey } = getKeyCredentials();
-      console.log("\n🔵 Public Key Certificate: ", publicKey);
+      // console.log("\n🔵 Public Key Certificate: ", publicKey);
 
       // Get Banxico Public Key Certificate
       const { crtBanxico, publicKeyBanxico } = getBanxicoCredentials();
-      console.log("\n🔵 Banxico Public Key Certificate: ", publicKeyBanxico);
+      // console.log("\n🔵 Banxico Public Key Certificate: ", publicKeyBanxico);
 
       // Get epoch
       const epoch = Date.now();
-      console.log("\n🔵 Epoch: ", epoch);
+      // console.log("\n🔵 Epoch: ", epoch);
 
       // Create object
       const datosMC = {
@@ -95,11 +95,11 @@ module.exports = {
         vigencia,
         apiKey,
       };
-      console.log("\n🔵 Datos a firmar: ", datosMC);
+      // console.log("\n🔵 Datos a firmar: ", datosMC);
 
       // Sign the data
       const selloDigital = await generateSignature(datosMC, epoch);
-      console.log("\n🔵 Sello digital: ", selloDigital);
+      // console.log("\n🔵 Sello digital: ", selloDigital);
 
       // Create request object
       requestObject = {
@@ -109,13 +109,13 @@ module.exports = {
         crtLogIn,
         crtOper,
       };
-      console.log("\n🔵 Request object: ", requestObject);
+      // console.log("\n🔵 Request object: ", requestObject);
 
       const requestBody = `d=${JSON.stringify(requestObject)}`;
-      console.log("\n🔵 Request body enviado a Banxico: ", requestBody);
+      // console.log("\n🔵 Request body enviado a Banxico: ", requestBody);
 
       const isVerified = verifySignature(requestObject, publicKey);
-      console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
+      // console.log("\n🔵 Firma de desarrollador verificada: ", isVerified);
 
       if (!isVerified) {
         return res.status(400).json({
@@ -131,11 +131,11 @@ module.exports = {
         requestBody,
         { timeout: 10000 }
       );
-      console.log("\n🔵 Respuesta de Banxico: ", response.data);
+      // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
       //  Capture response timestamp in Mexico City time
       const responseTimestamp = moment().tz("America/Mexico_City");
-      console.log("response timestamp", responseTimestamp);
+      // console.log("response timestamp", responseTimestamp);
 
       // Verify Banxico response code
       const banxicoResult = verifyBanxicoResponse(response);
@@ -145,10 +145,10 @@ module.exports = {
 
       // Verify that crtBdeM value matches our records
       const crtBanxicoVerified = compareCrtBanxico(crtBanxico, response.data);
-      console.log(
-        "\n🔵 Certificado de Banxico verificado: ",
-        crtBanxicoVerified
-      );
+      // console.log(
+      //   "\n🔵 Certificado de Banxico verificado: ",
+      //   crtBanxicoVerified
+      // );
 
       if (!crtBanxicoVerified) {
         return res.status(400).json({
@@ -162,7 +162,7 @@ module.exports = {
         response.data,
         publicKeyBanxico
       );
-      console.log("\n🔵  Mensaje de Banxico verificado: ", responseIsVerified);
+      // console.log("\n🔵  Mensaje de Banxico verificado: ", responseIsVerified);
       if (!responseIsVerified) {
         return res.status(400).json({
           success: false,
