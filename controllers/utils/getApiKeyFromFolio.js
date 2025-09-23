@@ -39,7 +39,7 @@ async function getApiKeyFromFolio(idMensajeCobro, supabase) {
     }
     
     const apiKey = folioData.api_key;
-    console.log(`Found api_key: ${apiKey}`);
+    // console.log(`Found api_key: ${apiKey}`);
     return apiKey;
   } catch (error) {
     console.error("Error retrieving API key:", error.message);
