@@ -13,7 +13,7 @@
     "url": "git+https://github.com/portfedh/codi-api.git"
   },
   "author": "Pablo Cruz Lemini",
-  "license": "See Licence in licence.txt",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/portfedh/codi-api/issues"
   },
