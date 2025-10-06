@@ -1,4 +1,3 @@
-// filepath: /Users/portfedh/FamilyOffice Dropbox/Pablo Cruz/1. Family Office/Fam CL/Proyectos/Coding/2_Projects/CODI/100_codi_api/codi-api/tests/fwdToCustomerUrl.test.js
 const { fwdToCustomerUrl } = require("../controllers/utils/fwdToCustomerUrl");
 const { extractIdMensajeCobro } = require("../controllers/utils/extractIdMensajeCobro");
 const { getApiKeyFromFolio } = require("../controllers/utils/getApiKeyFromFolio");
