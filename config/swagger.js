@@ -27,11 +27,11 @@ const swaggerOptions = {
       description: "API documentation for payment operations using CoDi",
       contact: {
         name: "API Support",
-        email: "pablo.cruz@bite-size.mx",
+        url: "https://github.com/portfedh/codi-api/issues",
       },
       license: {
-        name: "Private",
-        url: "https://example.com/license",
+        name: "Apache 2.0",
+        url: "https://www.apache.org/licenses/LICENSE-2.0",
       },
     },
     servers: [
@@ -42,11 +42,11 @@ const swaggerOptions = {
        */
       {
         url: "http://localhost:3131",
-        description: "Development server",
+        description: "Local development server",
       },
       {
-        url: "https://codi.salsa-candela.com",
-        description: "Production server",
+        url: "https://your-api-domain.com",
+        description: "Production server (replace with your domain)",
       },
     ],
     components: {

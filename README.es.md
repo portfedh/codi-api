@@ -68,7 +68,7 @@ Antes de comenzar, asegúrate de tener lo siguiente:
 1. **Clona el repositorio**
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/codi-api.git
+git clone https://github.com/portfedh/codi-api.git
 cd codi-api
 ```
 
@@ -666,8 +666,8 @@ Este proyecto está licenciado bajo la Licencia Apache 2.0 - consulta el archivo
 
 ### Obtener Ayuda
 
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/codi-api/issues)
-- **Discusiones**: [GitHub Discussions](https://github.com/YOUR_USERNAME/codi-api/discussions)
+- **Issues**: [GitHub Issues](https://github.com/portfedh/codi-api/issues)
+- **Discusiones**: [GitHub Discussions](https://github.com/portfedh/codi-api/discussions)
 
 ## Agradecimientos
 
@@ -685,6 +685,6 @@ Mejoras futuras bajo consideración:
 
 ---
 
-**Construido por Pablo Cruz Lemini, Bite Size SA de CV**
+**Creado por [Pablo Cruz Lemini](https://github.com/portfedh)**
 
 Para preguntas o comentarios, por favor abre un issue en GitHub.
