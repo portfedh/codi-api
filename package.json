@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "jest"
+    "test": "jest",
+    "license-check": "license-checker --summary",
+    "license-report": "mkdir -p licenses && license-checker --json > licenses/licenses.json && license-checker --production --markdown > licenses/THIRD-PARTY-LICENSES.md",
+    "license-compliance": "license-checker --onlyAllow 'MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;0BSD;CC0-1.0;Unlicense;WTFPL;Python-2.0;BlueOak-1.0.0;CC-BY-3.0;CC-BY-4.0;(BSD-3-Clause OR GPL-2.0);(MIT AND CC-BY-3.0);(MIT OR CC0-1.0)' --production"
   },
   "repository": {
     "type": "git",
@@ -41,6 +44,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "license-checker": "^25.0.1",
     "nodemon": "^3.1.9"
   },
   "jest": {

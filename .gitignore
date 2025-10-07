@@ -8,3 +8,6 @@ pm2.pid
 coverage
 access.log
 *.log
+
+# License checker - contains personal directory paths
+licenses/licenses.json

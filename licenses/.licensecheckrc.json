@@ -1,0 +1,22 @@
+{
+  "allowedLicenses": [
+    "MIT",
+    "Apache-2.0",
+    "ISC",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "0BSD",
+    "CC0-1.0",
+    "Unlicense",
+    "WTFPL"
+  ],
+  "forbiddenLicenses": [
+    "GPL",
+    "AGPL",
+    "LGPL",
+    "GPL-2.0",
+    "GPL-3.0",
+    "AGPL-3.0"
+  ],
+  "note": "This configuration allows permissive open source licenses compatible with Apache-2.0 and forbids copyleft licenses that could create licensing conflicts."
+}

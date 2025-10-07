@@ -15,6 +15,15 @@ npm start      # Start production server
 npm test       # Run Jest test suite with coverage
 ```
 
+**License Compliance:**
+```bash
+npm run license-check       # Show summary of all dependency licenses
+npm run license-report      # Generate detailed license reports
+npm run license-compliance  # Validate licenses against approved list
+```
+
+**IMPORTANT:** Always run `npm run license-compliance` after installing new dependencies to ensure license compatibility with Apache-2.0.
+
 **View logs:**
 ```bash
 pm2 logs codi-api
@@ -71,3 +80,24 @@ The `.env` file contains critical credentials including Supabase connection deta
 
 **Testing:**
 Jest test suite with coverage reporting covers all utility functions, validation rules, and core business logic. Tests are located in the `/tests` directory matching the source file structure.
+
+## Project Documentation & Governance
+
+**License & Legal:**
+- `LICENSE` - Apache License 2.0 (English)
+- `LICENSE.es.md` - Apache License 2.0 (Spanish)
+- `licenses/` - Third-party dependency license compliance
+  - `.licensecheckrc.json` - License policy configuration
+  - `THIRD-PARTY-LICENSES.md` - All production dependency licenses
+  - `licenses.json` - Detailed license report (gitignored - contains local paths)
+
+**Contributing & Community:**
+- `CODE_OF_CONDUCT.md` / `CODE_OF_CONDUCT.es.md` - Community guidelines (English/Spanish)
+- `CONTRIBUTING.md` / `CONTRIBUTING.es.md` - Contribution guidelines (English/Spanish)
+- `SECURITY.md` / `SECURITY.es.md` - Security policy and vulnerability reporting (English/Spanish)
+
+**Development Best Practices:**
+- Always run `npm run license-compliance` after installing new dependencies
+- Follow contribution guidelines in `CONTRIBUTING.md`
+- Report security vulnerabilities per `SECURITY.md` policy
+- All code must pass Jest tests and maintain license compliance
