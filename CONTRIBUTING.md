@@ -21,7 +21,9 @@ This project and everyone participating in it is governed by our [Code of Conduc
 
 ### Reporting Bugs
 
-Before creating bug reports, please check existing issues to avoid duplicates. When creating a bug report, include:
+Before creating bug reports, please check existing issues to avoid duplicates.
+
+When you [create a new bug report](../../issues/new?template=bug_report.md), our template will guide you through providing:
 
 - **Clear title and description**
 - **Steps to reproduce** the behavior
@@ -29,14 +31,19 @@ Before creating bug reports, please check existing issues to avoid duplicates. W
 - **Environment details**: Node.js version, OS, etc.
 - **Error messages** or logs (sanitize sensitive data)
 
+**Security Note:** For security vulnerabilities, please follow our [Security Policy](SECURITY.md) instead of creating a public issue.
+
 ### Suggesting Enhancements
 
-Enhancement suggestions are tracked as GitHub issues. When creating an enhancement suggestion:
+Enhancement suggestions are tracked as GitHub issues.
+
+When you [create a new feature request](../../issues/new?template=feature_request.md), our template will guide you through providing:
 
 - **Use a clear title** describing the enhancement
 - **Provide detailed description** of the suggested enhancement
 - **Explain why** this enhancement would be useful
 - **List alternatives** you've considered
+- **Impact assessment** on existing functionality and integrations
 
 ### Your First Code Contribution
 
@@ -218,11 +225,13 @@ docs(readme): update installation instructions
 
 2. Create Pull Request on GitHub
 
-3. Fill out the PR template with:
+3. Our [PR template](.github/PULL_REQUEST_TEMPLATE.md) will auto-populate. Fill it out with:
    - Description of changes
    - Type of change (bug fix, feature, etc.)
    - Testing performed
    - Related issues
+   - License compliance checklist
+   - Security considerations
 
 ### Review Process
 

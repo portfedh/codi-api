@@ -21,7 +21,9 @@ Este proyecto y todos los que participan en él se rigen por nuestro [Código de
 
 ### Reportar Errores
 
-Antes de crear reportes de errores, por favor revisa los issues existentes para evitar duplicados. Al crear un reporte de error, incluye:
+Antes de crear reportes de errores, por favor revisa los issues existentes para evitar duplicados.
+
+Cuando [crees un nuevo reporte de error](../../issues/new?template=bug_report.md), nuestra plantilla te guiará para proporcionar:
 
 - **Título y descripción claros**
 - **Pasos para reproducir** el comportamiento
@@ -29,14 +31,19 @@ Antes de crear reportes de errores, por favor revisa los issues existentes para 
 - **Detalles del entorno**: versión de Node.js, SO, etc.
 - **Mensajes de error** o logs (sanitiza datos sensibles)
 
+**Nota de Seguridad:** Para vulnerabilidades de seguridad, por favor sigue nuestra [Política de Seguridad](SECURITY.es.md) en lugar de crear un issue público.
+
 ### Sugerir Mejoras
 
-Las sugerencias de mejoras se rastrean como issues de GitHub. Al crear una sugerencia de mejora:
+Las sugerencias de mejoras se rastrean como issues de GitHub.
+
+Cuando [crees una nueva solicitud de funcionalidad](../../issues/new?template=feature_request.md), nuestra plantilla te guiará para proporcionar:
 
 - **Usa un título claro** que describa la mejora
 - **Proporciona una descripción detallada** de la mejora sugerida
 - **Explica por qué** esta mejora sería útil
 - **Lista alternativas** que hayas considerado
+- **Evaluación de impacto** en funcionalidad existente e integraciones
 
 ### Tu Primera Contribución de Código
 
@@ -218,11 +225,13 @@ docs(readme): actualizar instrucciones de instalación
 
 2. Crear Pull Request en GitHub
 
-3. Completa el template de PR con:
+3. Nuestra [plantilla de PR](.github/PULL_REQUEST_TEMPLATE.md) se autocompletará. Llénala con:
    - Descripción de los cambios
    - Tipo de cambio (corrección de error, funcionalidad, etc.)
    - Pruebas realizadas
    - Issues relacionados
+   - Lista de verificación de cumplimiento de licencias
+   - Consideraciones de seguridad
 
 ### Proceso de Revisión
 
