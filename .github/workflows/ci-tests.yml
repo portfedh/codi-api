@@ -1,3 +1,4 @@
+---
 # This workflow runs tests on every push and pull request
 name: CI Tests
 
