@@ -33,7 +33,6 @@ describe("getApiKeyFromFolio", () => {
     expect(mockSupabase.select).toHaveBeenCalledWith("api_key");
     expect(mockSupabase.eq).toHaveBeenCalledWith("folio_codi", idMensajeCobro);
     expect(mockSupabase.single).toHaveBeenCalled();
-    expect(consoleLogSpy).toHaveBeenCalledWith(`Found api_key: ${apiKey}`);
     expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
 
@@ -60,7 +59,6 @@ describe("getApiKeyFromFolio", () => {
     expect(mockSupabase.eq).toHaveBeenNthCalledWith(2, "folio_codi", idMensajeCobro.substring(0, 10));
     expect(mockSupabase.single).toHaveBeenCalledTimes(2);
     expect(consoleLogSpy).toHaveBeenCalledWith("No record found for full idMensajeCobro, trying first 10 characters");
-    expect(consoleLogSpy).toHaveBeenCalledWith(`Found api_key: ${apiKey}`);
   });
 
   it("should return null if API key is not found with shortened idMensajeCobro", async () => {

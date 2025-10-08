@@ -33,7 +33,6 @@ describe("getCallbackUrl", () => {
     expect(mockSupabase.select).toHaveBeenCalledWith("callback_url");
     expect(mockSupabase.eq).toHaveBeenCalledWith("api_key", apiKey);
     expect(mockSupabase.single).toHaveBeenCalled();
-    expect(consoleLogSpy).toHaveBeenCalledWith(`Found callback_url: ${callbackUrl}`);
     expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
 
