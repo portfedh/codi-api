@@ -1,0 +1,36 @@
+# Dependabot configuration for automated dependency updates
+# Documentation: https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Enable version updates for npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Mexico_City"
+    # Group all minor and patch updates together to reduce PR noise
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+    # Add labels for easier tracking
+    labels:
+      - "dependencies"
+      - "automated"
+    # Limit the number of open pull requests
+    open-pull-requests-limit: 5
+    # Increase the version requirements for vulnerable dependencies
+    versioning-strategy: increase
+    # IMPORTANT: After merging Dependabot PRs, always run:
+    # npm run license-compliance
+    # to ensure new dependencies comply with Apache-2.0 license requirements
