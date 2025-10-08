@@ -4,6 +4,10 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Deploy](https://github.com/portfedh/codi-api/actions/workflows/deploy.yml/badge.svg)](https://github.com/portfedh/codi-api/actions/workflows/deploy.yml)
+[![GitHub issues](https://img.shields.io/github/issues/portfedh/codi-api)](https://github.com/portfedh/codi-api/issues)
+[![GitHub last commit](https://img.shields.io/github/last-commit/portfedh/codi-api)](https://github.com/portfedh/codi-api/commits/main)
+[![Code size](https://img.shields.io/github/languages/code-size/portfedh/codi-api)](https://github.com/portfedh/codi-api)
 
 ## Overview
 
