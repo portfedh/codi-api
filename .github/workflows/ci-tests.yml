@@ -1,0 +1,72 @@
+# This workflow runs tests on every push and pull request
+name: CI Tests
+
+# When to run this workflow
+on:
+  push:
+    branches: [ main ]  # Run on pushes to main branch
+  pull_request:
+    branches: [ main ]  # Run on PRs targeting main branch
+
+# What jobs to run
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest  # Use Ubuntu Linux environment
+
+    strategy:
+      matrix:
+        # Test on multiple Node.js versions for compatibility
+        node-version: [18.x, 20.x]
+
+    steps:
+      # Step 1: Check out the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js with the specified version
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'  # Cache npm dependencies for faster builds
+
+      # Step 3: Install project dependencies
+      - name: Install dependencies
+        run: npm ci  # npm ci is faster and more reliable than npm install
+
+      # Step 4: Check if dependency files changed
+      - name: Check for dependency changes
+        id: deps-changed
+        run: |
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '^package(-lock)?.json$'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true  # Don't fail if this is the first commit
+
+      # Step 5: Run license compliance check (only when dependencies change)
+      # This ensures all dependencies comply with Apache-2.0 license requirements
+      - name: Check license compliance
+        if: steps.deps-changed.outputs.changed == 'true' || github.event_name == 'pull_request'
+        run: npm run license-compliance
+
+      # Step 6: Run the tests with coverage
+      - name: Run tests
+        run: npm test
+
+      # Step 7: Upload coverage reports (only for Node 20.x to avoid duplicates)
+      - name: Upload coverage reports
+        if: matrix.node-version == '20.x'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 30
+
+      # Step 8: Run security audit (only for Node 20.x to avoid duplicates)
+      - name: Security audit
+        if: matrix.node-version == '20.x'
+        run: npm audit --audit-level=moderate
+        continue-on-error: true  # Don't fail the build on audit warnings
