@@ -161,4 +161,45 @@ describe("sanitizeRequest middleware", () => {
     expect(req.body.content).toBe("Click me");
     expect(req.body.style).toBe("Styled text");
   });
+
+  test("should prevent nested tag bypass vulnerability", () => {
+    req.body = {
+      // Nested tags that would bypass single-pass sanitization
+      nestedScript: "<<script>alert(1)</script>>",
+      nestedDiv: "<<div>content</div>>",
+      doubleNested: "<<<script>alert('xss')</script>>>",
+      complexNested: "<script<script>>alert('xss')</script>",
+    };
+
+    sanitizeRequest(req, res, next);
+
+    // All nested tags should be completely removed
+    // The multi-pass approach prevents bypass attacks
+    expect(req.body.nestedScript).toBe("");
+    expect(req.body.nestedDiv).toBe("content&gt;");
+    expect(req.body.doubleNested).toBe("&gt;");
+    expect(req.body.complexNested).toBe("");
+  });
+
+  test("should prevent GitHub CodeQL incomplete sanitization vulnerability", () => {
+    req.body = {
+      // The exact attack pattern from GitHub's security warning
+      // Input: <scrip<script>is removed</script>t>alert(123)</script>
+      // Single-pass would produce: <script>alert(123)</script> (vulnerable!)
+      // Multi-pass correctly removes all script tags
+      githubExample: "<scrip<script>is removed</script>t>alert(123)</script>",
+
+      // Additional similar patterns
+      variation1: "<scri<script>foo</script>pt>alert(1)</script>",
+      variation2: "<<script>bar</script>script>alert(2)</script>",
+    };
+
+    sanitizeRequest(req, res, next);
+
+    // All script tags and content should be completely removed
+    // The loop prevents reconstituted script tags
+    expect(req.body.githubExample).toBe("");
+    expect(req.body.variation1).toBe("");
+    expect(req.body.variation2).toBe("");
+  });
 });

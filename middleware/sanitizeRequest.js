@@ -51,14 +51,24 @@ function sanitizeRecursively(obj) {
  * @returns {string} - The sanitized string.
  */
 function sanitizeString(str) {
-  // Remove script tags completely
-  let sanitized = str.replace(
-    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-    ""
-  );
+  // Remove script tags completely (including content) using a loop
+  // Loop prevents nested script tag bypass (e.g., <scrip<script>alert(1)</script>t>)
+  let sanitized = str;
+  let prev;
+  do {
+    prev = sanitized;
+    sanitized = sanitized.replace(
+      /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+      ""
+    );
+  } while (sanitized !== prev);
 
-  // Remove HTML tags (keep text content)
-  sanitized = sanitized.replace(/<[^>]*>/g, "");
+  // Remove remaining HTML tags (keep text content)
+  // Loop prevents nested tag bypass (e.g., <<div>alert(1)</div>>)
+  do {
+    prev = sanitized;
+    sanitized = sanitized.replace(/<[^>]*>/g, "");
+  } while (sanitized !== prev);
 
   // Encode remaining special characters
   sanitized = sanitized
