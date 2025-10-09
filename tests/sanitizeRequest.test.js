@@ -96,8 +96,9 @@ describe("sanitizeRequest middleware", () => {
 
     sanitizeRequest(req, res, next);
 
-    // The implementation first removes < > and then encodes the rest
-    expect(req.body.html).toBe(" &amp; &quot; &#x27;");
+    // sanitize-html properly encodes special characters
+    // < and > are encoded to prevent any potential tag interpretation
+    expect(req.body.html).toBe("&lt; &gt; &amp; \" '");
   });
 
   // Additional tests to improve branch coverage for lines 5-15
@@ -173,20 +174,24 @@ describe("sanitizeRequest middleware", () => {
 
     sanitizeRequest(req, res, next);
 
-    // All nested tags should be completely removed
-    // The multi-pass approach prevents bypass attacks
-    expect(req.body.nestedScript).toBe("");
-    expect(req.body.nestedDiv).toBe("content&gt;");
-    expect(req.body.doubleNested).toBe("&gt;");
-    expect(req.body.complexNested).toBe("");
+    // sanitize-html uses a proper HTML parser that handles nested tags correctly
+    // Malformed outer brackets are encoded, making output safe
+    expect(req.body.nestedScript).toBe("&lt;&gt;");
+    expect(req.body.nestedDiv).toBe("&lt;content&gt;");
+    expect(req.body.doubleNested).toBe("&lt;&lt;&gt;&gt;"); // Three brackets each side
+    expect(req.body.complexNested).toBe("&gt;alert('xss')"); // HTML parser handles complex nesting
+
+    // Verify no executable script tags remain in any output
+    expect(req.body.nestedScript).not.toContain("<script");
+    expect(req.body.complexNested).not.toContain("<script");
   });
 
   test("should prevent GitHub CodeQL incomplete sanitization vulnerability", () => {
     req.body = {
       // The exact attack pattern from GitHub's security warning
       // Input: <scrip<script>is removed</script>t>alert(123)</script>
-      // Single-pass would produce: <script>alert(123)</script> (vulnerable!)
-      // Multi-pass correctly removes all script tags
+      // Single-pass regex would produce: <script>alert(123)</script> (vulnerable!)
+      // sanitize-html uses proper HTML parser to handle this safely
       githubExample: "<scrip<script>is removed</script>t>alert(123)</script>",
 
       // Additional similar patterns
@@ -196,17 +201,29 @@ describe("sanitizeRequest middleware", () => {
 
     sanitizeRequest(req, res, next);
 
-    // All script tags and content should be completely removed
-    // The loop prevents reconstituted script tags
-    expect(req.body.githubExample).toBe("");
-    expect(req.body.variation1).toBe("");
-    expect(req.body.variation2).toBe("");
+    // sanitize-html properly parses HTML and removes all valid script tags
+    // Any remaining text is safe (no executable scripts)
+    // Verify NO executable <script> tags remain in output
+    expect(req.body.githubExample).not.toContain("<script");
+    expect(req.body.variation1).not.toContain("<script");
+    expect(req.body.variation2).not.toContain("<script");
+
+    // Verify angle brackets in output are encoded (safe)
+    expect(req.body.githubExample).toContain("&gt;");
+    expect(req.body.variation1).toContain("&gt;");
+    expect(req.body.variation2).toContain("&gt;");
+
+    // The output is safe text, not executable code
+    expect(req.body.githubExample).toBe("is removedt&gt;alert(123)");
+    expect(req.body.variation1).toBe("foopt&gt;alert(1)");
+    expect(req.body.variation2).toBe("&lt;script&gt;alert(2)"); // Angle brackets encoded = safe
   });
 
   test("should prevent script tag bypass with whitespace in closing tag", () => {
     req.body = {
       // CodeQL warning: regex doesn't match </script > with whitespace
-      // This allows XSS bypass via malformed closing tags
+      // This allows XSS bypass via malformed closing tags with regex-based approaches
+      // sanitize-html's HTML parser handles these correctly
       spaceBeforeClosing: '<script>alert("xss")</script >',
       multipleSpaces: '<script>alert("xss")</script  >',
       tabBeforeClosing: '<script>alert("xss")</script\t>',
@@ -216,11 +233,15 @@ describe("sanitizeRequest middleware", () => {
 
     sanitizeRequest(req, res, next);
 
-    // All script tags should be removed, regardless of whitespace in closing tag
+    // sanitize-html properly handles script tags with whitespace in closing tags
+    // All script tags are removed, output is safe
     expect(req.body.spaceBeforeClosing).toBe("");
     expect(req.body.multipleSpaces).toBe("");
     expect(req.body.tabBeforeClosing).toBe("");
     expect(req.body.mixedWhitespace).toBe("");
-    expect(req.body.nestedWithSpace).toBe("");
+
+    // Nested case - malformed outer structure is encoded safely
+    expect(req.body.nestedWithSpace).not.toContain("<script");
+    expect(req.body.nestedWithSpace).toBe("&lt;script&gt;alert(1)");
   });
 });

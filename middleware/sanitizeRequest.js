@@ -1,4 +1,4 @@
-const { sanitizeBody } = require("express-validator");
+const sanitizeHtml = require("sanitize-html");
 
 /**
  * Middleware to sanitize incoming request data (body, params, query).
@@ -46,41 +46,27 @@ function sanitizeRecursively(obj) {
 }
 
 /**
- * Sanitizes a string by removing script tags, HTML tags, and encoding special characters.
+ * Sanitizes a string by removing all HTML tags and encoding special characters.
+ * Uses sanitize-html library to properly parse and remove HTML tags, preventing
+ * bypass vulnerabilities that can occur with regex-based approaches.
  * @param {string} str - The string to sanitize.
  * @returns {string} - The sanitized string.
  */
 function sanitizeString(str) {
-  // Remove script tags completely (including content) using a loop
-  // Loop prevents nested script tag bypass (e.g., <scrip<script>alert(1)</script>t>)
-  // Regex handles closing tags with whitespace (e.g., </script >) to prevent XSS bypass
-  let sanitized = str;
-  let prev;
-  do {
-    prev = sanitized;
-    sanitized = sanitized.replace(
-      /<script\b[^<]*(?:(?!<\/script\s*>)<[^<]*)*<\/script\s*>/gi,
-      ""
-    );
-  } while (sanitized !== prev);
+  // Use sanitize-html library to strip ALL HTML tags
+  // This properly handles nested tags, malformed HTML, and edge cases
+  // that regex-based approaches can miss
+  const sanitized = sanitizeHtml(str, {
+    allowedTags: [], // No tags allowed - strip everything
+    allowedAttributes: {}, // No attributes allowed
+    disallowedTagsMode: "discard", // Remove tags and their content for script/style tags
+    parser: {
+      decodeEntities: true, // Decode entities for proper processing
+    },
+  });
 
-  // Remove remaining HTML tags (keep text content)
-  // Loop prevents nested tag bypass (e.g., <<div>alert(1)</div>>)
-  do {
-    prev = sanitized;
-    sanitized = sanitized.replace(/<[^>]*>/g, "");
-  } while (sanitized !== prev);
-
-  // Encode remaining special characters
-  sanitized = sanitized
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;");
-
-  // Additional sanitization as needed for your specific use case
-
+  // sanitize-html already handles entity encoding properly,
+  // so no additional encoding step is needed
   return sanitized;
 }
 

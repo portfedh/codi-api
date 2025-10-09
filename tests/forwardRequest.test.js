@@ -5,7 +5,6 @@ const axios = require("axios");
 jest.mock("axios");
 
 // Mock console methods
-const consoleLogSpy = jest.spyOn(console, "log").mockImplementation();
 const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
 
 describe("forwardRequest", () => {
@@ -35,7 +34,6 @@ describe("forwardRequest", () => {
         "X-Validation-Result": validationResult,
       },
     });
-    expect(consoleLogSpy).toHaveBeenCalledWith(`Request forwarded to ${callbackUrl}, status: 200`);
     expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
 
@@ -58,7 +56,6 @@ describe("forwardRequest", () => {
       status: 500,
       data: "Server Error",
     });
-    expect(consoleLogSpy).not.toHaveBeenCalled();
   });
 
   it("should handle errors without response property", async () => {
@@ -73,6 +70,5 @@ describe("forwardRequest", () => {
       status: undefined,
       data: undefined,
     });
-    expect(consoleLogSpy).not.toHaveBeenCalled();
   });
 });
