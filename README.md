@@ -1,5 +1,7 @@
 # CoDi API
 
+**[📖 Read this in Spanish / Leer en Español](README.es.md)**
+
 > An open source Node.js/Express API for generating CoDi (Cobro Digital) payment requests via QR codes and Push notifications, integrating with Banxico (Bank of Mexico).
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
