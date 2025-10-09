@@ -13,6 +13,8 @@ on:
 jobs:
   test:
     name: Run Tests
+    permissions:
+      contents: read
     runs-on: ubuntu-latest  # Use Ubuntu Linux environment
 
     strategy:
