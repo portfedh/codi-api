@@ -202,4 +202,25 @@ describe("sanitizeRequest middleware", () => {
     expect(req.body.variation1).toBe("");
     expect(req.body.variation2).toBe("");
   });
+
+  test("should prevent script tag bypass with whitespace in closing tag", () => {
+    req.body = {
+      // CodeQL warning: regex doesn't match </script > with whitespace
+      // This allows XSS bypass via malformed closing tags
+      spaceBeforeClosing: '<script>alert("xss")</script >',
+      multipleSpaces: '<script>alert("xss")</script  >',
+      tabBeforeClosing: '<script>alert("xss")</script\t>',
+      mixedWhitespace: '<script>alert("xss")</script \t >',
+      nestedWithSpace: '<<script>inner</script >script>alert(1)</script >',
+    };
+
+    sanitizeRequest(req, res, next);
+
+    // All script tags should be removed, regardless of whitespace in closing tag
+    expect(req.body.spaceBeforeClosing).toBe("");
+    expect(req.body.multipleSpaces).toBe("");
+    expect(req.body.tabBeforeClosing).toBe("");
+    expect(req.body.mixedWhitespace).toBe("");
+    expect(req.body.nestedWithSpace).toBe("");
+  });
 });

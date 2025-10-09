@@ -53,12 +53,13 @@ function sanitizeRecursively(obj) {
 function sanitizeString(str) {
   // Remove script tags completely (including content) using a loop
   // Loop prevents nested script tag bypass (e.g., <scrip<script>alert(1)</script>t>)
+  // Regex handles closing tags with whitespace (e.g., </script >) to prevent XSS bypass
   let sanitized = str;
   let prev;
   do {
     prev = sanitized;
     sanitized = sanitized.replace(
-      /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+      /<script\b[^<]*(?:(?!<\/script\s*>)<[^<]*)*<\/script\s*>/gi,
       ""
     );
   } while (sanitized !== prev);
