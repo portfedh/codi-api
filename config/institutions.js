@@ -1,13 +1,5 @@
 // Last Update: 2025-04-01
 
-// URL Producción
-// https://sintp.codi.org.mx/pcodi-catalogos/instituciones
-// https://sintp2.codi.org.mx/pcodi-catalogos/instituciones
-
-// URL BETA
-// https://sintb3.codi.org.mx/bcodi-catalogos/instituciones
-// https://sintb4.codi.org.mx/bcodi-catalogos/instituciones
-
 module.exports = {
   productionInstitutions: [
     { clave_institucion: 40995, nombreCorto: "Banco Wgo Push" }, // Added by user
