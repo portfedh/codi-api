@@ -7,6 +7,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![Deploy](https://github.com/portfedh/codi-api/actions/workflows/deploy.yml/badge.svg)](https://github.com/portfedh/codi-api/actions/workflows/deploy.yml)
+[![GitHub Sponsor](https://img.shields.io/badge/sponsor-portfedh-ea4aaa?logo=github-sponsors)](https://github.com/sponsors/portfedh)
 [![GitHub issues](https://img.shields.io/github/issues/portfedh/codi-api)](https://github.com/portfedh/codi-api/issues)
 [![GitHub last commit](https://img.shields.io/github/last-commit/portfedh/codi-api)](https://github.com/portfedh/codi-api/commits/main)
 [![Code size](https://img.shields.io/github/languages/code-size/portfedh/codi-api)](https://github.com/portfedh/codi-api)
@@ -674,6 +675,18 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 - **Issues**: [GitHub Issues](https://github.com/portfedh/codi-api/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/portfedh/codi-api/discussions)
+
+### Sponsor This Project
+
+If you find CoDi API valuable for your business or projects, please consider [sponsoring its development](https://github.com/sponsors/portfedh). Your support helps:
+
+- 🚀 Maintain and improve the codebase
+- 📚 Create better documentation and tutorials
+- 🔒 Enhance security features
+- ✨ Add new features and integrations
+- 🐛 Fix bugs and respond to issues faster
+
+Every contribution, no matter the size, makes a difference! 💖
 
 ## Acknowledgments
 

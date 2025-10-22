@@ -85,6 +85,7 @@ git checkout -b feature/nombre-de-tu-funcionalidad
 ```
 
 Convenciones de nombres de ramas:
+
 - `feature/` - Nuevas funcionalidades
 - `fix/` - Corrección de errores
 - `docs/` - Actualizaciones de documentación
@@ -175,7 +176,7 @@ try {
   console.error("Procesamiento de pago falló:", error);
   return res.status(500).json({
     success: false,
-    message: "Procesamiento de pago falló"
+    message: "Procesamiento de pago falló",
   });
 }
 ```
@@ -219,6 +220,7 @@ docs(readme): actualizar instrucciones de instalación
 ### Enviar tu PR
 
 1. Push a tu fork:
+
    ```bash
    git push origin feature/nombre-de-tu-funcionalidad
    ```
@@ -272,9 +274,14 @@ describe("Nombre de Funcionalidad", () => {
 - 🐛 GitHub Issues para errores y solicitudes de funcionalidades
 - 📧 Email para problemas de seguridad (ver SECURITY.md)
 
+## Apoyando el Proyecto
+
+Si encuentras útil CoDi API y quieres apoyar su desarrollo, considera [convertirte en patrocinador](https://github.com/sponsors/portfedh). ¡Tu apoyo ayuda a mantener y mejorar este proyecto para la comunidad! 💖
+
 ## Reconocimiento
 
 Los contribuidores serán reconocidos en:
+
 - Lista de contribuidores de GitHub
 - Notas de lanzamiento para contribuciones significativas
 - Agradecimientos en README para funcionalidades importantes

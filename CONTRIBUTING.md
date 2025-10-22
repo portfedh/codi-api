@@ -85,6 +85,7 @@ git checkout -b feature/your-feature-name
 ```
 
 Branch naming conventions:
+
 - `feature/` - New features
 - `fix/` - Bug fixes
 - `docs/` - Documentation updates
@@ -175,7 +176,7 @@ try {
   console.error("Payment processing failed:", error);
   return res.status(500).json({
     success: false,
-    message: "Payment processing failed"
+    message: "Payment processing failed",
   });
 }
 ```
@@ -219,6 +220,7 @@ docs(readme): update installation instructions
 ### Submitting Your PR
 
 1. Push to your fork:
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -272,9 +274,14 @@ describe("Feature Name", () => {
 - 🐛 GitHub Issues for bugs and feature requests
 - 📧 Email for security issues (see SECURITY.md)
 
+## Supporting the Project
+
+If you find CoDi API useful and want to support its development, consider [becoming a sponsor](https://github.com/sponsors/portfedh). Your support helps maintain and improve this project for the community! 💖
+
 ## Recognition
 
 Contributors will be recognized in:
+
 - GitHub contributors list
 - Release notes for significant contributions
 - README acknowledgments for major features

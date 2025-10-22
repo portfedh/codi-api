@@ -4,6 +4,7 @@
 
 [![Licencia](https://img.shields.io/badge/Licencia-Apache%202.0-blue.svg)](LICENSE)
 [![Versión Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Patrocinador GitHub](https://img.shields.io/badge/patrocinar-portfedh-ea4aaa?logo=github-sponsors)](https://github.com/sponsors/portfedh)
 
 ## Descripción General
 
@@ -668,6 +669,18 @@ Este proyecto está licenciado bajo la Licencia Apache 2.0 - consulta el archivo
 
 - **Issues**: [GitHub Issues](https://github.com/portfedh/codi-api/issues)
 - **Discusiones**: [GitHub Discussions](https://github.com/portfedh/codi-api/discussions)
+
+### Patrocina Este Proyecto
+
+Si encuentras valiosa CoDi API para tu negocio o proyectos, por favor considera [patrocinar su desarrollo](https://github.com/sponsors/portfedh). Tu apoyo ayuda a:
+
+- 🚀 Mantener y mejorar el código base
+- 📚 Crear mejor documentación y tutoriales
+- 🔒 Mejorar las características de seguridad
+- ✨ Agregar nuevas funcionalidades e integraciones
+- 🐛 Corregir errores y responder a issues más rápido
+
+¡Cada contribución, sin importar el tamaño, hace la diferencia! 💖
 
 ## Agradecimientos
 
