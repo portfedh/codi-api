@@ -89,19 +89,22 @@ const consultaValidationRules = [
    * @type {string}
    * @rules
    * - Must not be empty
-   * - Must be exactly 8 characters in YYYYMMDD format
+   * - Can be "0" (no start date restriction)
+   * - If not "0", must be exactly 8 characters in YYYYMMDD format
    * - Must contain only digits
    * - Must be a valid date
-   * @example "20230101" (January 1, 2023)
+   * @example "20230101" (January 1, 2023) or "0"
    */
   body("fechaInicial")
     .notEmpty()
     .withMessage("fechaInicial is required")
-    .isLength({ min: 8, max: 8 })
-    .withMessage("fechaInicial must be 8 characters in YYYYMMDD format")
-    .matches(/^\d{8}$/)
-    .withMessage("fechaInicial must contain only digits in YYYYMMDD format")
     .custom((value) => {
+      // Allow zero value
+      if (value === "0") return true;
+
+      // Check length and format
+      if (!/^\d{8}$/.test(value)) return false;
+
       // Check if valid date in YYYYMMDD format
       const year = parseInt(value.substring(0, 4), 10);
       const month = parseInt(value.substring(4, 6), 10) - 1; // JS months are 0-based
@@ -115,7 +118,7 @@ const consultaValidationRules = [
         date.getDate() === day
       );
     })
-    .withMessage("fechaInicial must be a valid date in YYYYMMDD format"),
+    .withMessage("fechaInicial must be '0' or a valid date in YYYYMMDD format"),
 
   /**
    * @name fechaFinal
@@ -159,6 +162,18 @@ const consultaValidationRules = [
       if (value === "0") return true;
 
       const fechaInicial = req.body.fechaInicial;
+
+      // Skip date comparison if fechaInicial is 0
+      if (fechaInicial === "0") {
+        // Only validate that fechaFinal is not in the future
+        const currentDate = new Date();
+        const finalYear = parseInt(value.substring(0, 4), 10);
+        const finalMonth = parseInt(value.substring(4, 6), 10) - 1;
+        const finalDay = parseInt(value.substring(6, 8), 10);
+        const fechaFinalDate = new Date(finalYear, finalMonth, finalDay);
+        return fechaFinalDate <= currentDate;
+      }
+
       const currentDate = new Date();
 
       // Convert fechaInicial to Date

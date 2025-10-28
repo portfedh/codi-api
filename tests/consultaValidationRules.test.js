@@ -193,6 +193,28 @@ describe("consultaValidationRules direct tests", () => {
       expect(result.isEmpty()).toBe(true);
     });
 
+    test("should pass with zero value", async () => {
+      const result = await runValidation({
+        folioCodi: "1234567890",
+        tpg: "50",
+        npg: "100",
+        fechaInicial: "0",
+        fechaFinal: "20230201",
+      });
+      expect(result.isEmpty()).toBe(true);
+    });
+
+    test("should pass when both fechaInicial and fechaFinal are zero", async () => {
+      const result = await runValidation({
+        folioCodi: "1234567890",
+        tpg: "50",
+        npg: "100",
+        fechaInicial: "0",
+        fechaFinal: "0",
+      });
+      expect(result.isEmpty()).toBe(true);
+    });
+
     test("should fail with invalid date format", async () => {
       const result = await runValidation({
         folioCodi: "1234567890",
@@ -219,7 +241,7 @@ describe("consultaValidationRules direct tests", () => {
       expect(
         errors.some(
           (e) =>
-            e.msg === "fechaInicial must be a valid date in YYYYMMDD format"
+            e.msg === "fechaInicial must be '0' or a valid date in YYYYMMDD format"
         )
       ).toBe(true);
     });
