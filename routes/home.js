@@ -585,7 +585,11 @@ router.post(
  * /v2/codi/consulta:
  *   post:
  *     summary: Query CoDi Operation Status
- *     description: Retrieves the current status and details of a previously initiated CoDi operation (QR or Push) using its unique operation ID.
+ *     description: |
+ *       Retrieves the current status and details of a previously initiated CoDi operation (QR or Push) using its unique operation ID.
+ *
+ *       **Security Note:** Banxico validates that the folioCodi is associated with the API key used in the request.
+ *       This endpoint will only return data for folios that were created using the requesting API key, ensuring data isolation between customers.
  *     tags: [CoDi Information]
  *     security:
  *       - ApiKeyAuth: []

@@ -59,6 +59,10 @@ module.exports = {
       const { folioCodi, tpg, npg, fechaInicial, fechaFinal } = req.body;
       // console.log("\n🔵 Datos de pago: ", req.body);
 
+      // NOTE: No need to validate folioCodi ownership locally.
+      // Banxico validates that the folioCodi is associated with the apiKey
+      // and will only return data for folios created by this API key.
+
       // Get url endpoints
       const { primary: primaryUrl, secondary: secondaryUrl } =
         getCodiConsultaUrls();
