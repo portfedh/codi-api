@@ -49,9 +49,8 @@ app.use(express.urlencoded({ extended: true }));
 const { allowedOrigins } = require("./config/cors");
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // Allow requests with no origin (like servers, mobile apps or curl requests)
     if (!origin) return callback(null, true);
-
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
