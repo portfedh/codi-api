@@ -49,8 +49,8 @@ module.exports = {
   resultadoOperaciones: async (req, res) => {
     // console.log("Request body: ", req.body);
 
-    //  Capture request timestamp in Mexico City time
-    const requestTimestamp = moment().tz("America/Mexico_City");
+    //  Capture request timestamp in UTC
+    const requestTimestamp = moment.utc();
     let responsePayload = { resultado: 0 }; // Default success response
 
     try {
@@ -95,8 +95,8 @@ module.exports = {
         }
       }
 
-      //  Capture response timestamp in Mexico City time
-      const responseTimestamp = moment().tz("America/Mexico_City");
+      //  Capture response timestamp in UTC
+      const responseTimestamp = moment.utc();
 
       // Send response immediately
       res.status(200).json(responsePayload);
@@ -148,7 +148,7 @@ module.exports = {
           requestTimestamp: requestTimestamp,
           responsePayload: errorResponse,
           responseStatus: 500,
-          responseTimestamp: moment().tz("America/Mexico_City"),
+          responseTimestamp: moment.utc(),
         });
       } catch (logError) {
         console.error("Error logging error response:", logError);

@@ -48,8 +48,8 @@ module.exports = {
   sendPushPayment: async (req, res) => {
     console.log("NODE_ENV:", process.env.NODE_ENV);
 
-    //  Capture request timestamp in Mexico City time
-    const requestTimestamp = moment().tz("America/Mexico_City");
+    //  Capture request timestamp in UTC
+    const requestTimestamp = moment.utc();
     // console.log("Req Timestamp", requestTimestamp);
 
     let requestObject = null;
@@ -133,8 +133,8 @@ module.exports = {
       );
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
-      //  Capture response timestamp in Mexico City time
-      const responseTimestamp = moment().tz("America/Mexico_City");
+      //  Capture response timestamp in UTC
+      const responseTimestamp = moment.utc();
       // console.log("response timestamp", responseTimestamp);
 
       // Verify Banxico response code
@@ -221,7 +221,7 @@ module.exports = {
           requestTimestamp: requestTimestamp,
           responsePayload: { error: error.message },
           responseStatus: 500,
-          responseTimestamp: moment().tz("America/Mexico_City"),
+          responseTimestamp: moment.utc(),
         });
       } catch (logError) {
         console.error("Error logging error response:", logError);

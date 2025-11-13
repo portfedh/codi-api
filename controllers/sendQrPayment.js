@@ -41,8 +41,8 @@ const { makeRequestWithFallback } = require("./utils/makeRequestWithFallback");
  */
 module.exports = {
   sendQrPayment: async (req, res) => {
-    // Capture request timestamp in Mexico City time
-    const requestTimestamp = moment().tz("America/Mexico_City");
+    // Capture request timestamp in UTC
+    const requestTimestamp = moment.utc();
 
     try {
       // Get payment data
@@ -121,8 +121,8 @@ module.exports = {
       );
       // console.log("\n🔵 Respuesta de Banxico: ", response.data);
 
-      // Capture response timestamp in Mexico City time
-      const responseTimestamp = moment().tz("America/Mexico_City");
+      // Capture response timestamp in UTC
+      const responseTimestamp = moment.utc();
 
       // Verify Banxico response code
       const banxicoResult = verifyBanxicoResponse(response);
@@ -212,7 +212,7 @@ module.exports = {
           requestTimestamp: requestTimestamp,
           responsePayload: { error: error.message },
           responseStatus: 500,
-          responseTimestamp: moment().tz("America/Mexico_City"),
+          responseTimestamp: moment.utc(),
         });
       } catch (logError) {
         console.error("Error logging error response:", logError);
