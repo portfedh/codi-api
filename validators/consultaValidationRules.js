@@ -99,16 +99,19 @@ const consultaValidationRules = [
     .notEmpty()
     .withMessage("fechaInicial is required")
     .custom((value) => {
+      // Convert to string to handle both Number and String inputs (Banxico accepts both)
+      const stringValue = String(value);
+
       // Allow zero value
-      if (value === "0") return true;
+      if (stringValue === "0") return true;
 
       // Check length and format
-      if (!/^\d{8}$/.test(value)) return false;
+      if (!/^\d{8}$/.test(stringValue)) return false;
 
       // Check if valid date in YYYYMMDD format
-      const year = parseInt(value.substring(0, 4), 10);
-      const month = parseInt(value.substring(4, 6), 10) - 1; // JS months are 0-based
-      const day = parseInt(value.substring(6, 8), 10);
+      const year = parseInt(stringValue.substring(0, 4), 10);
+      const month = parseInt(stringValue.substring(4, 6), 10) - 1; // JS months are 0-based
+      const day = parseInt(stringValue.substring(6, 8), 10);
       const date = new Date(year, month, day);
 
       // Check if date is valid
@@ -138,16 +141,19 @@ const consultaValidationRules = [
     .notEmpty()
     .withMessage("fechaFinal is required")
     .custom((value) => {
+      // Convert to string to handle both Number and String inputs (Banxico accepts both)
+      const stringValue = String(value);
+
       // Allow zero value
-      if (value === "0") return true;
+      if (stringValue === "0") return true;
 
       // Check length and format
-      if (!/^\d{8}$/.test(value)) return false;
+      if (!/^\d{8}$/.test(stringValue)) return false;
 
       // Check if valid date
-      const year = parseInt(value.substring(0, 4), 10);
-      const month = parseInt(value.substring(4, 6), 10) - 1;
-      const day = parseInt(value.substring(6, 8), 10);
+      const year = parseInt(stringValue.substring(0, 4), 10);
+      const month = parseInt(stringValue.substring(4, 6), 10) - 1;
+      const day = parseInt(stringValue.substring(6, 8), 10);
       const date = new Date(year, month, day);
 
       return (
@@ -158,18 +164,21 @@ const consultaValidationRules = [
     })
     .withMessage("fechaFinal must be '0' or a valid date in YYYYMMDD format")
     .custom((value, { req }) => {
-      // Skip validation if value is 0
-      if (value === "0") return true;
+      // Convert to string to handle both Number and String inputs
+      const stringValue = String(value);
 
-      const fechaInicial = req.body.fechaInicial;
+      // Skip validation if value is 0
+      if (stringValue === "0") return true;
+
+      const fechaInicialRaw = String(req.body.fechaInicial);
 
       // Skip date comparison if fechaInicial is 0
-      if (fechaInicial === "0") {
+      if (fechaInicialRaw === "0") {
         // Only validate that fechaFinal is not in the future
         const currentDate = new Date();
-        const finalYear = parseInt(value.substring(0, 4), 10);
-        const finalMonth = parseInt(value.substring(4, 6), 10) - 1;
-        const finalDay = parseInt(value.substring(6, 8), 10);
+        const finalYear = parseInt(stringValue.substring(0, 4), 10);
+        const finalMonth = parseInt(stringValue.substring(4, 6), 10) - 1;
+        const finalDay = parseInt(stringValue.substring(6, 8), 10);
         const fechaFinalDate = new Date(finalYear, finalMonth, finalDay);
         return fechaFinalDate <= currentDate;
       }
@@ -177,15 +186,15 @@ const consultaValidationRules = [
       const currentDate = new Date();
 
       // Convert fechaInicial to Date
-      const initialYear = parseInt(fechaInicial.substring(0, 4), 10);
-      const initialMonth = parseInt(fechaInicial.substring(4, 6), 10) - 1;
-      const initialDay = parseInt(fechaInicial.substring(6, 8), 10);
+      const initialYear = parseInt(fechaInicialRaw.substring(0, 4), 10);
+      const initialMonth = parseInt(fechaInicialRaw.substring(4, 6), 10) - 1;
+      const initialDay = parseInt(fechaInicialRaw.substring(6, 8), 10);
       const fechaInicialDate = new Date(initialYear, initialMonth, initialDay);
 
       // Convert fechaFinal to Date
-      const finalYear = parseInt(value.substring(0, 4), 10);
-      const finalMonth = parseInt(value.substring(4, 6), 10) - 1;
-      const finalDay = parseInt(value.substring(6, 8), 10);
+      const finalYear = parseInt(stringValue.substring(0, 4), 10);
+      const finalMonth = parseInt(stringValue.substring(4, 6), 10) - 1;
+      const finalDay = parseInt(stringValue.substring(6, 8), 10);
       const fechaFinalDate = new Date(finalYear, finalMonth, finalDay);
 
       // Check if fechaFinal is after fechaInicial and before current date

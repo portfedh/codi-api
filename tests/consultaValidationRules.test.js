@@ -246,6 +246,28 @@ describe("consultaValidationRules direct tests", () => {
       ).toBe(true);
     });
 
+    test("should pass with numeric value (Banxico accepts Number or String)", async () => {
+      const result = await runValidation({
+        folioCodi: "1234567890",
+        tpg: "50",
+        npg: "100",
+        fechaInicial: 20230101,
+        fechaFinal: "20230201",
+      });
+      expect(result.isEmpty()).toBe(true);
+    });
+
+    test("should pass with numeric zero value", async () => {
+      const result = await runValidation({
+        folioCodi: "1234567890",
+        tpg: "50",
+        npg: "100",
+        fechaInicial: 0,
+        fechaFinal: "20230201",
+      });
+      expect(result.isEmpty()).toBe(true);
+    });
+
     test("should fail when fechaInicial is empty", async () => {
       const result = await runValidation({
         folioCodi: "1234567890",
@@ -330,6 +352,39 @@ describe("consultaValidationRules direct tests", () => {
             "fechaFinal must be after fechaInicial and not in the future"
         )
       ).toBe(true);
+    });
+
+    test("should pass with numeric value for fechaFinal", async () => {
+      const result = await runValidation({
+        folioCodi: "1234567890",
+        tpg: "50",
+        npg: "100",
+        fechaInicial: "20230101",
+        fechaFinal: 20230201,
+      });
+      expect(result.isEmpty()).toBe(true);
+    });
+
+    test("should pass with both fechaInicial and fechaFinal as numbers", async () => {
+      const result = await runValidation({
+        folioCodi: "1234567890",
+        tpg: "50",
+        npg: "100",
+        fechaInicial: 20230101,
+        fechaFinal: 20230201,
+      });
+      expect(result.isEmpty()).toBe(true);
+    });
+
+    test("should pass with numeric zero for fechaFinal", async () => {
+      const result = await runValidation({
+        folioCodi: "1234567890",
+        tpg: "50",
+        npg: "100",
+        fechaInicial: "20230101",
+        fechaFinal: 0,
+      });
+      expect(result.isEmpty()).toBe(true);
     });
 
     test("should fail when fechaFinal is empty", async () => {

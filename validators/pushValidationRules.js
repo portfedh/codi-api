@@ -85,9 +85,8 @@ const pushValidationRules = [
    * @type {string|number}
    * @rules
    * - Can be empty (will be converted to "0")
-   * - Must be alphanumeric
-   * - Maximum length of 7 characters
-   * - No special characters allowed
+   * - Must contain only digits (0-9)
+   * - Maximum length of 7 digits
    * @example "1234567" or 1234567
    */
   body("referenciaNumerica")
@@ -98,12 +97,12 @@ const pushValidationRules = [
     .custom((value) => {
       // Convert value to a string for validation
       const stringValue = value.toString();
-      // Check if it is alphanumeric and matches the length constraint
-      const isValid = /^[a-zA-Z0-9]{1,7}$/.test(stringValue);
+      // Check if it contains only digits and matches the length constraint
+      const isValid = /^[0-9]{1,7}$/.test(stringValue);
       return isValid;
     })
     .withMessage(
-      "ReferenciaNumerica must be a string or number with a maximum length of 7 characters and no special characters"
+      "ReferenciaNumerica must contain only digits (0-9) with a maximum length of 7"
     ),
 
   /**
@@ -145,11 +144,10 @@ const pushValidationRules = [
    * - Special case: "0" is valid (no expiration)
    * - Must be numeric if not "0"
    * - Maximum length of 15 digits
-   * - Must be a valid timestamp
+   * - Must be a valid millisecond timestamp (Banxico spec)
    * - Must be in the future
    * - Cannot exceed one year from now
-   * - Accepts both seconds and milliseconds timestamps
-   * @example "0" or "1672531200000" (milliseconds) or "1672531200" (seconds)
+   * @example "0" or "1672531200000" (milliseconds)
    */
   body("vigencia")
     .notEmpty()
@@ -179,15 +177,18 @@ const pushValidationRules = [
       // Current time in milliseconds
       const currentTime = Date.now();
       const oneYearInMs = 365 * 24 * 60 * 60 * 1000;
-      // If timestamp has 10 digits or less, assume it's in seconds and convert to ms
-      const normalizedTimestamp =
-        timestamp < 10000000000 ? timestamp * 1000 : timestamp;
+      // Banxico expects milliseconds — reject values that look like seconds
+      if (timestamp > 0 && timestamp < 10000000000) {
+        throw new Error(
+          "Vigencia must be a millisecond timestamp (not seconds). Multiply by 1000 if needed"
+        );
+      }
       // Check if timestamp is in the past
-      if (normalizedTimestamp < currentTime) {
+      if (timestamp < currentTime) {
         throw new Error("Vigencia timestamp must be in the future");
       }
       // Check if timestamp is more than 1 year in the future
-      if (normalizedTimestamp > currentTime + oneYearInMs) {
+      if (timestamp > currentTime + oneYearInMs) {
         throw new Error("Vigencia timestamp cannot exceed one year from now");
       }
       return true;

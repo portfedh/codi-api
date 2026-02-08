@@ -103,11 +103,20 @@ describe("qrValidationRules direct tests", () => {
     expect(result.isEmpty()).toBe(true);
   });
 
-  test("referenciaNumerica must be alphanumeric with max 7 characters", async () => {
+  test("referenciaNumerica must contain only digits with max 7 characters", async () => {
     // Special characters
     let result = await runValidation({
       monto: 95.63,
       referenciaNumerica: "123!456",
+      concepto: "Valid concept",
+      vigencia: "0",
+    });
+    expect(result.isEmpty()).toBe(false);
+
+    // Letters not allowed
+    result = await runValidation({
+      monto: 95.63,
+      referenciaNumerica: "ABC1234",
       concepto: "Valid concept",
       vigencia: "0",
     });
@@ -239,14 +248,30 @@ describe("qrValidationRules direct tests", () => {
     );
   });
 
-  test("vigencia in seconds format is properly normalized", async () => {
-    // One day in the future, expressed in seconds
+  test("vigencia in seconds format is rejected (must be milliseconds)", async () => {
+    // One day in the future, expressed in seconds (not milliseconds)
     const oneDayFromNowInSeconds = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
     const result = await runValidation({
       monto: 95.63,
       referenciaNumerica: "1234567",
       concepto: "Valid concept",
       vigencia: oneDayFromNowInSeconds.toString(),
+    });
+    expect(result.isEmpty()).toBe(false);
+    const errors = result.array();
+    expect(
+      errors.some((e) => e.msg.includes("millisecond timestamp"))
+    ).toBe(true);
+  });
+
+  test("vigencia in milliseconds format is accepted", async () => {
+    // One day in the future, expressed in milliseconds
+    const oneDayFromNowInMs = Date.now() + 24 * 60 * 60 * 1000;
+    const result = await runValidation({
+      monto: 95.63,
+      referenciaNumerica: "1234567",
+      concepto: "Valid concept",
+      vigencia: oneDayFromNowInMs.toString(),
     });
     expect(result.isEmpty()).toBe(true);
   });
