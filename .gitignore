@@ -1,6 +1,7 @@
 node_modules
 .env
 .DS_Store
+.claude
 Index
 ToDo.md
 pm2.log
