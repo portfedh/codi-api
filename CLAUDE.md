@@ -81,6 +81,54 @@ The `.env` file contains critical credentials including Supabase connection deta
 **Testing:**
 Jest test suite with coverage reporting covers all utility functions, validation rules, and core business logic. Tests are located in the `/tests` directory matching the source file structure.
 
+## MCP Server (`mcp/`)
+
+The `mcp/` subdirectory contains a standalone MCP (Model Context Protocol) server that gives AI assistants structured knowledge of this API for code generation assistance. It is published separately to npm as `codi-api-mcp`.
+
+**Structure:**
+```
+mcp/
+  package.json          # ESM package, own dependencies, bin entry for npx
+  index.js              # Server entry point (stdio transport)
+  resources/            # Static documentation blobs (no live API calls)
+    authentication.js   # API key format, x-api-key header, environments
+    qr.js               # QR endpoint: all fields, types, rules, request/response
+    push.js             # Push endpoint: all fields including celularCliente
+    consulta.js         # Query endpoint: fields, pagination, date rules
+    webhook.js          # resultadoOperaciones: payload, resultado codes
+    errors.js           # All error codes: edoPet, edoMC, resultado, HTTP
+  prompts/              # Code generation conversation starters
+    integrateQr.js      # "Generate QR payment integration for [lang/framework]"
+    integratePush.js    # "Generate push payment integration for [lang/framework]"
+    handleWebhook.js    # "Generate webhook handler for [lang/framework]"
+    checkStatus.js      # "Generate payment status polling for [lang/framework]"
+  README.md             # Setup instructions for Claude Desktop & Claude Code
+```
+
+**Key rules when modifying this API:**
+- If you change a validation rule in `validators/`, update the corresponding `mcp/resources/` file to match.
+- If you add or remove a field from any endpoint, update the relevant resource AND the prompt that references it.
+- The MCP server uses ESM (`import`/`export`) — do not use `require()` inside `mcp/`.
+- The MCP server has its own `package.json` and `node_modules` — run `npm install` from `mcp/` when adding dependencies there.
+- The MCP server version in `mcp/package.json` is independent of the main API version.
+
+**Local smoke test:**
+```bash
+cd mcp
+echo '{"jsonrpc":"2.0","method":"resources/list","id":1}' | node index.js
+echo '{"jsonrpc":"2.0","method":"prompts/list","id":1}' | node index.js
+```
+
+**Add to Claude Code (global scope):**
+```bash
+claude mcp add --scope user codi-api-mcp -- node /absolute/path/to/codi-api/mcp/index.js
+```
+
+**Publish to npm (from `mcp/` directory):**
+```bash
+npm publish
+```
+
 ## Project Documentation & Governance
 
 **License & Legal:**
