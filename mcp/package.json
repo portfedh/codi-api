@@ -1,0 +1,34 @@
+{
+  "name": "codi-api-mcp",
+  "version": "1.0.0",
+  "description": "MCP server providing CoDi API documentation for AI-assisted integration",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "codi-api-mcp": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "resources/",
+    "prompts/",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "codi",
+    "banxico",
+    "mcp",
+    "model-context-protocol",
+    "payments",
+    "mexico",
+    "qr",
+    "push"
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.0.0"
+  }
+}
