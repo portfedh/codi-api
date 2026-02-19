@@ -119,15 +119,39 @@ echo '{"jsonrpc":"2.0","method":"resources/list","id":1}' | node index.js
 echo '{"jsonrpc":"2.0","method":"prompts/list","id":1}' | node index.js
 ```
 
-**Add to Claude Code (global scope):**
+**npm package:** Published at `codi-api-mcp` (maintainer: portfedh). Check current version: `npm view codi-api-mcp version`.
+
+**Sharing with others — two steps:**
+1. Share this install command (Node.js 18+ required, no other setup needed):
+   ```bash
+   claude mcp add --scope user codi-api-mcp -- npx codi-api-mcp
+   ```
+2. For Claude Desktop, share the JSON snippet in `mcp/README.md`.
+
+**Add to Claude Code (global scope, via npm):**
 ```bash
-claude mcp add --scope user codi-api-mcp -- node /absolute/path/to/codi-api/mcp/index.js
+claude mcp add --scope user codi-api-mcp -- npx codi-api-mcp
 ```
 
-**Publish to npm (from `mcp/` directory):**
-```bash
-npm publish
-```
+**Publishing a new version to npm:**
+
+1. Make and test your changes (run the smoke test above)
+2. Bump the version in `mcp/package.json` following semver:
+   - Bug fix / docs update → patch: `1.0.0` → `1.0.1`
+   - New resource or prompt → minor: `1.0.0` → `1.1.0`
+   - Breaking change (renamed/removed resource URI or prompt) → major: `1.0.0` → `2.0.0`
+3. Publish from the `mcp/` directory:
+   ```bash
+   cd mcp
+   npm publish --otp=<your-2fa-code>
+   ```
+4. Commit the version bump:
+   ```bash
+   git add mcp/package.json
+   git commit -m "chore: bump codi-api-mcp to vX.Y.Z"
+   ```
+
+Users on `npx codi-api-mcp` pick up the new version automatically on their next run (npx always fetches latest). Users who pinned a version must update manually.
 
 ## Project Documentation & Governance
 
