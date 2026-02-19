@@ -21,6 +21,29 @@ Pick your AI tool:
 claude mcp add --scope user codi-api-mcp -- npx codi-api-mcp
 ```
 
+**OpenAI Codex CLI** — one-command install:
+```bash
+codex mcp add codi-api-mcp -- npx -y codi-api-mcp
+```
+Or add directly to `~/.codex/config.toml`:
+```toml
+[mcp_servers.codi-api-mcp]
+command = "npx"
+args = ["-y", "codi-api-mcp"]
+```
+
+**Gemini CLI** — add to `~/.gemini/settings.json` (global) or `.gemini/settings.json` in your project root:
+```json
+{
+  "mcpServers": {
+    "codi-api-mcp": {
+      "command": "npx",
+      "args": ["codi-api-mcp"]
+    }
+  }
+}
+```
+
 **VS Code (GitHub Copilot)** — add to `.vscode/mcp.json` in your project:
 ```json
 {
@@ -195,6 +218,29 @@ Elige tu herramienta de IA:
 **Claude Code**
 ```bash
 claude mcp add --scope user codi-api-mcp -- npx codi-api-mcp
+```
+
+**OpenAI Codex CLI** — instalación con un comando:
+```bash
+codex mcp add codi-api-mcp -- npx -y codi-api-mcp
+```
+O agrega directamente a `~/.codex/config.toml`:
+```toml
+[mcp_servers.codi-api-mcp]
+command = "npx"
+args = ["-y", "codi-api-mcp"]
+```
+
+**Gemini CLI** — agrega a `~/.gemini/settings.json` (global) o `.gemini/settings.json` en la raíz de tu proyecto:
+```json
+{
+  "mcpServers": {
+    "codi-api-mcp": {
+      "command": "npx",
+      "args": ["codi-api-mcp"]
+    }
+  }
+}
 ```
 
 **VS Code (GitHub Copilot)** — agrega a `.vscode/mcp.json` en tu proyecto:
