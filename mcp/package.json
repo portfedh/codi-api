@@ -1,6 +1,6 @@
 {
   "name": "codi-api-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MCP server providing CoDi API documentation for AI-assisted integration",
   "type": "module",
   "main": "index.js",
