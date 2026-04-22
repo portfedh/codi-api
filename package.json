@@ -22,8 +22,8 @@
   },
   "homepage": "https://github.com/portfedh/codi-api#readme",
   "dependencies": {
-    "@supabase/supabase-js": "^2.103.0",
-    "axios": "^1.15.0",
+    "@supabase/supabase-js": "^2.104.0",
+    "axios": "^1.15.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
