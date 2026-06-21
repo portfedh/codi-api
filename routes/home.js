@@ -756,7 +756,7 @@ router.post(
  *                     crtBdeM:
  *                       type: string
  *                       description: Banxico public certificate identifier.
- *                       example: "00000100000100015974"
+ *                       example: "00000100000100015975"
  *                     selloDigital:
  *                       type: string
  *                       description: Digital signature of the response by Banxico.
@@ -793,7 +793,7 @@ router.post(
  *                             tipoCta: 0
  *                             cveInstit: 0
  *                     ultPag: true
- *                     crtBdeM: "00000100000100015974"
+ *                     crtBdeM: "00000100000100015975"
  *                     selloDigital: "qtSVpfEUgp2TuLUJvppubqkStMSOX7qCukId72xUcagH5ozaX1z+T1coNdOQv6M1TGU8n4jF6imWAwxpdGmMF2XU1sowu8ox8MiLTcT03yHoDGGFTwOqF4Ic1NiPqzw/gFaqIcbTheIf47oECmvz6e1cXPDt1HVZem6y8W3nmwVHUMJKWD/xgBLbDFjDe+ETbKjJtqUnQM9Uy4HOlExzW0YlT/0S+CQ1uylnPyhkDzv5isSNaeN6/XjicjmlvpsHjXj5fvbaFmCfZaFLEukFyWGL9COgPwdKEfUmnkbfmTgUKifFqxbWvRhZ5J8OxzaH/I046ofqNHde+3BovOWiKVVBRe94At3GrBMYUnHz/hhJ5aO0e7qWQ5MzfrgeXFEFnvrF2V+rTZ8lXB08FButuQ=="
  *                     epoch: 1743222437146
  *                     edoPet: 0
