@@ -40,7 +40,7 @@
     "node-forge": "^1.4.0",
     "qrcode": "^1.5.4",
     "rotating-file-stream": "^3.2.10",
-    "sanitize-html": "^2.18.0",
+    "sanitize-html": "^2.18.1",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1",
     "tslib": "^2.8.1"
