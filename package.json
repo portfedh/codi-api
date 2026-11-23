@@ -39,7 +39,7 @@
     "node-cache": "^5.1.2",
     "node-forge": "^1.4.3",
     "qrcode": "^1.5.4",
-    "rotating-file-stream": "^3.2.10",
+    "rotating-file-stream": "^4.0.0",
     "sanitize-html": "^2.18.2",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1",
